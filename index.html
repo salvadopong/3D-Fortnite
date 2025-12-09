@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Web Battle Royale: V3 - Advanced Combat (Final Complete)</title>
+    <title>Web Battle Royale: V3 - Advanced Combat (Final Fixed)</title>
     <style>
         /* Base Styles and UI Overlays (Unchanged from previous V3) */
         body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; user-select: none; background: #111; }
@@ -183,22 +183,20 @@
 
 
         // =========================================================================
-        // === 2. GLOBAL STATE VARIABLES (MUST BE AT THE TOP TO AVOID REFERENCE ERRORS)
+        // === 2. GLOBAL STATE VARIABLES ===========================================
         // =========================================================================
         
         let camera, scene, renderer, controls;
         let weaponCamera, weaponScene;
         let raycaster;
-        const v3 = new THREE.Vector3(); // Reusable vector for calculations
+        const v3 = new THREE.Vector3(); 
         
-        // Movement State
         let moveForward=false, moveBackward=false, moveLeft=false, moveRight=false, isSprinting=false;
         let canJump = false;
         let velocity = new THREE.Vector3();
         let direction = new THREE.Vector3();
         let prevTime = performance.now();
 
-        // Player State
         let player = {
             health: 100,
             shield: 50, 
@@ -212,14 +210,12 @@
             jugTimeLeft: 0, 
         };
 
-        // Combat State
         let isFiring = false; 
         let lastFireTime = 0;
         let isAds = false;
         let currentViewModel = null;
         let verticalRecoil = 0; 
 
-        // World Objects
         let objects = []; 
         let bots = [];
         let chests = [];
@@ -228,7 +224,6 @@
         let cars = [];
         let currentCar = null;
 
-        // Storm
         let stormStartTime = Date.now();
         let stormRadius = WORLD_SIZE;
         let stormCenter = new THREE.Vector2(0,0);
@@ -236,14 +231,91 @@
 
 
         // =========================================================================
-        // === 3. INITIALIZATION & SETUP ===========================================
+        // === 3. STORM & HEALING LOGIC (Moved up for early definition) ============
+        // =========================================================================
+
+        function createStormVisual() {
+            const stormGeo = new THREE.CylinderGeometry(WORLD_SIZE, WORLD_SIZE, 100, 64, 1, true);
+            const stormMat = new THREE.MeshBasicMaterial({
+                color: 0x9400d3, 
+                transparent: true, 
+                opacity: 0.3,
+                side: THREE.BackSide 
+            });
+            stormRingMesh = new THREE.Mesh(stormGeo, stormMat);
+            stormRingMesh.position.y = 50; 
+            scene.add(stormRingMesh);
+        }
+        
+        function updateStorm(delta) {
+            const elapsed = (Date.now() - stormStartTime) / 1000;
+            const stormTotal = 180; 
+            const newRadius = THREE.MathUtils.lerp(WORLD_SIZE, 50, Math.min(elapsed/stormTotal, 1));
+            stormRadius = newRadius;
+            
+            if (stormRingMesh) {
+                stormRingMesh.scale.x = stormRadius / (WORLD_SIZE / 2);
+                stormRingMesh.scale.z = stormRadius / (WORLD_SIZE / 2);
+            }
+            
+            const mins = Math.floor(Math.max(0, stormTotal - elapsed) / 60);
+            const secs = Math.floor(Math.max(0, stormTotal - elapsed) % 60);
+            document.getElementById('storm-timer').innerText = `STORM: ${mins}:${secs<10?'0':''}${secs}`;
+            
+            const pDist = new THREE.Vector2(camera.position.x, camera.position.z).distanceTo(stormCenter);
+            const overlay = document.getElementById('storm-overlay');
+            
+            if(pDist > stormRadius) {
+                overlay.style.display = 'block';
+                if(Math.floor(elapsed*10) % 10 === 0 && Math.random() < 0.1) {
+                   damagePlayer(1, false, "Storm"); 
+                }
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+        
+        function updateShieldJug(delta) {
+            const jugEl = document.getElementById('jug-indicator');
+            if (player.jugTimeLeft > 0) {
+                player.jugTimeLeft -= delta;
+                player.shield = Math.min(player.shield + (3 * delta), 100);
+                jugEl.style.display = 'block';
+                if (player.jugTimeLeft <= 0) {
+                    player.jugTimeLeft = 0;
+                    jugEl.style.display = 'none';
+                }
+                updateUI();
+            }
+        }
+
+        // =========================================================================
+        // === 4. WEAPON FUNCTIONS (Moved up for early definition) =================
+        // =========================================================================
+
+        function fireWeapon() {
+            const item = player.inventory[player.selectedSlot];
+            if(!item || player.inVehicle) return;
+
+            if(item.category === 'consumable') {
+                useConsumable(item);
+                return;
+            }
+
+            isFiring = true;
+        }
+
+        function stopFiring() { isFiring = false; }
+
+
+        // =========================================================================
+        // === 5. INITIALIZATION & SETUP ===========================================
         // =========================================================================
 
         init();
-        animate(); // Start the loop immediately after setup
+        animate(); 
 
         function init() {
-            // Scene & Camera
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87CEEB);
             scene.fog = new THREE.Fog(0x87CEEB, 20, 400);
@@ -251,7 +323,6 @@
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.y = PLAYER_HEIGHT;
 
-            // Weapon Layer
             weaponScene = new THREE.Scene();
             weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
 
@@ -262,7 +333,6 @@
             renderer.autoClear = false;
             document.getElementById('game-container').appendChild(renderer.domElement);
 
-            // Lighting
             const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
             dirLight.position.set(100, 200, 100);
             dirLight.castShadow = true;
@@ -270,24 +340,20 @@
             dirLight.shadow.camera.left = -200; dirLight.shadow.camera.right = 200;
             scene.add(dirLight);
 
-            // Controls
             controls = new PointerLockControls(camera, document.body);
             document.addEventListener('click', () => {
                 if(!player.isDead) controls.lock();
             });
 
-            // Inputs
             setupInputs();
 
-            // Generation
             raycaster = new THREE.Raycaster();
             generateTerrain();
             generatePOIs();
             spawnBots();
             spawnCars(); 
-            createStormVisual();
+            createStormVisual(); // <-- Now defined earlier
 
-            // Give initial loot (Common AR in Slot 0)
             addToInventory(generateWeapon('AR', RARITY.COMMON), 0);
 
             updateUI();
@@ -300,7 +366,7 @@
 
 
         // =========================================================================
-        // === 4. INPUTS & INTERACTION =============================================
+        // === 6. INPUTS & INTERACTION =============================================
         // =========================================================================
         function setupInputs() {
             const onKeyDown = (e) => {
@@ -338,7 +404,7 @@
                 if(e.button === 2) toggleAds(true);
             };
             const onMouseUp = (e) => {
-                if(e.button === 0) stopFiring();
+                if(e.button === 0) stopFiring(); // <-- Now defined earlier
                 if(e.button === 2) toggleAds(false);
             };
 
@@ -351,7 +417,6 @@
         function interact() {
             const pos = camera.position;
             
-            // 1. Exit Car
             if(player.inVehicle) {
                 player.inVehicle = false;
                 currentCar = null;
@@ -360,7 +425,6 @@
                 return;
             }
 
-            // 2. Enter Car
             for(let c of cars) {
                 if(c.mesh.position.distanceTo(pos) < 5) {
                     player.inVehicle = true;
@@ -369,7 +433,6 @@
                 }
             }
 
-            // 3. Open Chests
             for(let i=chests.length-1; i>=0; i--) {
                 const c = chests[i];
                 if(c.position.distanceTo(pos) < 3) {
@@ -382,7 +445,6 @@
                 }
             }
 
-            // 4. Pick up Loot
             for(let i=lootItems.length-1; i>=0; i--) {
                 const l = lootItems[i];
                 if(l.position.distanceTo(pos) < 2.5) {
@@ -397,7 +459,7 @@
 
 
         // =========================================================================
-        // === 5. WORLD GENERATION & PHYSICS HELPERS ===============================
+        // === 7. WORLD GENERATION & PHYSICS HELPERS ===============================
         // =========================================================================
         
         function getTerrainHeight(x, z) {
@@ -433,7 +495,6 @@
         }
 
         function generatePOIs() {
-            // Simplified POI generation for conciseness
             createCity(-60, -60);
             createForest(60, 60);
             createOutpost(0, 80);
@@ -488,7 +549,7 @@
 
 
         // =========================================================================
-        // === 6. CARS, LOOT, & INVENTORY ==========================================
+        // === 8. CARS, LOOT, & INVENTORY ==========================================
         // =========================================================================
         
         function spawnCars() {
@@ -596,19 +657,19 @@
             const item = player.inventory[index];
             if(item && item.category === 'weapon') {
                 buildWeaponModel(item);
-                toggleAds(isAds); // Re-apply ADS if active
+                toggleAds(isAds); 
             } else {
                 if(currentViewModel) {
                     weaponScene.remove(currentViewModel);
                     currentViewModel = null;
                 }
-                toggleAds(false); // Force off ADS if switching away from weapon
+                toggleAds(false); 
             }
         }
 
 
         // =========================================================================
-        // === 7. WEAPON & COMBAT LOGIC ============================================
+        // === 9. WEAPON & COMBAT LOGIC ============================================
         // =========================================================================
 
         function generateWeapon(baseKey, rarity) {
@@ -636,28 +697,23 @@
             const mat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.3, metalness: 0.5 });
             const black = new THREE.MeshStandardMaterial({ color: 0x111111 });
 
-            // Proceedural Parts
             const type = item.name;
             const length = type.includes("Sniper") ? 0.8 : type.includes("Rifle") ? 0.6 : 0.4;
             
-            // Body
             const body = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, length), mat); 
             group.add(body);
             
-            // Mag
             if (!type.includes("Shotgun") && !type.includes("Sniper")) {
                 const mag = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.2, 0.1), black); 
                 mag.position.x = 0.05; mag.position.y = -0.15;
                 group.add(mag);
             }
             
-            // Barrel
             const bLength = length + 0.3;
             const b = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03, bLength), black);
             b.rotation.x = -Math.PI/2; b.position.z = -bLength/2;
             group.add(b);
 
-            // Scope (Visual only)
             if (item.scope) {
                 const scopeGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.3);
                 const scope = new THREE.Mesh(scopeGeo, black);
@@ -665,7 +721,6 @@
                 group.add(scope);
             }
 
-            // Default Pos (Held)
             group.position.set(0.3, -0.3, -0.5);
             weaponScene.add(group);
             currentViewModel = group;
@@ -682,11 +737,9 @@
 
             lastFireTime = time;
 
-            // Recoil
             const recoilAmount = item.recoil * (isAds ? 0.2 : 1.0) * 0.01; 
             verticalRecoil += recoilAmount;
 
-            // Visual Kickback
             if(currentViewModel) {
                 currentViewModel.position.z += 0.15 * (item.recoil);
                 currentViewModel.rotation.x += 0.05 * (item.recoil);
@@ -699,7 +752,6 @@
                 const x = (Math.random()-0.5) * spread;
                 const y = (Math.random()-0.5) * spread;
 
-                // Adjust raycaster direction by current recoil (verticalRecoil is inverted for screen space to world space)
                 raycaster.setFromCamera(new THREE.Vector2(x, y - verticalRecoil), camera);
                 
                 const botMeshes = bots.map(b => b.mesh);
@@ -746,8 +798,43 @@
             setTimeout(() => el.remove(), 1500);
         }
 
+        function toggleAds(state) {
+            if(player.isConsuming) return;
+            isAds = state;
+            const item = player.inventory[player.selectedSlot];
+            const crosshair = document.getElementById('crosshair');
+            const scopeOverlay = document.getElementById('scope-overlay');
+            
+            scopeOverlay.style.opacity = 0;
+            crosshair.style.display = 'block';
+            scopeOverlay.className = '';
+
+            if (state && item && item.category === 'weapon') {
+                if (item.scope === 'sniper' || item.scope === 'heavy_zoom') {
+                    crosshair.style.display = 'none';
+                    scopeOverlay.className = 'sniper';
+                    scopeOverlay.style.opacity = 1;
+                    renderer.setPixelRatio(window.devicePixelRatio * (item.scope === 'sniper' ? 0.3 : 0.6)); 
+                    camera.fov = item.scope === 'sniper' ? 10 : 30; 
+                    camera.updateProjectionMatrix();
+                } else if (item.scope === 'red_dot') {
+                    crosshair.style.transform = "translate(-50%, -50%) scale(0.5)";
+                    document.querySelector('.ch-dot').style.display = 'block';
+                    document.querySelectorAll('.ch-line').forEach(el => el.style.display = 'none');
+                }
+            } else {
+                document.querySelector('.ch-dot').style.display = 'none';
+                document.querySelectorAll('.ch-line').forEach(el => el.style.display = 'block');
+                renderer.setPixelRatio(window.devicePixelRatio);
+                camera.fov = 75;
+                camera.updateProjectionMatrix();
+                scopeOverlay.style.opacity = 0;
+            }
+        }
+
+
         // =========================================================================
-        // === 8. HEALING, AI & BUILD LOGIC ========================================
+        // === 10. HEALING, AI & BUILD LOGIC =======================================
         // =========================================================================
 
         function useConsumable(item) {
@@ -811,7 +898,6 @@
             if(player.isDead) return;
 
             if (isBotDamage && player.inVehicle && currentCar) {
-                // Car collision damage (not implemented for simplicity, but here if needed)
                 return;
             }
 
@@ -840,7 +926,7 @@
 
 
         // =========================================================================
-        // === 9. MAIN ANIMATION LOOP (animate) ====================================
+        // === 11. MAIN ANIMATION LOOP (animate) ===================================
         // =========================================================================
 
         function animate() {
@@ -859,14 +945,12 @@
 
             if(controls.isLocked) {
                 if (player.inVehicle && currentCar) {
-                    // Car Physics (Movement + Running over NPCs)
                     const speed = 25.0;
                     if(moveForward) currentCar.mesh.translateZ(speed * delta);
                     if(moveBackward) currentCar.mesh.translateZ(-speed * delta);
                     if(moveLeft) currentCar.mesh.rotateY(2.0 * delta);
                     if(moveRight) currentCar.mesh.rotateY(-2.0 * delta);
 
-                    // Car-Bot Collision Check (100 Damage requested)
                     bots.forEach(bot => {
                         if (bot.mesh.position.distanceTo(currentCar.mesh.position) < 4 && currentCar.mesh.speed > 5) {
                             bot.health -= 100;
@@ -874,7 +958,6 @@
                         }
                     });
 
-                    // Camera Follow
                     const offset = new THREE.Vector3(0, 5, -10);
                     offset.applyQuaternion(currentCar.mesh.quaternion);
                     camera.position.copy(currentCar.mesh.position).add(offset);
@@ -884,7 +967,6 @@
                     currentCar.mesh.position.y = h + 1;
 
                 } else {
-                    // Player Movement & Gravity
                     velocity.x -= velocity.x * 10.0 * delta;
                     velocity.z -= velocity.z * 10.0 * delta;
                     velocity.y -= GRAVITY * delta;
@@ -900,11 +982,9 @@
                     controls.moveRight(-velocity.x * delta);
                     controls.moveForward(-velocity.z * delta);
 
-                    // Recoil Recovery
                     if(!isFiring) verticalRecoil *= 0.99; 
                     if(verticalRecoil < 0.001) verticalRecoil = 0; 
 
-                    // Weapon Sway/Recoil Reset
                     if(currentViewModel) {
                         const tx = isAds ? 0 : 0.3;
                         const ty = isAds ? -0.20 : -0.3;
@@ -920,7 +1000,6 @@
                         currentViewModel.rotation.x *= 0.8; 
                     }
 
-                    // Ground Collision & Map Boundary Check
                     const h = getTerrainHeight(camera.position.x, camera.position.z);
                     if(camera.position.y < h + PLAYER_HEIGHT) {
                         velocity.y = 0;
@@ -938,7 +1017,6 @@
             updateBots(delta, time);
             updateMinimap();
 
-            // Rendering
             renderer.clear();
             renderer.render(scene, camera);
             if(!player.inVehicle) {
@@ -949,51 +1027,7 @@
 
         // --- Other Update Functions ---
 
-        function updateStorm(delta) {
-            // (Same storm update logic from V2/V3)
-            const elapsed = (Date.now() - stormStartTime) / 1000;
-            const stormTotal = 180; 
-            const newRadius = THREE.MathUtils.lerp(WORLD_SIZE, 50, Math.min(elapsed/stormTotal, 1));
-            stormRadius = newRadius;
-            
-            if (stormRingMesh) {
-                stormRingMesh.scale.x = stormRadius / (WORLD_SIZE / 2);
-                stormRingMesh.scale.z = stormRadius / (WORLD_SIZE / 2);
-            }
-            
-            const mins = Math.floor(Math.max(0, stormTotal - elapsed) / 60);
-            const secs = Math.floor(Math.max(0, stormTotal - elapsed) % 60);
-            document.getElementById('storm-timer').innerText = `STORM: ${mins}:${secs<10?'0':''}${secs}`;
-            
-            const pDist = new THREE.Vector2(camera.position.x, camera.position.z).distanceTo(stormCenter);
-            const overlay = document.getElementById('storm-overlay');
-            
-            if(pDist > stormRadius) {
-                overlay.style.display = 'block';
-                if(Math.floor(elapsed*10) % 10 === 0 && Math.random() < 0.1) {
-                   damagePlayer(1, false, "Storm"); 
-                }
-            } else {
-                overlay.style.display = 'none';
-            }
-        }
-
-        function updateShieldJug(delta) {
-            const jugEl = document.getElementById('jug-indicator');
-            if (player.jugTimeLeft > 0) {
-                player.jugTimeLeft -= delta;
-                player.shield = Math.min(player.shield + (3 * delta), 100);
-                jugEl.style.display = 'block';
-                if (player.jugTimeLeft <= 0) {
-                    player.jugTimeLeft = 0;
-                    jugEl.style.display = 'none';
-                }
-                updateUI();
-            }
-        }
-
         function updateBots(delta, now) {
-            // (Same bot logic from V3 with wall breaking and damage values)
             const pPos = camera.position;
             const pDir = new THREE.Vector3(pPos.x, pPos.y - PLAYER_HEIGHT/2, pPos.z);
             
@@ -1002,7 +1036,6 @@
                 
                 const dist = bot.mesh.position.distanceTo(pPos);
                 
-                // Gravity
                 const floorY = getTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
                 if(bot.mesh.position.y > floorY + 0.9) {
                     bot.mesh.position.y -= GRAVITY * delta * 0.5;
@@ -1071,7 +1104,6 @@
         }
         
         function updateMinimap() {
-            // (Same minimap logic from V3)
             const mapContainer = document.getElementById('minimap');
             const p = camera.position;
             const mapX = (p.x / MINIMAP_SCALE) + 150/2;
@@ -1157,7 +1189,6 @@
 
         window.restartGame = restartGame; 
         
-        // Window Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
