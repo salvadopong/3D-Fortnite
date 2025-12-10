@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V17.1 - Definitive Edition</title>
+    <title>Web Battle Royale: V17.2 - Mobile & Recoil-Free</title>
     <style>
         /* ======================================= */
-        /* === V17.1 CLEAN & POLISHED UI/UX === */
+        /* === V17.2 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
-        /* Font fix: Removed external Google Font (Rajdhani, Oswald) to avoid 400 error */
         body { 
             margin: 0; 
             overflow: hidden; 
-            font-family: 'Verdana', sans-serif; /* System font replacement */
+            font-family: 'Verdana', sans-serif; 
             user-select: none; 
             background: #000;
-            touch-action: none; 
+            touch-action: none; /* Prevents default browser swipe/zoom behavior */
         }
 
         #ui-layer { 
@@ -78,7 +77,7 @@
             padding: 10px 20px;
             border-bottom: 3px solid #00d2ff;
             border-radius: 6px;
-            font-size: 18px; /* Adjusted size for Verdana */
+            font-size: 18px; 
             font-weight: 700;
             text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
@@ -182,7 +181,7 @@
             align-items: center; justify-content: center; 
             color: white; position: relative; 
             transition: transform 0.1s, border-color 0.1s; 
-            pointer-events: auto; 
+            pointer-events: auto; /* IMPORTANT: Enable touch interaction */
             overflow: hidden;
             font-family: 'Verdana', sans-serif;
         }
@@ -218,7 +217,7 @@
         .rarity-rare { border-bottom: 4px solid #007bff; }
         .rarity-epic { border-bottom: 4px solid #a335ee; }
         .rarity-legendary { border-bottom: 4px solid #ffd700; }
-        .rarity-mythic { border-bottom: 4px solid #ff4d4d; } /* New Mythic Rarity */
+        .rarity-mythic { border-bottom: 4px solid #ff4d4d; } 
 
         /* Damage Text */
         .dmg-txt {
@@ -231,18 +230,19 @@
         .dmg-txt.headshot { color: #ff0000; font-size: 30px; text-shadow: 0 0 10px red; }
         @keyframes popUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(1.2); } }
 
-        /* --- MOBILE CONTROLS --- */
+        /* --- MOBILE CONTROLS (50/50 Split) --- */
         #mobile-controls {
             display: none; 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
         }
         .joystick-zone {
-            position: absolute; bottom: 50px; width: 40%; height: 180px;
+            position: absolute; top: 0; width: 50%; height: 100%; /* 50% width split */
             pointer-events: auto;
         }
-        #stick-left { left: 0; bottom: 0; width: 50%; height: 100%; } 
-        #stick-right { right: 0; width: 50%; height: 100%; }
+        #stick-left { left: 0; } 
+        #stick-right { right: 0; } /* Now primarily for camera and action buttons */
 
+        /* Movement Zone Visuals (Bottom Left Corner) */
         #movement-zone-visual {
             position: absolute; bottom: 50px; left: 40px; 
             width: 150px; height: 150px;
@@ -272,6 +272,7 @@
         }
         .action-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
+        /* Button Positioning (Now on the Right Half of the screen) */
         #btn-fire { bottom: 100px; right: 20px; width: 80px; height: 80px; border-color: #ff4444; background: rgba(255,0,0,0.3); font-size: 18px; }
         #btn-jump { bottom: 200px; right: 30px; }
         #btn-interact { bottom: 160px; right: 100px; border-color: #ffd700; color: #ffd700; }
@@ -364,6 +365,7 @@
         <div id="storm-overlay"></div>
 
         <div id="top-hud">
+            
             <div class="hud-box">Alive: <span id="alive-count">21</span></div>
             <div class="hud-box" style="border-bottom-color: #a335ee;">
                 <span id="storm-status">WAITING...</span>: <span id="storm-timer">04:00</span>
@@ -393,15 +395,15 @@
                     <div class="resource-icon">🪵</div>
                     <span id="wood-val">0</span>
                 </div>
-                </div>
+            </div>
         </div>
 
         <div id="inventory">
-            <div class="slot" id="slot-0" onclick="selectSlot(0)"></div>
-            <div class="slot" id="slot-1" onclick="selectSlot(1)"></div>
-            <div class="slot" id="slot-2" onclick="selectSlot(2)"></div>
-            <div class="slot" id="slot-3" onclick="selectSlot(3)"></div>
-            <div class="slot" id="slot-4" onclick="selectSlot(4)"></div>
+            <div class="slot" id="slot-0" onclick="selectSlot(0)" ontouchstart="selectSlot(0)"></div>
+            <div class="slot" id="slot-1" onclick="selectSlot(1)" ontouchstart="selectSlot(1)"></div>
+            <div class="slot" id="slot-2" onclick="selectSlot(2)" ontouchstart="selectSlot(2)"></div>
+            <div class="slot" id="slot-3" onclick="selectSlot(3)" ontouchstart="selectSlot(3)"></div>
+            <div class="slot" id="slot-4" onclick="selectSlot(4)" ontouchstart="selectSlot(4)"></div>
         </div>
 
         <div id="mobile-controls">
@@ -410,7 +412,6 @@
             </div>
             
             <div id="stick-right" class="joystick-zone">
-                <div class="stick-thumb" id="thumb-right"></div>
                 <div id="btn-fire" class="action-btn">FIRE</div>
                 <div id="btn-jump" class="action-btn">JUMP</div>
                 <div id="btn-interact" class="action-btn">PICKUP</div>
@@ -445,7 +446,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V17.1) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V17.2) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -468,17 +469,18 @@
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
         const WEAPONS_BASE = {
-            PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 2.0, bulletType: 'hitscan' }, 
-            RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.3, bulletType: 'hitscan' }, 
-            SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.1, bulletType: 'hitscan' },
-            SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 3.0, bulletType: 'hitscan' },
-            HR:   { name: "Heavy Rifle", dmg: 30, head: 50, rate: 0.5, mag: 8, range: 250, spread: 0.02, pellets: 1, auto: false, icon: '🎯', reload: 2500, recoil: 1.0, bulletType: 'hitscan' },
-            RL:   { name: "Rocket", dmg: 100, head: 100, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 5, radius: 5, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
-            PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.3, bulletType: 'hitscan' },
+            // RECOIL REMOVED (set to 0.0)
+            PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
+            RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
+            SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.0, bulletType: 'hitscan' },
+            SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan' },
+            HR:   { name: "Heavy Rifle", dmg: 30, head: 50, rate: 0.5, mag: 8, range: 250, spread: 0.02, pellets: 1, auto: false, icon: '🎯', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
+            RL:   { name: "Rocket", dmg: 100, head: 100, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 5, radius: 5, recoil: 0.0, bulletType: 'projectile', projSpeed: 50 }, 
+            PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
         };
-        const MYTHIC_WEAPON_KEY = 'RL'; // Making the RL the target mythic item for high value
+        const MYTHIC_WEAPON_KEY = 'RL'; 
 
-        // --- CONSUMABLES CONFIG (MINI is now instant and stackable) ---
+        // --- CONSUMABLES CONFIG ---
         const CONSUMABLES = {
             MINI: { name: "Small Shield", val: 25, type: 'shield', max: 50, icon: '💧', time: 1, continuous: false, instant: true, maxStack: 6 },
             BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false, instant: false, maxStack: 3 },
@@ -1059,14 +1061,14 @@
                 scene.add(mesh);
                 
                 const randomWeaponKey = getRandomWeaponKey();
-                const randomRarity = getRandomRarity(); // FIX: Used getRandomRarity here
+                const randomRarity = getRandomRarity(); 
                 
                 bots.push({ 
                     mesh: mesh, 
                     health: 100, 
                     target: null, 
                     lastShot: 0, 
-                    weapon: createWeaponItem(randomWeaponKey, randomRarity), // Guaranteed weapon
+                    weapon: createWeaponItem(randomWeaponKey, randomRarity), 
                     lastMove: performance.now(),
                     velocity: new THREE.Vector3(0, 0, 0),
                     lastStormDamage: 0
@@ -1286,9 +1288,6 @@
 
         /**
          * Creates a weapon item object with rarity scaling.
-         * @param {string} typeKey - Key from WEAPONS_BASE.
-         * @param {string} rarityKey - Key from RARITY_MULTIPLIERS.
-         * @returns {object} The created weapon item.
          */
         function createWeaponItem(typeKey, rarityKey) {
             const base = WEAPONS_BASE[typeKey];
@@ -1301,8 +1300,8 @@
                 stats: { 
                     ...base, 
                     dmg: base.dmg * rar.dmg, 
-                    head: base.head * rar.dmg, // Headshot multiplier also scales
-                    reload: base.reload * rar.reload, // Reload time scales inversely
+                    head: base.head * rar.dmg, 
+                    reload: base.reload * rar.reload, 
                     currentMag: base.mag 
                 }, 
                 maxAmmo: base.mag
@@ -1311,9 +1310,6 @@
         
         /**
          * Gets a random rarity key, optionally starting from a minimum rarity.
-         * FIX for ReferenceError
-         * @param {string} minRarityKey - The minimum rarity (e.g., 'RARE').
-         * @returns {string} A random rarity key (e.g., 'EPIC').
          */
         function getRandomRarity(minRarityKey = 'COMMON') {
             const minIndex = RARITY_KEYS.indexOf(minRarityKey);
@@ -1416,7 +1412,7 @@
                 return;
             }
 
-            camera.rotation.x += item.stats.recoil * 0.01;
+            // RECOIL REMOVED: camera.rotation.x += item.stats.recoil * 0.01;
             
             const fireOrigin = camera.position.clone();
             const fireDirection = new THREE.Vector3();
@@ -1515,7 +1511,7 @@
                 damage: item.stats.dmg,
                 radius: item.stats.blast, 
                 source: player,
-                rarity: item.rarity // Pass rarity for damage calculation
+                rarity: item.rarity 
             });
         }
 
@@ -1588,7 +1584,7 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
-                    // Final requirement: Bot Kill drop (Bot's Weapon + Random Healing Item)
+                    // Bot Kill drop (Bot's Weapon + Random Healing Item)
                     const botWeapon = target.weapon;
                     const dropConsumableKey = getRandomConsumableKey();
                     const consumableBase = CONSUMABLES[dropConsumableKey];
@@ -1767,7 +1763,7 @@
                     const name = item.category === 'weapon' ? `${item.rarity.name}-${item.name}` : item.name;
                     const count = item.category === 'consumable' ? item.count : '';
 
-                    el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-name">${name} [${count}]</div>`;
+                    el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-name">${name} ${count ? '['+count+']' : ''}</div>`;
                     let rarityKey = 'common';
                     if (item.rarity) {
                         rarityKey = Object.keys(RARITY_MULTIPLIERS).find(key => RARITY_MULTIPLIERS[key] === item.rarity).toLowerCase();
@@ -1901,17 +1897,20 @@
                 if(e.button === 2) toggleADS(false);
             });
 
-            // 5. Mobile Touch Logic
+            // 5. Mobile Touch Logic (Left for Movement, Right for Camera)
             const touchZoneLeft = document.getElementById('stick-left');
             const touchZoneRight = document.getElementById('stick-right');
             const thumbLeft = document.getElementById('thumb-left');
+            const sensitivity = 0.005; // Camera look sensitivity
 
             const handleJoystickLeft = (e) => {
-                e.preventDefault(); 
+                // Determine touch relative to the visual circle, not the whole left zone
                 const rect = document.getElementById('movement-zone-visual').getBoundingClientRect();
                 const touch = e.touches[0];
-                const cx = rect.left + rect.width/2;
-                const cy = rect.top + rect.height/2;
+                
+                // Get center of the visual control area
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
                 
                 const maxDist = 40;
                 let dx = touch.clientX - cx;
@@ -1923,8 +1922,10 @@
                     dx *= ratio; dy *= ratio;
                 }
                 
+                // Move visual thumb
                 thumbLeft.style.transform = `translate(${dx}px, ${dy}px)`;
                 
+                // Apply movement inputs
                 inputs.w = dy < -10; inputs.s = dy > 10;
                 inputs.a = dx < -10; inputs.d = dx > 10;
                 inputs.sprint = dist > 30; 
@@ -1937,21 +1938,23 @@
 
             const handleLookRight = (e) => {
                 e.preventDefault();
-                const sensitivity = 0.005;
+                // We use e.touches[0] since touchZoneRight is auto-managed by touchstart/move/end
                 const touch = e.touches[0];
 
                 if (touchZoneRight.lastX !== undefined) {
                     const dx = touch.clientX - touchZoneRight.lastX;
                     const dy = touch.clientY - touchZoneRight.lastY;
                     
+                    // Rotate the camera based on touch movement
                     camera.rotation.y -= dx * sensitivity; 
                     camera.rotation.x -= dy * sensitivity; 
-                    camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
+                    camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x)); // Clamp vertical look
                 }
                 touchZoneRight.lastX = touch.clientX;
                 touchZoneRight.lastY = touch.clientY;
             };
-
+            
+            // Left Zone: Movement
             touchZoneLeft.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 handleJoystickLeft(e);
@@ -1960,11 +1963,15 @@
             touchZoneLeft.addEventListener('touchend', resetStickLeft);
             touchZoneLeft.addEventListener('touchcancel', resetStickLeft);
             
+            // Right Zone: Camera Look
             touchZoneRight.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                touchZoneRight.lastX = touch.clientX;
-                touchZoneRight.lastY = touch.clientY;
+                // Only track the first touch that starts in this zone
+                if (e.touches.length === 1) { 
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    touchZoneRight.lastX = touch.clientX;
+                    touchZoneRight.lastY = touch.clientY;
+                }
             });
             touchZoneRight.addEventListener('touchmove', handleLookRight);
             touchZoneRight.addEventListener('touchend', () => { touchZoneRight.lastX = undefined; });
