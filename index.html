@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V9.0 - Maximum Polish & Code Completeness (Final)</title>
+    <title>Web Battle Royale: V10.0 - Final Physics & Bot Fix</title>
     <style>
         /* ======================================= */
-        /* === V9.0 MODERN UI / UX DESIGN === */
+        /* === V10.0 MODERN UI / UX DESIGN === */
         /* ======================================= */
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
 
@@ -319,7 +319,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V9.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V10.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -372,22 +372,22 @@
         let isGrounded = false;
         let lastTime = performance.now();
         let lastShot = 0;
-        let isMobileMode = false; // Tracks active mode
+        let isMobileMode = false; 
         
         // Dynamic Arrays for Entities
         let bots = [];
-        let objects = []; // Collidables (Ground + Buildings)
+        let objects = []; 
         let chests = [];
         let cars = [];
         let loot = [];
         let buildings = []; 
-        let projectiles = []; // For rockets, grenades, etc.
+        let projectiles = []; 
 
         // Storm
         let stormRadius = WORLD_SIZE * 0.5;
         let stormCenter = new THREE.Vector2(0, 0);
         let stormDamageRate = 0;
-        let stormPhaseTime = 120; // 2 minutes per phase
+        let stormPhaseTime = 120; 
         let stormPhaseTimer = stormPhaseTime;
         let stormActive = false;
 
@@ -414,7 +414,7 @@
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
-            renderer.autoClear = false; // Crucial for rendering two scenes
+            renderer.autoClear = false; 
             const gameContainer = document.getElementById('game-container');
             gameContainer.appendChild(renderer.domElement);
             
@@ -485,7 +485,7 @@
         function lockPointer() {
             if (!isMobileMode) {
                 controls.lock();
-                inputs.fire = false; // Prevent accidental firing when locking on PC
+                inputs.fire = false; 
             }
         }
 
@@ -509,7 +509,7 @@
                     if(e.code === 'KeyD') inputs.d = v;
                     if(e.code === 'ShiftLeft') inputs.sprint = v;
                     
-                    if(e.code === 'Space' && v) inputs.jump = true; // Use a trigger for jump
+                    if(e.code === 'Space' && v) inputs.jump = true; 
                 }
             };
             document.addEventListener('keydown', e => {
@@ -671,15 +671,15 @@
             
             for(let f=0; f<floors; f++) {
                 const fy = h + 0.2 + (f*4);
-                createBox(x, fy, z, size, 0.4, size, 0x333333); // Floor
-                createBox(x, fy + 2, z + size/2, size, 4, 1, 0x666666); // Wall
+                createBox(x, fy, z, size, 0.4, size, 0x333333); 
+                createBox(x, fy + 2, z + size/2, size, 4, 1, 0x666666); 
                 if(Math.random() > 0.5) spawnChest(x + 5, fy + 1, z - 5);
             }
         }
 
         function createTree(x, z) {
             const h = getTerrainHeight(x, z);
-            const trunk = createBox(x, h+2, z, 1, 4, 1, 0x8B4513, 'tree'); // Mark as resource
+            const trunk = createBox(x, h+2, z, 1, 4, 1, 0x8B4513, 'tree'); 
             const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(3), new THREE.MeshStandardMaterial({color: 0x228B22}));
             leaves.position.set(x, h+5, z);
             scene.add(leaves);
@@ -738,13 +738,13 @@
                     return;
                 }
             }
-            
+
             // 3. Check Cars (Entry/Exit)
             for(let c of cars) {
                 if(pos.distanceTo(c.mesh.position) < 5) {
                     if(player.vehicle) {
                         player.vehicle = null;
-                        camera.position.y += 2; // Exit player above car
+                        camera.position.y += 2; 
                     } else {
                         player.vehicle = c;
                     }
@@ -752,13 +752,12 @@
                 }
             }
             
-            // 4. Check Resources (Harvesting - requires melee or pickaxe)
-            // Simplified: If close to a 'tree' building, give wood
+            // 4. Check Resources (Harvesting)
             for (let b of buildings) {
                 if (b.type === 'tree' && pos.distanceTo(b.mesh.position) < 5) {
                     player.wood += 5;
                     updateUI();
-                    // Simple removal after a few hits
+                    
                     if (b.health <= 0) {
                         scene.remove(b.mesh);
                         objects = objects.filter(obj => obj !== b.mesh);
@@ -778,7 +777,6 @@
             const dir = new THREE.Vector3();
             camera.getWorldDirection(dir);
             
-            // Cast ray forward to determine placement position and ground height
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const buildHits = raycaster.intersectObjects(objects, false);
             
@@ -787,12 +785,10 @@
             
             if (buildHits.length > 0 && buildHits[0].distance < 10) {
                 pos = buildHits[0].point;
-                // Use the height of the object we hit, if it's a solid structure
                 h = buildHits[0].object.position.y - 0.5; 
             }
             
             const wall = createBox(pos.x, h + 1.5, pos.z, 4, 3, 0.2, 0x8B4513, 'wall');
-            // Align wall to player's view direction
             wall.rotation.y = Math.atan2(dir.x, dir.z);
         }
 
@@ -803,7 +799,7 @@
                 category: 'weapon',
                 name: base.name,
                 rarity: rar,
-                stats: { ...base, dmg: base.dmg * rar.mul, ammo: base.mag }, // stats.ammo holds current ammo
+                stats: { ...base, dmg: base.dmg * rar.mul, ammo: base.mag }, 
                 maxAmmo: base.mag
             };
         }
@@ -873,7 +869,7 @@
                 document.getElementById('crosshair').style.display = 'block';
             }
             toggleADS(false);
-            updateUI(); // Ensure new ammo count is displayed
+            updateUI(); 
         }
 
         function toggleADS(bool) {
@@ -905,7 +901,6 @@
 
         function shoot(item) {
             if (item.stats.ammo <= 0) {
-                // Play "click" sound/animation if empty
                 return;
             }
 
@@ -938,7 +933,6 @@
                     const hit = hits[0];
                     let hitBot = null;
 
-                    // Check if we hit a bot
                     let obj = hit.object;
                     while(obj && obj.parent && obj.parent.type !== 'Scene') {
                         const b = bots.find(bot => bot.mesh === obj.parent);
@@ -949,15 +943,13 @@
 
                     if(hitBot) {
                         let dmg = item.stats.dmg;
-                        // Headshot Check (simplified: if hit on upper third of body)
                         if (hit.point.y > hitBot.mesh.position.y + 1.6) { 
                             dmg = item.stats.head; 
                         }
                         
                         applyDamage(hitBot, dmg, hit.point);
                     } else {
-                        // We hit a building/object
-                        // Could add code here to chip away at player-built structures
+                        // Hit a building/object
                     }
                 }
             }
@@ -972,7 +964,7 @@
             const direction = new THREE.Vector3();
             camera.getWorldDirection(direction);
             
-            projectileMesh.position.copy(startPos).add(direction.multiplyScalar(0.5)); // Launch slightly in front
+            projectileMesh.position.copy(startPos).add(direction.multiplyScalar(0.5)); 
             scene.add(projectileMesh);
             
             projectiles.push({
@@ -991,21 +983,17 @@
 
                 p.mesh.position.add(p.velocity.clone().multiplyScalar(dt));
                 
-                // 1. Collision Check (Simplified sphere-to-objects)
                 const ray = new THREE.Raycaster(p.mesh.position, p.velocity.clone().normalize(), 0, 1);
                 const hits = ray.intersectObjects(objects.concat(bots.map(b=>b.mesh)), true);
 
                 if (hits.length > 0) {
                     p.isExploded = true;
-                    // Explosion logic
                     const impactPoint = hits[0].point;
                     scene.remove(p.mesh);
                     
-                    // Apply AoE Damage
                     applyExplosiveDamage(impactPoint, p.blast, p.damage);
                     projectiles.splice(i, 1);
                 } else if (p.mesh.position.distanceTo(camera.position) > WEAPONS.RL.range + 10) {
-                    // Out of range (or map edge)
                     scene.remove(p.mesh);
                     projectiles.splice(i, 1);
                 }
@@ -1035,12 +1023,11 @@
             showDmg(amount, hitPoint);
             
             if(target.health <= 0) {
-                // If it's a bot, handle elimination
                 if (bots.includes(target)) {
-                    player.eliminations += 1; // Credit elimination to player
+                    player.eliminations += 1; 
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
-                    spawnLoot(hitPoint.x, hitPoint.y, hitPoint.z, 'weapon'); // Drop weapon
+                    spawnLoot(hitPoint.x, hitPoint.y, hitPoint.z, 'weapon'); 
                     checkWin();
                 }
             }
@@ -1066,7 +1053,7 @@
                 player.health -= remainingDmg;
             }
             
-            showDmg(amount, camera.position.clone().setY(camera.position.y - 0.5)); // Show damage on screen for player
+            showDmg(amount, camera.position.clone().setY(camera.position.y - 0.5)); 
             updateUI();
             
             if(player.health <= 0) {
@@ -1107,7 +1094,7 @@
                     health: 100,
                     weapon: createWeaponItem(wKeys[Math.floor(Math.random()*wKeys.length)], rarKeys[Math.floor(Math.random()*rarKeys.length)]),
                     state: 'idle',
-                    target: camera.position, // Player is always the target for now
+                    target: camera.position, 
                     lastShot: 0,
                     nextMove: 0
                 });
@@ -1136,17 +1123,16 @@
                         bot.mesh.translateZ(moveSpeed);
                         bot.nextMove = now + 100; 
                     } else if (dist < 8) {
-                        // Strafe logic
                         if (Math.random() > 0.8) bot.mesh.rotateY(Math.PI / 4 * (Math.random() > 0.5 ? 1 : -1));
                         bot.nextMove = now + 500;
                     }
                     
                     // 3. Shoot Logic
-                    const weaponStats = bot.weapon.stats.stats;
+                    // FIX: Changed bot.weapon.stats.stats.rate to bot.weapon.stats.rate
+                    const weaponStats = bot.weapon.stats; 
                     if(now - bot.lastShot > weaponStats.rate * 2000) { 
                         bot.lastShot = now;
                         if(Math.random() > 0.5) { 
-                            // Simplified hitscan on player (50% base accuracy)
                             takeDamage(weaponStats.dmg, bot.mesh.position);
                         }
                     }
@@ -1158,6 +1144,31 @@
         // ===============================================================
         // === STORM MECHANICS ===========================================
         // ===============================================================
+
+        function updateMinimap() {
+            // Simplified Minimap update using rotation and translation
+            const mapFrame = document.getElementById('minimap-frame');
+            const map = document.getElementById('minimap');
+            const mapArrow = map.querySelector('.map-arrow');
+            
+            // Map scale factor (World Size 600 -> Map Div 500)
+            const scale = 500 / WORLD_SIZE; 
+
+            // Calculate player rotation (Yaw)
+            const playerYaw = Math.atan2(camera.matrixWorld.elements[8], camera.matrixWorld.elements[0]);
+            
+            // Map Translation: Center the player (0,0 world) on the map center (250, 250 map)
+            const mapX = 250 - camera.position.x * scale;
+            const mapY = 250 - camera.position.z * scale; 
+            
+            // Apply map transform (translate and rotate map content inverse to player rotation)
+            map.style.transform = `translate(${mapX}px, ${mapY}px) rotate(${-playerYaw}rad)`;
+            
+            // Rotate the player arrow to show direction (not needed since map is rotated)
+            // mapArrow.style.transform = `translate(-50%, -50%) rotate(${playerYaw}rad)`;
+            
+            // Bot/Loot Rendering on Minimap (Omitted for final code brevity but concept is here)
+        }
 
         function startStormTimer() {
             stormActive = true;
@@ -1174,10 +1185,11 @@
                     nextStormPhase();
                 }
 
-                // Apply storm damage if player is outside the circle
+                // Check storm damage
                 const playerDistance = new THREE.Vector2(camera.position.x, camera.position.z).distanceTo(stormCenter);
                 if (playerDistance > stormRadius) {
-                    takeDamage(stormDamageRate * 10 * dt, camera.position); // Damage scaled by DT in update loop
+                    // Apply storm damage scaled to time step (dt)
+                    takeDamage(stormDamageRate * 10 * 0.016, camera.position); // Use average DT (1/60s) for damage consistency
                     document.getElementById('storm-overlay').style.display = 'block';
                 } else {
                     document.getElementById('storm-overlay').style.display = 'none';
@@ -1187,16 +1199,13 @@
         }
 
         function nextStormPhase() {
-            if (stormRadius < 50) return; // Final circle
+            if (stormRadius < 50) return; 
             
-            // 1. Shrink radius
             const newRadius = stormRadius * 0.75; 
             stormRadius = newRadius;
             
-            // 2. Increase damage
             stormDamageRate = Math.min(5, stormDamageRate + 0.5); 
 
-            // 3. Reset timer
             stormPhaseTimer = stormPhaseTime; 
             
             updateStormUI();
@@ -1223,13 +1232,10 @@
             if(player.dead) return;
 
             // 1. Player Physics & Movement
-            if(player.vehicle) {
-                // Simplified Car Physics Update (Omitted for brevity)
-            } else {
+            if(!player.vehicle) {
                 
                 const currentSpeed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED;
                 
-                // Get camera direction for movement
                 const direction = new THREE.Vector3();
                 camera.getWorldDirection(direction);
                 direction.y = 0;
@@ -1240,13 +1246,11 @@
                 const yVelocity = velocity.y; 
                 velocity.set(0, yVelocity, 0); 
 
-                // Apply movement inputs to horizontal velocity
-                if(inputs.w) velocity.add(direction.multiplyScalar(currentSpeed));
-                if(inputs.s) velocity.add(direction.multiplyScalar(-currentSpeed));
-                if(inputs.a) velocity.add(right.multiplyScalar(-currentSpeed));
-                if(inputs.d) velocity.add(right.multiplyScalar(currentSpeed));
+                if(inputs.w) velocity.add(direction.clone().multiplyScalar(currentSpeed));
+                if(inputs.s) velocity.add(direction.clone().multiplyScalar(-currentSpeed));
+                if(inputs.a) velocity.add(right.clone().multiplyScalar(-currentSpeed));
+                if(inputs.d) velocity.add(right.clone().multiplyScalar(currentSpeed));
                 
-                // Apply velocity and gravity
                 camera.position.x += velocity.x * dt;
                 camera.position.z += velocity.z * dt;
                 velocity.y -= GRAVITY * dt;
@@ -1255,7 +1259,6 @@
                 const groundY = getTerrainHeight(camera.position.x, camera.position.z);
                 let floorY = groundY;
                 
-                // Structure Check (Casting a short ray downwards)
                 downRay.ray.origin.copy(camera.position);
                 const hits = downRay.intersectObjects(objects, false);
                 
@@ -1274,17 +1277,14 @@
                     isGrounded = false;
                 }
                 
-                // Jump trigger
                 if(inputs.jump && isGrounded) {
                     velocity.y = JUMP_FORCE;
                     isGrounded = false;
                     inputs.jump = false; 
                 }
                 
-                // Apply vertical movement
                 camera.position.y += velocity.y * dt;
 
-                // Stop movement if PC mode unlocked
                 if(!controls.isLocked && !isMobileMode) {
                     velocity.x = 0; 
                     velocity.z = 0;
@@ -1295,20 +1295,17 @@
             if(inputs.fire && !player.vehicle) {
                 const item = player.inventory[player.slot];
                 if(item && item.category === 'weapon') {
-                    if(now - lastShot > item.stats.stats.rate * 1000) {
+                    if(now - lastShot > item.stats.rate * 1000) {
                         lastShot = now;
                         shoot(item);
                     }
                 }
-                // Consumable usage is only instant (fire button tap)
-                if(item && item.category === 'consumable') {
-                    if(item.type === 'shield' && player.shield < item.max) {
-                        player.shield = Math.min(item.max, player.shield + item.val);
-                        player.inventory[player.slot] = null;
-                        updateUI();
-                        inputs.fire = false; 
-                    } else if (item.type === 'health' && player.health < item.max) {
-                        player.health = Math.min(item.max, player.health + item.val);
+                if(item && item.category === 'consumable' && inputs.fire) {
+                    // Consumable logic executed here (instant consumption)
+                    if((item.type === 'shield' && player.shield < item.max) || (item.type === 'health' && player.health < item.max)) {
+                        if(item.type === 'shield') player.shield = Math.min(item.max, player.shield + item.val);
+                        if(item.type === 'health') player.health = Math.min(item.max, player.health + item.val);
+                        
                         player.inventory[player.slot] = null;
                         updateUI();
                         inputs.fire = false; 
@@ -1352,7 +1349,6 @@
         }
 
         function updateUI() {
-            // Stats
             player.health = Math.max(0, player.health);
             player.shield = Math.max(0, player.shield);
             document.getElementById('health-val').innerText = Math.ceil(player.health);
@@ -1361,7 +1357,6 @@
             document.getElementById('shield-bar').style.width = player.shield + '%';
             document.getElementById('wood-val').innerText = player.wood;
             
-            // Inventory Slots
             player.inventory.forEach((item, i) => {
                 const el = document.getElementById('slot-'+i);
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
@@ -1377,10 +1372,8 @@
                 }
             });
             
-            // Interact Msg (Logic minimized for brevity, but UI kept)
             let msg = player.vehicle ? "Exit Vehicle" : "Interact";
             document.getElementById('interact-msg').innerText = msg;
-            // Simplified visibility check:
             const showInteract = player.vehicle || chests.some(c => camera.position.distanceTo(c.position) < 6) || loot.some(l => camera.position.distanceTo(l.mesh.position) < 4);
             document.getElementById('interact-msg').style.display = showInteract ? 'block' : 'none';
         }
@@ -1398,7 +1391,6 @@
             document.getElementById('go-title').style.color = won ? "gold" : "red";
             document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
             
-            // Exit fullscreen/pointer lock
             document.exitPointerLock();
         }
 
