@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V16.0 - Final Apex Predator</title>
+    <title>Web Battle Royale: V17.0 - Explosive Finale</title>
     <style>
         /* ======================================= */
-        /* === V16.0 CLEAN & POLISHED UI/UX === */
+        /* === V17.0 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         /* Font fix: Removed external Google Font (Rajdhani, Oswald) to avoid 400 error */
@@ -279,15 +279,63 @@
         #btn-ads { bottom: 60px; right: 120px; width: 55px; height: 55px; font-size: 12px; }
 
 
-        /* --- Game Over --- */
+        /* --- Game Over (Standard) --- */
         #game-over {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center; align-items: center;
             color: white; z-index: 999; pointer-events: auto;
             font-family: 'Verdana', sans-serif;
         }
-        #game-over h1 { font-size: 80px; margin: 0; color: #ffd700; text-shadow: 0 0 30px orange; font-style: italic; }
-        #game-over h3 { font-size: 26px; margin-top: 10px; }
+        
+        /* --- VICTORY ROYALE ANIMATION --- */
+        #victory-overlay {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: none;
+            overflow: hidden;
+            font-family: 'Verdana', sans-serif;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        #victory-text {
+            font-size: 0px; 
+            color: #ffd700; 
+            text-shadow: 0 0 40px orange, 0 0 80px red; 
+            font-weight: 900;
+            animation: textGrow 2s ease-out forwards, 
+                       pulse 1s infinite alternate 2s;
+            position: relative;
+            transform: scale(0);
+            pointer-events: auto;
+        }
+        
+        #victory-text::after {
+            content: '#1!';
+            display: block;
+            font-size: 0.5em;
+            text-align: center;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 2s forwards;
+        }
+
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes textGrow {
+            0% { font-size: 0px; transform: scale(0); opacity: 0; }
+            50% { font-size: 150px; transform: scale(1.1); opacity: 1; }
+            100% { font-size: 100px; transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { text-shadow: 0 0 40px orange; }
+            100% { text-shadow: 0 0 60px red; }
+        }
+        @keyframes fadeUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
         button.restart-btn { 
             margin-top: 30px; padding: 15px 50px; font-size: 22px; 
             background: #007bff; color: white; border: none; 
@@ -295,6 +343,9 @@
             font-family: 'Verdana', sans-serif; font-weight: bold;
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.5);
             transition: background 0.2s;
+            pointer-events: auto;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 3s forwards;
         }
         button.restart-btn:hover { background: #0056b3; }
     </style>
@@ -369,10 +420,15 @@
         </div>
     </div>
 
-    <div id="game-over">
-        <h1 id="go-title">VICTORY ROYALE!</h1>
-        <h3 id="go-stats">Eliminations: 0</h3>
+    <div id="victory-overlay">
+        <div id="victory-text">VICTORY ROYALE</div>
         <button class="restart-btn" onclick="location.reload()">RETURN TO LOBBY</button>
+    </div>
+    
+    <div id="game-over">
+        <h1 id="go-title">GAME OVER</h1>
+        <h3 id="go-stats">Eliminations: 0</h3>
+        <button class="restart-btn" onclick="location.reload()" style="animation: none; opacity: 1;">RETURN TO LOBBY</button>
     </div>
 
     <script type="importmap">
@@ -389,7 +445,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V16.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V17.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -401,32 +457,33 @@
         const PLAYER_HEIGHT = 1.8;
         
         // --- WEAPONS CONFIG ---
-        const RARITY = {
-            COMMON: { color: '#b0b0b0', mul: 1.0, name: "C" },
-            UNCOMMON: { color: '#28a745', mul: 1.2, name: "U" },
-            RARE: { color: '#007bff', mul: 1.4, name: "R" },
-            EPIC: { color: '#a335ee', mul: 1.6, name: "E" },
-            LEGENDARY: { color: '#ffd700', mul: 2.0, name: "L" },
-            MYTHIC: { color: '#ff4d4d', mul: 2.5, name: "M" } 
+        const RARITY_MULTIPLIERS = {
+            COMMON: { dmg: 1.0, reload: 1.0, color: '#b0b0b0', name: "C" },
+            UNCOMMON: { dmg: 1.2, reload: 0.9, color: '#28a745', name: "U" },
+            RARE: { dmg: 1.4, reload: 0.8, color: '#007bff', name: "R" },
+            EPIC: { dmg: 1.6, reload: 0.7, color: '#a335ee', name: "E" },
+            LEGENDARY: { dmg: 2.0, reload: 0.6, color: '#ffd700', name: "L" },
+            MYTHIC: { dmg: 2.5, reload: 0.5, color: '#ff4d4d', name: "M" } 
         };
+        const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        const WEAPONS = {
+        const WEAPONS_BASE = {
             PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 2.0, bulletType: 'hitscan' }, 
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.3, bulletType: 'hitscan' }, 
             SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.1, bulletType: 'hitscan' },
             SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 3.0, bulletType: 'hitscan' },
-            RL:   { name: "Rocket", dmg: 130, head: 130, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 80, radius: 2, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
+            HR:   { name: "Heavy Rifle", dmg: 30, head: 50, rate: 0.5, mag: 8, range: 250, spread: 0.02, pellets: 1, auto: false, icon: '🎯', reload: 2500, recoil: 1.0, bulletType: 'hitscan' },
+            RL:   { name: "Rocket", dmg: 100, head: 100, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 5, radius: 5, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.3, bulletType: 'hitscan' },
-            CSAR: { name: "Creator AR", dmg: 20, head: 35, rate: 0.2, mag: 40, range: 300, spread: 0.01, pellets: 1, auto: true, icon: '👑', reload: 1500, recoil: 0.2, bulletType: 'hitscan' }
         };
-        const MYTHIC_WEAPON_KEY = 'CSAR';
+        const MYTHIC_WEAPON_KEY = 'RL'; // Making the RL the target mythic item for now for high value
 
-        // --- CONSUMABLES CONFIG ---
+        // --- CONSUMABLES CONFIG (MINI is now instant and stackable) ---
         const CONSUMABLES = {
-            MINI: { name: "Mini Shield", val: 25, type: 'shield', max: 50, icon: '🛡️', time: 2000, continuous: false },
-            BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false },
-            CHUG: { name: "Chug Jug", val: 3, shieldVal: 3, type: 'continuous', max: 100, icon: '🥤', time: 20000, continuous: true },
-            MEDKIT: { name: "Med Kit", val: 100, type: 'health', max: 100, icon: '🩹', time: 10000, continuous: false }
+            MINI: { name: "Small Shield", val: 25, type: 'shield', max: 50, icon: '💧', time: 1, continuous: false, instant: true, maxStack: 6 },
+            BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false, instant: false, maxStack: 3 },
+            CHUG: { name: "Chug Jug", val: 3, shieldVal: 3, type: 'continuous', max: 100, icon: '🥤', time: 20000, continuous: true, instant: false, maxStack: 1 },
+            MEDKIT: { name: "Med Kit", val: 100, type: 'health', max: 100, icon: '🩹', time: 10000, continuous: false, instant: false, maxStack: 3 }
         };
 
         // --- STORM PHASES ---
@@ -533,9 +590,14 @@
         function handleGameOver(win) {
             player.dead = true;
             controls.unlock();
-            document.getElementById('go-title').innerText = win ? "VICTORY ROYALE!" : "GAME OVER";
-            document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
-            document.getElementById('game-over').style.display = 'flex';
+            
+            if (win) {
+                document.getElementById('victory-overlay').style.display = 'flex';
+            } else {
+                document.getElementById('go-title').innerText = "GAME OVER";
+                document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
+                document.getElementById('game-over').style.display = 'flex';
+            }
         }
 
         function toggleADS(bool) {
@@ -588,11 +650,14 @@
             player.isReloading = true;
             updateUI(); 
 
+            // Use the rarity-modified reload time
+            const reloadTime = item.stats.reload * item.rarity.reload;
+
             setTimeout(() => {
                 item.stats.currentMag = item.stats.mag;
                 player.isReloading = false;
                 updateUI();
-            }, item.stats.reload);
+            }, reloadTime);
         }
 
         function buildWall() {
@@ -993,7 +1058,6 @@
                 const mesh = createBotMesh(x, h + 1, z);
                 scene.add(mesh);
                 
-                // Final requirement: Bots spawn with a random weapon at random rarity
                 const randomWeaponKey = getRandomWeaponKey();
                 const randomRarity = getRandomWeaponRarity();
                 
@@ -1016,13 +1080,29 @@
         // ===============================================================
 
         function useHealingItem() {
-            if (player.isHealing) return; 
-            
             const item = player.inventory[player.slot];
             if (!item || item.category !== 'consumable' || item.count <= 0) return;
 
+            // 1. Instant use for Small Shields (MINI)
+            if (item.instant) {
+                 if (item.type === 'shield' && player.shield < item.max) {
+                    player.shield = Math.min(item.max, player.shield + item.val);
+                    item.count -= 1; 
+                    if (item.count <= 0) player.inventory[player.slot] = null;
+                    updateUI();
+                    return;
+                }
+            }
+
+
+            // 2. Timed/Continuous use for others
+            if (player.isHealing) {
+                // Allow cancelling timed heals by switching or trying to use the same item again
+                if (player.healingItem === item && !item.continuous) finishHealing();
+                return;
+            }
+
             let canUse = false;
-            
             if (item.type === 'shield' && player.shield < item.max) canUse = true;
             if (item.type === 'health' && player.health < item.max) canUse = true;
             if (item.type === 'continuous') canUse = (player.health < 100 || player.shield < 100);
@@ -1035,7 +1115,7 @@
                 document.getElementById('healing-bar-text').innerText = `USING ${item.name.toUpperCase()}...`;
                 updateUI();
                 
-                if (!item.continuous) {
+                if (!item.continuous && !item.instant) {
                     setTimeout(() => {
                         applyHealing(item);
                         finishHealing();
@@ -1045,6 +1125,7 @@
         }
         
         function applyHealing(item) {
+            // Non-continuous, non-instant (Big Shield, Medkit)
             if (item.type === 'shield') {
                 player.shield = Math.min(item.max, player.shield + item.val);
             } else if (item.type === 'health') {
@@ -1085,6 +1166,7 @@
             player.lastHealTick = 0;
             document.getElementById('healing-bar-wrap').style.display = 'none';
             
+            // Continuous items (Chug Jug) are consumed upon completion
             if (player.inventory[player.slot] && player.inventory[player.slot].continuous) {
                  player.inventory[player.slot].count -= 1;
                  if (player.inventory[player.slot].count <= 0) {
@@ -1105,17 +1187,20 @@
                     
                     const currentItem = player.inventory[player.slot];
 
-                    if (currentItem && !currentItem.continuous && currentItem.category === currentLoot.data.category) {
-                        if (currentItem.category === 'consumable') {
-                             currentItem.count += currentLoot.data.count;
-                             scene.remove(currentLoot.mesh);
-                             loot.splice(i, 1);
-                             updateUI();
-                             return;
+                    // Stackable Consumable logic (e.g., MINI, BIG, MEDKIT)
+                    if (currentItem && currentItem.category === 'consumable' && currentItem.name === currentLoot.data.name) {
+                        if (currentItem.count < currentItem.maxStack) {
+                            currentItem.count = Math.min(currentItem.maxStack, currentItem.count + currentLoot.data.count);
+                            scene.remove(currentLoot.mesh);
+                            loot.splice(i, 1);
+                            updateUI();
+                            return;
                         }
                     }
 
+                    // Weapon/Item Slot Swap/Pickup logic
                     if (currentItem) {
+                        // Drop the current item at a nearby location
                         dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
                     }
                     
@@ -1199,25 +1284,44 @@
             player.inventory[slotIndex] = null;
         }
 
+        /**
+         * Creates a weapon item object with rarity scaling.
+         * @param {string} typeKey - Key from WEAPONS_BASE.
+         * @param {string} rarityKey - Key from RARITY_MULTIPLIERS.
+         * @returns {object} The created weapon item.
+         */
         function createWeaponItem(typeKey, rarityKey) {
-            const base = WEAPONS[typeKey];
-            const rar = RARITY[rarityKey];
+            const base = WEAPONS_BASE[typeKey];
+            const rar = RARITY_MULTIPLIERS[rarityKey];
+            
             return {
                 category: 'weapon',
                 name: base.name,
                 rarity: rar,
-                stats: { ...base, dmg: base.dmg * rar.mul, currentMag: base.mag }, 
+                stats: { 
+                    ...base, 
+                    dmg: base.dmg * rar.dmg, 
+                    head: base.head * rar.dmg, // Headshot multiplier also scales
+                    reload: base.reload * rar.reload, // Reload time scales inversely
+                    currentMag: base.mag 
+                }, 
                 maxAmmo: base.mag
             };
         }
         
-        function getRandomWeaponRarity() {
-            const rarKeys = Object.keys(RARITY).filter(k => k !== 'MYTHIC');
-            return rarKeys[Math.floor(Math.random()*rarKeys.length)];
+        function getRandomRarityKey(minRarityKey = 'COMMON') {
+            const minIndex = RARITY_KEYS.indexOf(minRarityKey);
+            if (minIndex === -1) return 'COMMON';
+            
+            // Filter out MYTHIC for generic spawn
+            const availableRarities = RARITY_KEYS.slice(minIndex).filter(k => k !== 'MYTHIC'); 
+            
+            return availableRarities[Math.floor(Math.random() * availableRarities.length)];
         }
         
         function getRandomWeaponKey() {
-            const keys = Object.keys(WEAPONS).filter(k => k !== MYTHIC_WEAPON_KEY);
+            // Exclude MYTHIC (RL) from general random spawn, unless specified by MYTHIC_WEAPON_KEY
+            const keys = Object.keys(WEAPONS_BASE).filter(k => k !== MYTHIC_WEAPON_KEY);
             return keys[Math.floor(Math.random()*keys.length)];
         }
         
@@ -1231,24 +1335,23 @@
                 player.wood += item.count;
                 return true;
             }
-
-            // Consumable logic (instant use if full health/shield, or place in inventory)
+            
+            // Consumable stacking logic
             if (item.category === 'consumable') {
-                if (!item.continuous) {
-                    let consumed = false;
-                    if (item.type === 'shield' && player.shield < item.max) {
-                        player.shield = Math.min(item.max, player.shield + item.val);
-                        consumed = true;
-                    } else if (item.type === 'health' && player.health < item.max) {
-                        player.health = Math.min(item.max, player.health + item.val);
-                        consumed = true;
-                    } 
-                    if (consumed) {
-                        return true;
+                for (let i = 0; i < player.inventory.length; i++) {
+                    const existingItem = player.inventory[i];
+                    if (existingItem && existingItem.category === 'consumable' && existingItem.name === item.name) {
+                        const newCount = Math.min(existingItem.maxStack, existingItem.count + item.count);
+                        if (newCount > existingItem.count) {
+                            existingItem.count = newCount;
+                            updateUI();
+                            return true; 
+                        }
                     }
                 }
             }
-            
+
+            // Find empty slot if no slot provided
             if(slot === -1) {
                 slot = player.inventory.findIndex(i => i === null);
                 if(slot === -1) return false; 
@@ -1266,12 +1369,13 @@
                 item = itemOrType; 
             } else {
                 if (itemOrType === 'weapon') {
-                    const key = getRandomWeaponKey();
-                    const rar = rarityOrKey || getRandomWeaponRarity();
+                    const key = rarityOrKey && WEAPONS_BASE[rarityOrKey] ? rarityOrKey : getRandomWeaponKey();
+                    const rar = getRandomRarityKey(rarityOrKey || 'COMMON');
                     item = createWeaponItem(key, rar);
                 } else if (itemOrType === 'consumable') {
                     const key = rarityOrKey || getRandomConsumableKey();
-                    item = { category: 'consumable', ...CONSUMABLES[key], count: 1 };
+                    const consumableBase = CONSUMABLES[key];
+                    item = { category: 'consumable', ...consumableBase, count: 1 };
                 } else if (itemOrType === 'mythic') {
                     item = createWeaponItem(MYTHIC_WEAPON_KEY, 'MYTHIC');
                 }
@@ -1302,7 +1406,7 @@
 
         function shoot(item) {
             if (item.stats.currentMag <= 0 || player.isReloading || player.isHealing) {
-                reload();
+                if (!player.isReloading) reload();
                 return;
             }
 
@@ -1336,12 +1440,10 @@
                 
                 const ray = new THREE.Raycaster(fireOrigin);
                 
-                // Add random spread to the direction vector
                 const spreadDir = fireDirection.clone();
                 const randomX = (Math.random() - 0.5) * spread;
                 const randomY = (Math.random() - 0.5) * spread;
                 
-                // This is a simplified way to add spread (pitch/yaw adjustment)
                 spreadDir.x += randomX;
                 spreadDir.y += randomY;
                 spreadDir.normalize();
@@ -1374,7 +1476,6 @@
 
                     if(hitBot && hitBot !== shooter) {
                         let dmg = item.stats.dmg;
-                        // Headshot check on new model (head is at y=2.4 on bot mesh)
                         if (hit.point.y > hitBot.mesh.position.y + 2.2) { 
                             dmg = item.stats.head; 
                             isHeadshot = true;
@@ -1382,7 +1483,6 @@
                         applyDamage(hitBot, dmg, hit.point, shooter, isHeadshot);
                     } else if (hitPlayer) {
                         let dmg = item.stats.dmg;
-                        // Player Headshot check (head is roughly 0.5m above camera position, camera is at PLAYER_HEIGHT)
                         if (hit.point.y > camera.position.y + 0.5) { 
                             dmg = item.stats.head; 
                         }
@@ -1407,8 +1507,9 @@
                 mesh: rocketMesh,
                 velocity: fireDirection.multiplyScalar(item.stats.projSpeed),
                 damage: item.stats.dmg,
-                radius: item.stats.radius, 
-                source: player 
+                radius: item.stats.blast, 
+                source: player,
+                rarity: item.rarity // Pass rarity for damage calculation
             });
         }
 
@@ -1433,18 +1534,23 @@
                 }
                 
                 if (explosion) {
-                    applyExplosiveDamage(proj.mesh.position, proj.radius, proj.damage, proj.source);
+                    applyExplosiveDamage(proj.mesh.position, proj.radius, proj.damage, proj.source, proj.rarity);
                     scene.remove(proj.mesh);
                     projectiles.splice(i, 1);
                 }
             }
         }
         
-        function applyExplosiveDamage(center, radius, baseDamage, source) {
+        function applyExplosiveDamage(center, radius, baseDamage, source, rarity) {
+            
+            // Apply Rarity damage multiplier for explosion (100 damage max at radius 5m for Common)
+            const maxDmg = 100 * rarity.dmg;
+            
             // Player damage
             const playerDist = center.distanceTo(camera.position);
             if (playerDist < radius + PLAYER_HEIGHT) {
-                const damage = baseDamage * (1 - playerDist / radius);
+                const distanceRatio = Math.max(0, 1 - (playerDist / radius));
+                const damage = maxDmg * distanceRatio; // Scale damage based on distance
                 takeDamage(damage, center);
             }
             
@@ -1452,7 +1558,8 @@
             bots.forEach(bot => {
                 const botDist = center.distanceTo(bot.mesh.position);
                 if (botDist < radius + 1) {
-                    const damage = baseDamage * (1 - botDist / radius);
+                    const distanceRatio = Math.max(0, 1 - (botDist / radius));
+                    const damage = maxDmg * distanceRatio; // Scale damage based on distance
                     applyDamage(bot, damage, center, source);
                 }
             });
@@ -1475,13 +1582,16 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
-                    // FINAL Requirement: Bot Kill drop (Random Weapon + Random Healing Item)
-                    const dropWeaponKey = getRandomWeaponKey();
-                    const dropWeaponRarity = getRandomWeaponRarity();
+                    // Final requirement: Bot Kill drop (Bot's Weapon + Random Healing Item)
+                    const botWeapon = target.weapon;
                     const dropConsumableKey = getRandomConsumableKey();
-
-                    spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, dropWeaponKey, dropWeaponRarity); 
-                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, 'consumable', dropConsumableKey); 
+                    const consumableBase = CONSUMABLES[dropConsumableKey];
+                    const healingItemDrop = { category: 'consumable', ...consumableBase, count: 1 };
+                    
+                    // Drop the weapon the bot was holding
+                    spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
+                    // Drop a healing item
+                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
                     
                     checkWin();
                 }
@@ -1550,7 +1660,7 @@
                     const dist = bot.mesh.position.distanceTo(targetPos);
                     
                     // Face the target
-                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 1.8, targetPos.z);
+                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
                     
                     // 3. Movement
                     if(dist > 15 && dist < 80) {
@@ -1573,7 +1683,6 @@
                         const fireDirection = new THREE.Vector3();
                         fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
 
-                        // FINAL FIX IMPLEMENTATION: Pass origin and direction directly to hitscan
                         handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
                     }
                 } else {
@@ -1649,13 +1758,13 @@
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
                 if(item) {
                     const icon = item.category === 'weapon' ? item.stats.icon : item.icon;
-                    const name = item.category === 'weapon' ? `${item.rarity.name}-${item.name} (${item.stats.currentMag})` : item.name;
+                    const name = item.category === 'weapon' ? `${item.rarity.name}-${item.name}` : item.name;
                     const count = item.category === 'consumable' ? item.count : '';
 
                     el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-name">${name} [${count}]</div>`;
                     let rarityKey = 'common';
                     if (item.rarity) {
-                        rarityKey = Object.keys(RARITY).find(key => RARITY[key] === item.rarity).toLowerCase();
+                        rarityKey = Object.keys(RARITY_MULTIPLIERS).find(key => RARITY_MULTIPLIERS[key] === item.rarity).toLowerCase();
                     }
                     el.className = `slot ${i===player.slot ? 'active' : ''} rarity-${rarityKey}`;
                 } else {
@@ -1675,7 +1784,7 @@
         
         function switchSlot(idx) {
             if (player.isHealing) {
-                const currentHealingSlot = player.inventory.indexOf(player.healingItem);
+                const currentHealingSlot = player.inventory.findIndex(i => i === player.healingItem);
                 if (currentHealingSlot === player.slot) {
                     if (player.healingItem.continuous) return; 
                     finishHealing();
@@ -1926,7 +2035,7 @@
 
             // 6. Starter Loot & UI
             giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
-            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1);
+            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1); // Starter minis
             giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1 }, 2);
             player.wood = 50; 
             updateUI();
@@ -1949,11 +2058,14 @@
             if(player.dead) return;
 
             // 0. Healing Update
-            if (player.isHealing && player.healingItem.continuous) {
-                applyContinuousHealing(player.healingItem, dt);
-            } else if (player.isHealing) {
-                inputs.fire = false;
-                inputs.w = inputs.a = inputs.s = inputs.d = false;
+            if (player.isHealing && player.healingItem) {
+                if (player.healingItem.continuous) {
+                    applyContinuousHealing(player.healingItem, dt);
+                } else if (!player.healingItem.instant) {
+                    // Stop movement while performing timed heal
+                    inputs.fire = false;
+                    inputs.w = inputs.a = inputs.s = inputs.d = false;
+                }
             }
 
 
