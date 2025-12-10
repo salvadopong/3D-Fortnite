@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V17.2 - Mobile & Recoil-Free</title>
+    <title>Web Battle Royale: V17.3 - Seamless Mobile Controls</title>
     <style>
         /* ======================================= */
-        /* === V17.2 CLEAN & POLISHED UI/UX === */
+        /* === V17.3 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         body { 
@@ -171,6 +171,7 @@
             top: 20px; 
             bottom: auto;
             right: 20px;
+            z-index: 20; /* Ensure inventory is above the right joystick area */
         }
         .slot { 
             width: 75px; height: 75px; 
@@ -233,14 +234,23 @@
         /* --- MOBILE CONTROLS (50/50 Split) --- */
         #mobile-controls {
             display: none; 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            pointer-events: none; /* Default: Let UI pass through */
         }
-        .joystick-zone {
-            position: absolute; top: 0; width: 50%; height: 100%; /* 50% width split */
-            pointer-events: auto;
+        
+        /* Left 50% for Movement Joystick */
+        #stick-left { 
+            position: absolute; top: 0; left: 0; width: 50%; height: 100%; 
+            pointer-events: auto; /* Active for movement input */
         }
-        #stick-left { left: 0; } 
-        #stick-right { right: 0; } /* Now primarily for camera and action buttons */
+        
+        /* Right 50% for Camera Look (Invisible Joystick) */
+        #stick-right { 
+            position: absolute; top: 0; right: 0; width: 50%; height: 100%; 
+            background: none; /* Invisible */
+            pointer-events: auto; /* Active for camera movement input */
+            z-index: 1; /* Must be low to allow UI elements to be on top */
+        } 
 
         /* Movement Zone Visuals (Bottom Left Corner) */
         #movement-zone-visual {
@@ -259,20 +269,25 @@
             pointer-events: none;
         }
 
+        /* Action buttons are now positioned ABSOLUTELY relative to the UI layer, 
+           and their pointer-events are set to 'auto' so they can be pressed 
+           even when over the stick-right zone. */
         .action-btn {
             position: absolute; width: 65px; height: 65px;
             border-radius: 50%; background: rgba(20, 20, 20, 0.7);
             border: 2px solid rgba(255,255,255,0.5);
             color: white; font-weight: bold; font-size: 14px;
             display: flex; justify-content: center; align-items: center;
-            pointer-events: auto; backdrop-filter: blur(4px);
+            pointer-events: auto; /* Re-enable pointer events for buttons */
+            backdrop-filter: blur(4px);
             text-align: center;
             font-family: 'Verdana', sans-serif;
             text-transform: uppercase;
+            z-index: 5; /* Ensure buttons are above the joystick zone */
         }
         .action-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
-        /* Button Positioning (Now on the Right Half of the screen) */
+        /* Button Positioning (Relative to the entire screen/UI Layer) */
         #btn-fire { bottom: 100px; right: 20px; width: 80px; height: 80px; border-color: #ff4444; background: rgba(255,0,0,0.3); font-size: 18px; }
         #btn-jump { bottom: 200px; right: 30px; }
         #btn-interact { bottom: 160px; right: 100px; border-color: #ffd700; color: #ffd700; }
@@ -407,17 +422,18 @@
         </div>
 
         <div id="mobile-controls">
-            <div id="stick-left" class="joystick-zone">
+            <div id="stick-left">
                 <div id="movement-zone-visual"><div class="stick-thumb" id="thumb-left"></div></div>
             </div>
             
-            <div id="stick-right" class="joystick-zone">
-                <div id="btn-fire" class="action-btn">FIRE</div>
-                <div id="btn-jump" class="action-btn">JUMP</div>
-                <div id="btn-interact" class="action-btn">PICKUP</div>
-                <div id="btn-build" class="action-btn">BUILD</div>
-                <div id="btn-ads" class="action-btn">AIM</div>
-            </div>
+            <div id="stick-right">
+                </div>
+
+            <div id="btn-fire" class="action-btn">FIRE</div>
+            <div id="btn-jump" class="action-btn">JUMP</div>
+            <div id="btn-interact" class="action-btn">PICKUP</div>
+            <div id="btn-build" class="action-btn">BUILD</div>
+            <div id="btn-ads" class="action-btn">AIM</div>
         </div>
     </div>
 
@@ -446,7 +462,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V17.2) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V17.3) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -469,7 +485,7 @@
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
         const WEAPONS_BASE = {
-            // RECOIL REMOVED (set to 0.0)
+            // RECOIL IS 0.0 IN V17.2 AND V17.3
             PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
             SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.0, bulletType: 'hitscan' },
@@ -1412,7 +1428,7 @@
                 return;
             }
 
-            // RECOIL REMOVED: camera.rotation.x += item.stats.recoil * 0.01;
+            // Recoil is 0.0, so no camera movement here
             
             const fireOrigin = camera.position.clone();
             const fireDirection = new THREE.Vector3();
@@ -1906,7 +1922,9 @@
             const handleJoystickLeft = (e) => {
                 // Determine touch relative to the visual circle, not the whole left zone
                 const rect = document.getElementById('movement-zone-visual').getBoundingClientRect();
-                const touch = e.touches[0];
+                // Find the touch that originated in the left zone
+                let touch = Array.from(e.changedTouches).find(t => t.clientX < window.innerWidth / 2);
+                if (!touch) return;
                 
                 // Get center of the visual control area
                 const cx = rect.left + rect.width / 2;
@@ -1936,49 +1954,67 @@
                 inputs.w=false; inputs.s=false; inputs.a=false; inputs.d=false; inputs.sprint = false;
             };
 
+            const activeTouchesRight = new Map();
             const handleLookRight = (e) => {
                 e.preventDefault();
-                // We use e.touches[0] since touchZoneRight is auto-managed by touchstart/move/end
-                const touch = e.touches[0];
+                const rightZoneRect = touchZoneRight.getBoundingClientRect();
+                
+                for (let touch of e.changedTouches) {
+                    // Only process touches that are within the right 50% screen area (for camera)
+                    if (touch.clientX >= window.innerWidth / 2) { 
+                        if (!activeTouchesRight.has(touch.identifier)) {
+                            // Start tracking a new touch for camera look
+                            activeTouchesRight.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+                        } else {
+                            const lastTouch = activeTouchesRight.get(touch.identifier);
+                            const dx = touch.clientX - lastTouch.x;
+                            const dy = touch.clientY - lastTouch.y;
+                            
+                            // Rotate the camera based on touch movement
+                            camera.rotation.y -= dx * sensitivity; 
+                            camera.rotation.x -= dy * sensitivity; 
+                            camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x)); // Clamp vertical look
 
-                if (touchZoneRight.lastX !== undefined) {
-                    const dx = touch.clientX - touchZoneRight.lastX;
-                    const dy = touch.clientY - touchZoneRight.lastY;
-                    
-                    // Rotate the camera based on touch movement
-                    camera.rotation.y -= dx * sensitivity; 
-                    camera.rotation.x -= dy * sensitivity; 
-                    camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x)); // Clamp vertical look
+                            // Update last position
+                            activeTouchesRight.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+                        }
+                    }
                 }
-                touchZoneRight.lastX = touch.clientX;
-                touchZoneRight.lastY = touch.clientY;
             };
             
+            const handleTouchEnd = (e) => {
+                for (let touch of e.changedTouches) {
+                    // Check if the touch that ended was tracking for the camera
+                    if (activeTouchesRight.has(touch.identifier)) {
+                        activeTouchesRight.delete(touch.identifier);
+                    }
+                }
+                // Check if the touch that ended was for the movement stick
+                if (Array.from(e.changedTouches).some(t => t.clientX < window.innerWidth / 2)) {
+                    resetStickLeft();
+                }
+            };
+
+
             // Left Zone: Movement
             touchZoneLeft.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                handleJoystickLeft(e);
-            });
-            touchZoneLeft.addEventListener('touchmove', handleJoystickLeft);
-            touchZoneLeft.addEventListener('touchend', resetStickLeft);
-            touchZoneLeft.addEventListener('touchcancel', resetStickLeft);
-            
-            // Right Zone: Camera Look
-            touchZoneRight.addEventListener('touchstart', (e) => {
-                // Only track the first touch that starts in this zone
-                if (e.touches.length === 1) { 
-                    e.preventDefault();
-                    const touch = e.touches[0];
-                    touchZoneRight.lastX = touch.clientX;
-                    touchZoneRight.lastY = touch.clientY;
+                // Only process touches starting in the left zone for joystick visuals/input
+                if (e.touches[0].clientX < window.innerWidth / 2) {
+                    handleJoystickLeft(e);
                 }
-            });
+            }, { passive: true });
+            touchZoneLeft.addEventListener('touchmove', handleJoystickLeft, { passive: true });
+            touchZoneLeft.addEventListener('touchend', handleTouchEnd);
+            touchZoneLeft.addEventListener('touchcancel', handleTouchEnd);
+            
+            // Right Zone: Camera Look (Full 50% width, invisible)
+            touchZoneRight.addEventListener('touchstart', handleLookRight);
             touchZoneRight.addEventListener('touchmove', handleLookRight);
-            touchZoneRight.addEventListener('touchend', () => { touchZoneRight.lastX = undefined; });
-            touchZoneRight.addEventListener('touchcancel', () => { touchZoneRight.lastX = undefined; });
+            touchZoneRight.addEventListener('touchend', handleTouchEnd);
+            touchZoneRight.addEventListener('touchcancel', handleTouchEnd);
 
 
-            // 6. Mobile Buttons
+            // 6. Mobile Buttons (Must use ontouchstart/touchend to avoid interference with camera look)
             document.getElementById('btn-fire').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.fire = true; });
             document.getElementById('btn-fire').addEventListener('touchend', (e) => { e.preventDefault(); inputs.fire = false; });
             document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.jump = true; });
