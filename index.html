@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V17.0 - Explosive Finale</title>
+    <title>Web Battle Royale: V17.1 - Definitive Edition</title>
     <style>
         /* ======================================= */
-        /* === V17.0 CLEAN & POLISHED UI/UX === */
+        /* === V17.1 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         /* Font fix: Removed external Google Font (Rajdhani, Oswald) to avoid 400 error */
@@ -445,7 +445,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V17.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V17.1) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -476,7 +476,7 @@
             RL:   { name: "Rocket", dmg: 100, head: 100, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 5, radius: 5, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.3, bulletType: 'hitscan' },
         };
-        const MYTHIC_WEAPON_KEY = 'RL'; // Making the RL the target mythic item for now for high value
+        const MYTHIC_WEAPON_KEY = 'RL'; // Making the RL the target mythic item for high value
 
         // --- CONSUMABLES CONFIG (MINI is now instant and stackable) ---
         const CONSUMABLES = {
@@ -1059,7 +1059,7 @@
                 scene.add(mesh);
                 
                 const randomWeaponKey = getRandomWeaponKey();
-                const randomRarity = getRandomWeaponRarity();
+                const randomRarity = getRandomRarity(); // FIX: Used getRandomRarity here
                 
                 bots.push({ 
                     mesh: mesh, 
@@ -1309,7 +1309,13 @@
             };
         }
         
-        function getRandomRarityKey(minRarityKey = 'COMMON') {
+        /**
+         * Gets a random rarity key, optionally starting from a minimum rarity.
+         * FIX for ReferenceError
+         * @param {string} minRarityKey - The minimum rarity (e.g., 'RARE').
+         * @returns {string} A random rarity key (e.g., 'EPIC').
+         */
+        function getRandomRarity(minRarityKey = 'COMMON') {
             const minIndex = RARITY_KEYS.indexOf(minRarityKey);
             if (minIndex === -1) return 'COMMON';
             
@@ -1370,7 +1376,7 @@
             } else {
                 if (itemOrType === 'weapon') {
                     const key = rarityOrKey && WEAPONS_BASE[rarityOrKey] ? rarityOrKey : getRandomWeaponKey();
-                    const rar = getRandomRarityKey(rarityOrKey || 'COMMON');
+                    const rar = getRandomRarity(rarityOrKey || 'COMMON');
                     item = createWeaponItem(key, rar);
                 } else if (itemOrType === 'consumable') {
                     const key = rarityOrKey || getRandomConsumableKey();
@@ -1633,7 +1639,7 @@
         // ===============================================================
 
         function findClosestTarget(bot) {
-            // FINAL Requirement: Bots only target the player
+            // Bots only target the player
             if (player.health > 0 && !player.dead) {
                 return player;
             } else {
