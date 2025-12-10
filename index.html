@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V14.1 - Error Fix & Final Combat Overhaul</title>
+    <title>Web Battle Royale: V14.2 - Critical Fixes</title>
     <style>
         /* ======================================= */
-        /* === V14.1 CLEAN & POLISHED UI/UX === */
+        /* === V14.2 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;800&family=Oswald:wght=700&display=swap');
 
@@ -444,11 +444,11 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V14.1) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V14.2) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        const BOT_COUNT = 30; // IMPROVEMENT 8: Increased NPC count
+        const BOT_COUNT = 30; 
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
@@ -469,12 +469,11 @@
             AR:   { name: "AR", dmg: 16, head: 24, rate: 0.33,mag: 30, range: 200,spread: 0.02, pellets: 1, auto: true, icon: '🔫', reload: 2000, recoil: 0.5, bulletType: 'hitscan' }, 
             SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.1, bulletType: 'hitscan' },
             SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 3.0, bulletType: 'hitscan' },
-            // IMPROVEMENT 6: Rocket Launcher damage/radius fix
             RL:   { name: "Rocket", dmg: 80, head: 80, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 80, radius: 2, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.3, bulletType: 'hitscan' }
         };
 
-        // IMPROVEMENT 7: Healing items
+        // --- CONSUMABLES CONFIG ---
         const CONSUMABLES = {
             MINI: { name: "Mini Shield", val: 25, type: 'shield', max: 50, icon: '🛡️', time: 2000, continuous: false },
             BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false },
@@ -681,12 +680,19 @@
         // === STORM LOGIC ===============================================
         // ===============================================================
 
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
         function startStormTimer() {
             if (stormTimerInterval) clearInterval(stormTimerInterval);
 
             const nextPhase = STORM_PHASES[stormPhase];
             if (!nextPhase) {
                 document.getElementById('storm-status').innerText = "FINAL";
+                document.getElementById('storm-timer').innerText = "00:00";
                 return;
             }
             
@@ -704,6 +710,7 @@
                 }
                 
                 stormPhaseTimer -= 1;
+                document.getElementById('storm-timer').innerText = formatTime(stormPhaseTimer);
                 
                 if (nextPhase.status === "Shrink") {
                     const elapsed = performance.now() - startTime;
@@ -711,7 +718,7 @@
                     const t = Math.min(1, elapsed / duration);
                     stormRadius = startRadius + (endRadius - startRadius) * t;
                     stormActive = true; 
-                } else if (nextPhase.status === "Hold") {
+                } else if (nextPhase.status === "Hold" || nextPhase.status === "Deathmatch") {
                     stormDamageRate = nextPhase.damage; 
                     stormActive = true;
                 } else if (nextPhase.status === "Wait") {
@@ -726,6 +733,31 @@
                 }
             }, 1000);
         }
+        
+        // FIX 1: Missing updateStorm function definition
+        function updateStorm() {
+            const playerPos2D = new THREE.Vector2(camera.position.x, camera.position.z);
+            const distToStorm = playerPos2D.distanceTo(stormCenter);
+            const stormCircleEl = document.getElementById('storm-circle');
+
+            // 1. Storm Circle Visual Update
+            const mapRadius = stormRadius * MINIMAP_SCALE;
+            const mapCenter = 250;
+            stormCircleEl.style.width = `${mapRadius * 2}px`;
+            stormCircleEl.style.height = `${mapRadius * 2}px`;
+            stormCircleEl.style.left = `${mapCenter}px`;
+            stormCircleEl.style.top = `${mapCenter}px`;
+
+            // 2. Damage Application
+            if (stormActive && distToStorm > stormRadius && stormDamageRate > 0) {
+                document.getElementById('storm-overlay').style.display = 'block';
+                // Apply damage once per second (damage handled by damage functions but visual update here)
+                takeDamage(stormDamageRate, camera.position);
+            } else {
+                document.getElementById('storm-overlay').style.display = 'none';
+            }
+        }
+
 
         // ===============================================================
         // === WORLD GENERATION & GEOMETRY (12 New POIs) =================
@@ -929,18 +961,18 @@
             createPleasantPark(-280, 0);
             createTomatoTown(280, 0);
 
-            // IMPROVEMENT 5: 12 More POIS
-            createSaltySprings(50, 200); // Near Center-East
-            createFatalFields(150, -100); // Center-South
-            createRiskyReels(-150, 100); // Center-West
-            createTheGrotto(100, -250); // South
-            createSlurpySwamp(-100, -300); // South-West
-            createMistyMeadows(300, 150); // North-East
-            createTheFortilla(0, 300); // North edge
-            createSteamyStacks(300, -300); // South-East
-            createSweatySands(-300, 150); // North-West
-            createWeepingWoods(-100, 250); // North
-            createLazyLake(200, 0); // Center-East
+            // 12 More POIS
+            createSaltySprings(50, 200); 
+            createFatalFields(150, -100); 
+            createRiskyReels(-150, 100); 
+            createTheGrotto(100, -250); 
+            createSlurpySwamp(-100, -300); 
+            createMistyMeadows(300, 150); 
+            createTheFortilla(0, 300); 
+            createSteamyStacks(300, -300); 
+            createSweatySands(-300, 150); 
+            createWeepingWoods(-100, 250); 
+            createLazyLake(200, 0); 
             
             // Trees
             for(let i=0; i<50; i++) {
@@ -976,7 +1008,6 @@
         }
 
         function spawnBots() {
-            // IMPROVEMENT 8: Increased NPC count
             for(let i=0; i<BOT_COUNT; i++) {
                 const x = (Math.random()-0.5)*WORLD_SIZE*0.8;
                 const z = (Math.random()-0.5)*WORLD_SIZE*0.8;
@@ -1056,7 +1087,7 @@
             const percentage = Math.min(1, timeElapsed / item.time);
             document.getElementById('healing-bar-fill').style.width = `${percentage * 100}%`;
             
-            // IMPROVEMENT 7: Chug Jug logic (3 shields per second)
+            // Chug Jug logic (3 shields per second)
             const interval = 1000; 
             if (!player.lastHealTick || (performance.now() - player.lastHealTick) >= interval) {
                 if(player.shield < 100) {
@@ -1331,7 +1362,6 @@
             }
         }
         
-        // IMPROVEMENT 6: Rocket Launcher functionality (Projectile)
         function handleProjectile(item, sourceCamera) {
             const dir = new THREE.Vector3();
             sourceCamera.getWorldDirection(dir);
@@ -1381,7 +1411,6 @@
             }
         }
         
-        // IMPROVEMENT 6: Rocket Launcher radius damage logic
         function applyExplosiveDamage(center, radius, baseDamage, source) {
             // Player damage
             const playerDist = center.distanceTo(camera.position);
@@ -1457,7 +1486,6 @@
         // ===============================================================
 
         function findClosestTarget(bot) {
-            // IMPROVEMENT 9: Ensure NPCs can target player and other NPCs
             const potentialTargets = [player, ...bots.filter(b => b !== bot && b.health > 0)];
             let closest = null;
             let minDist = Infinity;
@@ -1517,7 +1545,9 @@
                     if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
                         bot.lastShot = now;
                         
+                        // FIX 2: Added isPerspectiveCamera property to satisfy Raycaster
                         const tempCamera = { 
+                            isPerspectiveCamera: true, // CRITICAL FIX for Raycaster error
                             position: bot.mesh.position.clone().setY(bot.mesh.position.y + 1), 
                             getWorldDirection: function(targetVector) {
                                 const targetHeight = target === player ? camera.position.y : target.mesh.position.y + 1;
@@ -1558,7 +1588,7 @@
                     const oldPos = car.mesh.position.clone();
                     car.mesh.translateZ(car.speed * dt);
                     
-                    // IMPROVEMENT 3: Car Hit Damage (100)
+                    // Car Hit Damage
                     if (Math.abs(car.speed) > 5) {
                         const currentPos = car.mesh.position;
                         
@@ -1586,7 +1616,6 @@
         // === UI & MINIMAP FUNCTIONS ====================================
         // ===============================================================
         
-        // IMPROVEMENT 4: Enhanced Minimap
         function updateMinimap() {
             const map = document.getElementById('minimap');
             const playerPos = camera.position;
@@ -1933,7 +1962,7 @@
             downRay = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, PLAYER_HEIGHT + 0.1);
             
             // 5. World Generation
-            generateTerrain(); // Now defined above init()
+            generateTerrain(); 
             generatePOIs(); 
             spawnBots();
             spawnCars();
@@ -2054,7 +2083,7 @@
 
             // 3. AI Update
             updateBots(dt, now);
-            updateStorm();
+            updateStorm(); // FIX 1: The missing function call is now defined.
 
             // 4. Render
             renderer.clear();
