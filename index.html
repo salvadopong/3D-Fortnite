@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V10.0 - Final Physics & Bot Fix</title>
+    <title>Web Battle Royale: V11.0 - No Fall Damage & Bot Damage Tweak</title>
     <style>
         /* ======================================= */
-        /* === V10.0 MODERN UI / UX DESIGN === */
+        /* === V11.0 MODERN UI / UX DESIGN === */
         /* ======================================= */
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
 
@@ -319,7 +319,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V10.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V11.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -1128,12 +1128,13 @@
                     }
                     
                     // 3. Shoot Logic
-                    // FIX: Changed bot.weapon.stats.stats.rate to bot.weapon.stats.rate
                     const weaponStats = bot.weapon.stats; 
                     if(now - bot.lastShot > weaponStats.rate * 2000) { 
                         bot.lastShot = now;
                         if(Math.random() > 0.5) { 
-                            takeDamage(weaponStats.dmg, bot.mesh.position);
+                            // MODIFICATION: Hardcoded bot damage to 4
+                            const botDamage = 4;
+                            takeDamage(botDamage, bot.mesh.position);
                         }
                     }
                 }
@@ -1273,6 +1274,7 @@
                     camera.position.y = floorY + PLAYER_HEIGHT;
                     velocity.y = 0;
                     isGrounded = true;
+                    // --- FALL DAMAGE REMOVED HERE ---
                 } else {
                     isGrounded = false;
                 }
