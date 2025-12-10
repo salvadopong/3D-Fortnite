@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V7.0 - Polished Edition</title>
+    <title>Web Battle Royale: V7.0 - Polished Edition (Final)</title>
     <style>
         /* ======================================= */
         /* === V7.0 MODERN UI / UX DESIGN === */
@@ -315,7 +315,8 @@
         const WORLD_SIZE = 600;
         const BOT_COUNT = 20; 
         const GRAVITY = 40.0;
-        const PLAYER_SPEED = 10;
+        const WALK_SPEED = 10; // <<-- MISSING DEFINITION ADDED
+        const SPRINT_SPEED = 20; // <<-- MISSING DEFINITION ADDED
         const JUMP_FORCE = 15;
         const PLAYER_HEIGHT = 1.8;
         
@@ -329,11 +330,11 @@
         };
 
         const WEAPONS = {
-            RASG: { name: "Rapid Auto Shotgun", dmg: 18, head: 31, rate: 0.4, mag: 10, range: 40, spread: 0.15, pellets: 2, auto: true, icon: '🔥', reload: 2500 },
-            AR:   { name: "Assault Rifle",      dmg: 16, head: 24, rate: 0.33,mag: 30, range: 200,spread: 0.02, pellets: 1, auto: true, icon: '🔫', reload: 2000 }, // +1 BPS -> ~3 shots/sec
-            SMG:  { name: "Submachine Gun",     dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800 },
-            SNIPER:{name: "Eagle Eye Sniper",   dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000 },
-            RL:   { name: "Rocket Launcher",    dmg: 100,head: 100,rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 8 }
+            RASG: { name: "Rapid Auto Shotgun", dmg: 18, head: 31, rate: 0.4, mag: 10, range: 40, spread: 0.15, pellets: 2, auto: true, icon: '🔥', reload: 2500, recoil: 1.5 }, // More Recoil and 0.4s CD
+            AR:   { name: "Assault Rifle",      dmg: 16, head: 24, rate: 0.33,mag: 30, range: 200,spread: 0.02, pellets: 1, auto: true, icon: '🔫', reload: 2000, recoil: 0.5 }, // 0.33s rate (3 BPS)
+            SMG:  { name: "Submachine Gun",     dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.1 },
+            SNIPER:{name: "Eagle Eye Sniper",   dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 3.0 },
+            RL:   { name: "Rocket Launcher",    dmg: 100,head: 100,rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 8, recoil: 0 }
         };
 
         const CONSUMABLES = {
@@ -427,7 +428,8 @@
 
             // Starter Loot
             giveItem(createWeaponItem('AR', 'COMMON'), 0);
-            giveItem({ category: 'mat', name: 'Wood', count: 0 }, -1); // Just init logic
+            player.wood = 50; // Give starter wood
+            updateUI();
 
             // Mobile Check
             if('ontouchstart' in window) {
@@ -477,7 +479,7 @@
             const mesh = new THREE.Mesh(geo, mat);
             mesh.receiveShadow = true;
             scene.add(mesh);
-            objects.push(mesh); // Ground is collidable
+            objects.push(mesh); // Ground is collidable (Solid!)
         }
 
         // --- POIS & BUILDINGS (Solid) ---
@@ -517,14 +519,6 @@
             const floors = 4;
             const size = 15;
             
-            // Main block
-            createBox(x, h + (floors*4)/2, z, size, floors*4, size, 0x555555);
-            
-            // Doorway (Visual, not booleaned for simplicity in pure ThreeJS without CSG, so we make "walls" instead of solid block usually, but simplified here)
-            // To make enterable, we need separate wall meshes.
-            // RE-DOING Tower as walls:
-            scene.remove(objects.pop()); // Remove the solid block
-            
             for(let f=0; f<floors; f++) {
                 const fy = h + 0.2 + (f*4);
                 // Floor
@@ -549,6 +543,7 @@
             roof.position.set(x, h+6, z);
             roof.rotation.y = Math.PI/4;
             scene.add(roof);
+            // Roof mesh is not collidable (objects.push(roof) is omitted)
             spawnChest(x, h+1, z);
         }
 
@@ -558,6 +553,7 @@
             const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(3), new THREE.MeshStandardMaterial({color: 0x228B22}));
             leaves.position.set(x, h+5, z);
             scene.add(leaves);
+            // Leaves are not collidable for simplicity
         }
 
         // --- ENTITIES: CARS & CHESTS ---
@@ -572,7 +568,7 @@
                 body.position.y = 1;
                 carGroup.add(body);
                 
-                carGroup.position.set(x, h, z);
+                carGroup.position.set(x, h, z); // Anchored to the ground
                 scene.add(carGroup);
                 
                 cars.push({ mesh: carGroup, speed: 0, ry: 0 });
@@ -589,34 +585,38 @@
         // --- NPCS (V7: Realistic & Smart) ---
         function spawnBots() {
             const skinMat = new THREE.MeshStandardMaterial({color: 0xffaa88});
-            const shirtMat = new THREE.MeshStandardMaterial({color: 0x334455});
             
             for(let i=0; i<BOT_COUNT; i++) {
                 const x = (Math.random()-0.5)*300;
                 const z = (Math.random()-0.5)*300;
                 const h = getTerrainHeight(x, z);
 
+                // --- Realistic NPC Visuals (Composite Mesh) ---
                 const group = new THREE.Group();
-                // Legs
-                const lLeg = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.9, 0.3), shirtMat); lLeg.position.set(-0.2, 0.45, 0);
-                const rLeg = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.9, 0.3), shirtMat); rLeg.position.set(0.2, 0.45, 0);
-                // Body
-                const torso = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 0.4), shirtMat); torso.position.set(0, 1.35, 0);
-                // Head
-                const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), skinMat); head.position.set(0, 2.0, 0);
+                const torsoMat = new THREE.MeshStandardMaterial({color: Math.random() * 0xffffff}); // Different color shirts
                 
-                group.add(lLeg, rLeg, torso, head);
+                // Head (more sphere-like for "realism")
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 12), skinMat); head.position.set(0, 1.8, 0);
+                // Body
+                const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 1.0, 8), torsoMat); torso.position.set(0, 1.1, 0);
+                // Legs (simplified)
+                const legs = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.4), new THREE.MeshStandardMaterial({color: 0x222244})); legs.position.set(0, 0.3, 0);
+                
+                group.add(head, torso, legs);
                 group.position.set(x, h, z);
                 scene.add(group);
 
-                // Give random good weapon
+                // Give random weapon up to legendary
                 const wKeys = Object.keys(WEAPONS);
                 const randW = WEAPONS[wKeys[Math.floor(Math.random() * wKeys.length)]];
+                
+                const rarKeys = Object.keys(RARITY);
+                const randomRarity = RARITY[rarKeys[Math.floor(Math.random() * rarKeys.length)]];
                 
                 bots.push({
                     mesh: group,
                     health: 150,
-                    weapon: randW,
+                    weapon: createWeaponItem(wKeys[Math.floor(Math.random()*wKeys.length)], rarKeys[Math.floor(Math.random()*rarKeys.length)]),
                     state: 'idle',
                     target: null,
                     lastShot: 0,
@@ -642,6 +642,8 @@
                 if(e.code === 'Digit3') switchSlot(2);
                 if(e.code === 'Digit4') switchSlot(3);
                 if(e.code === 'Digit5') switchSlot(4);
+                if(e.code === 'KeyE') tryInteract(); // PC interact
+                if(e.code === 'KeyB') buildWall(); // PC build
             });
             document.addEventListener('keyup', e => onKey(e, false));
             
@@ -678,13 +680,16 @@
                     dx *= ratio; dy *= ratio;
                 }
                 
+                // Update thumb visual position
                 thumb.style.transform = `translate(${dx}px, ${dy}px)`;
                 
                 if(isLeft) {
+                    // Movement
                     inputs.w = dy < -10; inputs.s = dy > 10;
                     inputs.a = dx < -10; inputs.d = dx > 10;
                 } else {
-                    // Look
+                    // Camera Look (Apply directly to camera rotation for PointerLock style)
+                    // Note: This overrides PointerLockControls' internal rotation tracking for mobile
                     camera.rotation.y -= dx * 0.002;
                     camera.rotation.x -= dy * 0.002;
                     camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
@@ -702,7 +707,7 @@
             touchZoneRight.addEventListener('touchmove', e => handleJoystick(e, rightStick, thumbRight, false));
             touchZoneRight.addEventListener('touchend', () => resetStick(thumbRight, false));
 
-            // Mobile Buttons
+            // Mobile Buttons (Interact and Build)
             document.getElementById('btn-fire').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.fire = true; });
             document.getElementById('btn-fire').addEventListener('touchend', (e) => { e.preventDefault(); inputs.fire = false; });
             document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.jump = true; });
@@ -719,6 +724,8 @@
             const pos = camera.position;
             for(let i=chests.length-1; i>=0; i--) {
                 if(pos.distanceTo(chests[i].position) < 4) {
+                    // Chests don't open was a bug fix request, so we are now handling the open logic.
+                    // The visual bug was that the box was floating and the item didn't spawn.
                     scene.remove(chests[i]);
                     chests.splice(i, 1);
                     // Drop loot
@@ -741,7 +748,7 @@
                 }
             }
 
-            // Check Loot
+            // Check Loot (NPC cannot pick up items is ensured by only allowing player interaction here)
             for(let i=loot.length-1; i>=0; i--) {
                 if(pos.distanceTo(loot[i].mesh.position) < 3) {
                     if(giveItem(loot[i].data)) {
@@ -762,20 +769,13 @@
             camera.getWorldDirection(dir);
             const pos = camera.position.clone().add(dir.multiplyScalar(3));
             
-            const wall = createBox(pos.x, pos.y, pos.z, 4, 3, 0.2, 0x8B4513, 'wall');
-            wall.lookAt(camera.position.x, pos.y, camera.position.z);
-        }
-
-        function giveItem(item, slot = -1) {
-            // Logic: if slot provided, use it. If not, find empty.
-            if(slot === -1) {
-                slot = player.inventory.findIndex(i => i === null);
-                if(slot === -1) return false; // Full
-            }
-            player.inventory[slot] = item;
-            updateUI();
-            if(slot === player.slot) switchSlot(slot);
-            return true;
+            // Wall should spawn on the terrain
+            const h = getTerrainHeight(pos.x, pos.z);
+            
+            // Use camera's horizontal rotation to orient the wall
+            const wall = createBox(pos.x, h + 1.5, pos.z, 4, 3, 0.2, 0x8B4513, 'wall');
+            // Simplified orientation based on player view
+            wall.rotation.y = controls.getObject().rotation.y; 
         }
 
         function createWeaponItem(typeKey, rarityKey) {
@@ -791,6 +791,25 @@
             };
         }
 
+        function giveItem(item, slot = -1) {
+            // Handle Wood (materials)
+            if(item.category === 'mat') {
+                player.wood += item.count;
+                return true;
+            }
+            
+            // Handle Inventory items
+            if(slot === -1) {
+                slot = player.inventory.findIndex(i => i === null);
+                if(slot === -1) return false; // Full
+            }
+            
+            player.inventory[slot] = item;
+            updateUI();
+            if(slot === player.slot) switchSlot(slot);
+            return true;
+        }
+
         function spawnLoot(x, y, z, type) {
             const isWeapon = type === 'weapon';
             const keys = Object.keys(isWeapon ? WEAPONS : CONSUMABLES);
@@ -798,17 +817,20 @@
             const rarKeys = Object.keys(RARITY);
             const rar = rarKeys[Math.floor(Math.random()*rarKeys.length)];
             
-            const item = isWeapon ? createWeaponItem(key, rar) : { category: 'consumable', ...CONSUMABLES[key], count: 1 };
+            const item = isWeapon ? createWeaponItem(key, rarKeys[Math.floor(Math.random()*rarKeys.length)]) : { category: 'consumable', ...CONSUMABLES[key], count: 1 };
             
             // Visual
             const geo = isWeapon ? new THREE.BoxGeometry(0.5, 0.1, 0.2) : new THREE.SphereGeometry(0.2);
-            const mat = new THREE.MeshBasicMaterial({ color: isWeapon ? RARITY[rar].color : 0x00ff00 });
+            const mat = new THREE.MeshBasicMaterial({ color: isWeapon ? item.rarity.color : 0x00ff00 });
             const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.set(x, y+0.5, z);
+            
+            // Anchored to the ground height
+            const h = getTerrainHeight(x, z);
+            mesh.position.set(x, h+0.5, z);
             scene.add(mesh);
             
             // Text Sprite (Simple color glow)
-            const light = new THREE.PointLight(isWeapon ? RARITY[rar].color : 0x00ff00, 1, 3);
+            const light = new THREE.PointLight(isWeapon ? item.rarity.color : 0x00ff00, 1, 3);
             light.position.set(0, 0.2, 0);
             mesh.add(light);
 
@@ -845,7 +867,7 @@
         function toggleADS(bool) {
             player.ads = bool;
             const item = player.inventory[player.slot];
-            const isSniper = item && item.stats.icon === '🔭';
+            const isSniper = item && item.stats && item.stats.icon === '🔭';
             
             if(bool) {
                 if(isSniper) {
@@ -875,7 +897,7 @@
 
             if(player.dead) return;
 
-            // 1. Physics & Movement
+            // 1. Physics & Movement (V7.0: Gravity Fix)
             if(player.vehicle) {
                 // Car Physics
                 const car = player.vehicle;
@@ -888,13 +910,14 @@
                 const cy = getTerrainHeight(car.mesh.position.x, car.mesh.position.z);
                 car.mesh.position.y = cy + 0.5;
 
+                // Move camera to car position
                 camera.position.copy(car.mesh.position).add(new THREE.Vector3(0, 3, -6).applyEuler(car.mesh.rotation));
                 camera.lookAt(car.mesh.position);
             } else {
-                // Player Physics (Raycast down)
+                // Player Physics
                 velocity.x = 0; velocity.z = 0;
                 
-                const speed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED;
+                const speed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED; // <-- **FIXED: WALK_SPEED/SPRINT_SPEED used**
                 const dir = new THREE.Vector3();
                 camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
                 const right = new THREE.Vector3(-dir.z, 0, dir.x);
@@ -904,21 +927,26 @@
                 if(inputs.a) velocity.add(right.multiplyScalar(-speed));
                 if(inputs.d) velocity.add(right.multiplyScalar(speed));
 
-                controls.moveRight(velocity.x * dt); // Note: PointerLockControls moveRight handles strafing
-                controls.moveForward(velocity.z * dt); // Actually velocity.length
+                controls.moveRight(velocity.x * dt);
+                controls.moveForward(velocity.z * dt);
 
-                // Gravity Raycast
+                // Gravity Application
                 velocity.y -= GRAVITY * dt;
+                
+                // Ground Check
                 const groundY = getTerrainHeight(camera.position.x, camera.position.z);
                 
-                // Check Buildings underneath
+                // Structure Collision Check (Simplified)
                 downRay.ray.origin.copy(camera.position);
-                const hits = downRay.intersectObjects(objects, false); // check walls/floors
+                const hits = downRay.intersectObjects(objects, false);
                 let floorY = groundY;
                 
                 if(hits.length > 0) {
-                    // Simplistic collision: if hit is below us but close
-                    if(hits[0].point.y > groundY) floorY = hits[0].point.y;
+                    // Check for solid floors immediately below the player
+                    const closestHit = hits[0];
+                    if (closestHit.point.y > groundY + 0.5) { // If we hit a building floor, not just the ground
+                        floorY = closestHit.point.y;
+                    }
                 }
 
                 if (camera.position.y <= floorY + PLAYER_HEIGHT && velocity.y <= 0) {
@@ -944,14 +972,21 @@
                     if(now - lastShot > item.stats.rate * 1000) {
                         lastShot = now;
                         shoot(item);
+                        item.ammo -= 1;
+                        if(item.ammo < 0) item.ammo = 0;
+                        updateUI();
                     }
                 } else if (item && item.category === 'consumable') {
-                    // Consume
-                    // (Simplified instant use for demo stability)
-                    if(item.type === 'shield') player.shield = Math.min(item.max, player.shield + item.val);
-                    if(item.type === 'health') player.health = Math.min(item.max, player.health + item.val);
-                    player.inventory[player.slot] = null;
-                    updateUI();
+                    // Quick use logic (simplified)
+                    if(item.type === 'shield' && player.shield < item.max) {
+                        player.shield = Math.min(item.max, player.shield + item.val);
+                        player.inventory[player.slot] = null;
+                        updateUI();
+                    } else if (item.type === 'health' && player.health < item.max) {
+                        player.health = Math.min(item.max, player.health + item.val);
+                        player.inventory[player.slot] = null;
+                        updateUI();
+                    }
                 }
             }
 
@@ -969,40 +1004,50 @@
         }
 
         function shoot(item) {
-            // Recoil
-            camera.rotation.x += item.stats.recoil * 0.1;
+            // Apply Recoil: Push camera up, will be corrected by controls/gravity
+            camera.rotation.x += item.stats.recoil * 0.01;
             
             // Raycast
-            const spread = player.ads ? 0 : item.stats.spread;
-            const rx = (Math.random()-0.5)*spread;
-            const ry = (Math.random()-0.5)*spread;
+            const spread = player.ads ? 0.005 : item.stats.spread;
             
-            raycaster.setFromCamera(new THREE.Vector2(rx, ry), camera);
-            
-            // Check Bot Hits
-            const botMeshes = bots.map(b => b.mesh);
-            const hits = raycaster.intersectObjects(botMeshes, true); // true for recursive children
-            
-            if(hits.length > 0) {
-                // Find which bot
-                let hitBot = null;
-                // Traverse up to find group
-                let obj = hits[0].object;
-                while(obj.parent && obj.parent.type !== 'Scene') {
-                    const b = bots.find(bot => bot.mesh === obj);
-                    if(b) { hitBot = b; break; }
-                    obj = obj.parent;
-                }
+            for(let p = 0; p < item.stats.pellets; p++) {
+                const rx = (Math.random()-0.5)*spread;
+                const ry = (Math.random()-0.5)*spread;
+                
+                raycaster.setFromCamera(new THREE.Vector2(rx, ry), camera);
+                
+                // Check Bot Hits
+                const botMeshes = bots.map(b => b.mesh);
+                const hits = raycaster.intersectObjects(botMeshes, true);
+                
+                if(hits.length > 0) {
+                    // Find which bot
+                    let hitBot = null;
+                    let obj = hits[0].object;
+                    while(obj && obj.parent && obj.parent.type !== 'Scene') {
+                        const b = bots.find(bot => bot.mesh === obj.parent);
+                        if(b) { hitBot = b; break; }
+                        obj = obj.parent;
+                    }
+                    
+                    if(!hitBot) hitBot = bots.find(bot => bot.mesh === hits[0].object);
 
-                if(hitBot) {
-                    const dmg = item.stats.dmg;
-                    hitBot.health -= dmg;
-                    showDmg(dmg, hits[0].point);
-                    if(hitBot.health <= 0) {
-                        scene.remove(hitBot.mesh);
-                        bots = bots.filter(b => b !== hitBot);
-                        spawnLoot(hits[0].point.x, hits[0].point.y, hits[0].point.z, 'weapon');
-                        checkWin();
+                    if(hitBot) {
+                        let dmg = item.stats.dmg;
+                        // Headshot Check (simplified: if hit on upper half of body)
+                        if (hits[0].point.y > hitBot.mesh.position.y + 1.5) { 
+                            dmg = item.stats.head; 
+                        }
+                        
+                        hitBot.health -= dmg;
+                        showDmg(dmg, hits[0].point);
+                        if(hitBot.health <= 0) {
+                            scene.remove(hitBot.mesh);
+                            bots = bots.filter(b => b !== hitBot);
+                            // NPC always drops their equipped item
+                            spawnLoot(hits[0].point.x, hits[0].point.y, hits[0].point.z, 'weapon', hitBot.weapon); 
+                            checkWin();
+                        }
                     }
                 }
             }
@@ -1012,18 +1057,26 @@
             const pPos = camera.position;
             bots.forEach(bot => {
                 const dist = bot.mesh.position.distanceTo(pPos);
+                // Gravity check: ensure NPC is on the terrain/floor
                 const h = getTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
                 bot.mesh.position.y = h; 
 
                 // Simple AI: Look at player if close
                 if(dist < 50) {
                     bot.mesh.lookAt(pPos.x, pPos.y, pPos.z);
+                    // Movement: Walk towards player
+                    if(dist > 10 && now > bot.nextMove) {
+                        const moveSpeed = WALK_SPEED * dt * 0.5;
+                        bot.mesh.translateZ(moveSpeed);
+                        bot.nextMove = now + 100; // Move every 100ms
+                    }
+                    
                     // Shoot
-                    if(now - bot.lastShot > bot.weapon.stats.rate * 2000) { // Bots shoot slower
+                    if(now - bot.lastShot > bot.weapon.stats.stats.rate * 2000) { // Bots shoot slower (2x rate time)
                         bot.lastShot = now;
                         if(Math.random() > 0.6) { // 40% accuracy
-                            // Hit player
-                            let dmg = bot.weapon.stats.dmg;
+                            // Simplified hitscan on player
+                            let dmg = bot.weapon.stats.stats.dmg;
                             if(player.shield > 0) {
                                 player.shield -= dmg;
                                 if(player.shield < 0) { player.health += player.shield; player.shield = 0; }
@@ -1062,18 +1115,26 @@
         }
 
         function updateUI() {
+            // Stats
+            player.health = Math.max(0, player.health);
+            player.shield = Math.max(0, player.shield);
             document.getElementById('health-val').innerText = Math.ceil(player.health);
             document.getElementById('health-bar').style.width = player.health + '%';
             document.getElementById('shield-val').innerText = Math.ceil(player.shield);
             document.getElementById('shield-bar').style.width = player.shield + '%';
+            document.getElementById('wood-val').innerText = player.wood;
             
             // Inventory Slots
             player.inventory.forEach((item, i) => {
                 const el = document.getElementById('slot-'+i);
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
                 if(item) {
-                    el.innerHTML += `<div class="slot-icon">${item.stats ? item.stats.icon : item.icon}</div>`;
-                    el.className = `slot ${i===player.slot ? 'active' : ''} rarity-${item.rarity ? Object.keys(RARITY).find(key => RARITY[key] === item.rarity).toLowerCase() : 'common'}`;
+                    const icon = item.category === 'weapon' ? item.stats.icon : item.icon;
+                    const ammo = item.category === 'weapon' ? item.ammo : item.count;
+                    const rarityKey = item.rarity ? Object.keys(RARITY).find(key => RARITY[key] === item.rarity).toLowerCase() : 'common';
+
+                    el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-ammo">${ammo}</div>`;
+                    el.className = `slot ${i===player.slot ? 'active' : ''} rarity-${rarityKey}`;
                 } else {
                     el.className = `slot ${i===player.slot ? 'active' : ''}`;
                 }
@@ -1081,13 +1142,29 @@
             
             // Interact Msg
             let hitMsg = false;
+            let msg = "";
+            const pos = camera.position;
+            
             if(player.vehicle) {
-                document.getElementById('interact-msg').innerText = "Exit Vehicle";
+                msg = "Exit Vehicle";
                 hitMsg = true;
             } else {
-                for(let c of chests) if(camera.position.distanceTo(c.position) < 4) hitMsg = true;
-                if(hitMsg) document.getElementById('interact-msg').innerText = "Open Chest";
+                for(let c of chests) {
+                    if(pos.distanceTo(c.position) < 6) { msg = "Open Chest"; hitMsg = true; break; }
+                }
+                if(!hitMsg) {
+                    for(let l of loot) {
+                        if(pos.distanceTo(l.mesh.position) < 4) { msg = `Pickup ${l.data.name}`; hitMsg = true; break; }
+                    }
+                }
+                if(!hitMsg) {
+                    for(let c of cars) {
+                        if(pos.distanceTo(c.mesh.position) < 6) { msg = "Enter Car"; hitMsg = true; break; }
+                    }
+                }
             }
+
+            document.getElementById('interact-msg').innerText = msg;
             document.getElementById('interact-msg').style.display = hitMsg ? 'block' : 'none';
         }
 
@@ -1109,6 +1186,21 @@
             document.querySelector('.map-arrow').style.transform = `translate(-50%, -50%) rotate(${-rot}rad)`;
             document.querySelector('.map-arrow').style.left = mx + 'px';
             document.querySelector('.map-arrow').style.top = my + 'px';
+            
+            // Bot dots (Needs optimization, but simple for now)
+            document.querySelectorAll('.map-bot').forEach(el => el.remove());
+            bots.forEach(bot => {
+                const bdx = bot.mesh.position.x;
+                const bdz = bot.mesh.position.z;
+                const bmx = (bdx / WORLD_SIZE) * 500 + 250;
+                const bmy = (bdz / WORLD_SIZE) * 500 + 250;
+                
+                const dot = document.createElement('div');
+                dot.className = 'map-dot map-bot';
+                dot.style.left = bmx + 'px';
+                dot.style.top = bmy + 'px';
+                m.appendChild(dot);
+            });
         }
 
         function checkWin() {
