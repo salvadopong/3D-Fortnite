@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V17.3 - Seamless Mobile Controls</title>
+    <title>Web Battle Royale: V17.4 - Device Selection Start Screen</title>
     <style>
         /* ======================================= */
-        /* === V17.3 CLEAN & POLISHED UI/UX === */
+        /* === V17.4 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         body { 
@@ -24,6 +24,27 @@
             color: white;
         }
 
+        /* --- PRE-GAME START SCREEN MODAL --- */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; z-index: 1000;
+            text-align: center;
+        }
+        #start-screen h1 { font-size: 36px; margin-bottom: 20px; color: #00d2ff; }
+        .start-button {
+            padding: 15px 30px; margin: 10px; font-size: 20px;
+            background: #28a745; color: white; border: none; 
+            border-radius: 6px; cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: 'Verdana', sans-serif; font-weight: bold;
+        }
+        .start-button:hover { background: #1e7e34; }
+        .start-button:active { transform: scale(0.98); }
+        .start-button.mobile-option { background: #ffaa00; }
+        .start-button.mobile-option:hover { background: #cc8800; }
+        
         /* --- Crosshair --- */
         #crosshair { 
             position: absolute; top: 50%; left: 50%; 
@@ -368,6 +389,15 @@
 </head>
 <body>
 
+    <div id="start-screen">
+        <h1>BATTLE ROYALE - V17.4</h1>
+        <p>Are you playing on a mobile device or a tablet (e.g., iPad)?</p>
+        <div>
+            <button class="start-button mobile-option" onclick="startGame(true)">Yes, I'm on Mobile / iPad</button>
+            <button class="start-button" onclick="startGame(false)">No, I'm on PC / Desktop</button>
+        </div>
+    </div>
+    
     <div id="game-container"></div>
 
     <div id="ui-layer">
@@ -462,7 +492,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V17.3) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V17.4) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -485,7 +515,7 @@
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
         const WEAPONS_BASE = {
-            // RECOIL IS 0.0 IN V17.2 AND V17.3
+            // RECOIL IS 0.0 IN V17.4
             PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
             SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.0, bulletType: 'hitscan' },
@@ -539,6 +569,7 @@
         let lastTime = performance.now();
         let lastShot = 0;
         let isMobileMode = false; 
+        let gameStarted = false;
         
         // Dynamic Arrays for Entities
         let bots = [];
@@ -607,7 +638,8 @@
         
         function handleGameOver(win) {
             player.dead = true;
-            controls.unlock();
+            // Only try to unlock controls if they were ever locked (i.e., not mobile mode)
+            if (controls && controls.isLocked) controls.unlock(); 
             
             if (win) {
                 document.getElementById('victory-overlay').style.display = 'flex';
@@ -1842,43 +1874,41 @@
             isMobileMode = enable;
             const mobileControls = document.getElementById('mobile-controls');
             const inventory = document.getElementById('inventory');
-            const container = document.getElementById('game-container');
+            const gameContainer = document.getElementById('game-container');
 
             if (enable) {
-                controls.unlock();
-                controls.enabled = false;
+                if (controls) controls.enabled = false;
                 mobileControls.style.display = 'block';
                 inventory.classList.add('mobile');
-                container.removeEventListener('mousedown', lockPointer);
+                // Remove PC specific listeners if mobile
+                gameContainer.removeEventListener('mousedown', lockPointer);
             } else {
-                controls.enabled = true;
+                if (controls) controls.enabled = true;
                 mobileControls.style.display = 'none';
                 inventory.classList.remove('mobile');
-                container.addEventListener('mousedown', lockPointer);
+                // Add PC specific listener
+                gameContainer.addEventListener('mousedown', lockPointer);
             }
         }
 
         function lockPointer() {
-            if (!isMobileMode) {
+            if (controls && !isMobileMode) {
                 controls.lock();
                 inputs.fire = false; 
             }
         }
 
-        function setupInputs(container) {
-            // 1. Dynamic Mode Switch
-            container.addEventListener('touchstart', (e) => {
-                if (!isMobileMode) {
-                    setMobileMode(true);
-                }
-            }, { once: true });
+        function setupPCLock() {
+            if (controls) controls.enabled = true;
+            document.getElementById('game-container').addEventListener('mousedown', lockPointer);
+        }
+
+        function setupInputs() {
+            const gameContainer = document.getElementById('game-container');
             
-            // 2. PC Mode: Lock pointer on click
-            container.addEventListener('mousedown', lockPointer);
-            
-            // 3. PC Mode: Keyboard
+            // 1. PC Mode: Keyboard
             const onKey = (e, v) => {
-                if (controls.isLocked) {
+                if (!isMobileMode && controls.isLocked) {
                     if(e.code === 'KeyW') inputs.w = v;
                     if(e.code === 'KeyS') inputs.s = v;
                     if(e.code === 'KeyA') inputs.a = v;
@@ -1892,41 +1922,43 @@
             };
             document.addEventListener('keydown', e => {
                 onKey(e, true);
-                if(e.code === 'Digit1') switchSlot(0);
-                if(e.code === 'Digit2') switchSlot(1);
-                if(e.code === 'Digit3') switchSlot(2);
-                if(e.code === 'Digit4') switchSlot(3);
-                if(e.code === 'Digit5') switchSlot(4);
-                if(e.code === 'KeyE') tryInteract(); 
-                if(e.code === 'KeyB') buildWall(); 
+                if(!isMobileMode && controls.isLocked) {
+                    if(e.code === 'Digit1') switchSlot(0);
+                    if(e.code === 'Digit2') switchSlot(1);
+                    if(e.code === 'Digit3') switchSlot(2);
+                    if(e.code === 'Digit4') switchSlot(3);
+                    if(e.code === 'Digit5') switchSlot(4);
+                    if(e.code === 'KeyE') tryInteract(); 
+                    if(e.code === 'KeyB') buildWall(); 
+                }
             });
             document.addEventListener('keyup', e => onKey(e, false));
             
-            // 4. PC Mode: Mouse buttons
+            // 2. PC Mode: Mouse buttons
             document.addEventListener('mousedown', e => {
-                if(player.dead || !controls.isLocked) return;
+                if(player.dead || isMobileMode || !controls.isLocked) return;
                 if(e.button === 0) inputs.fire = true;
                 if(e.button === 2) toggleADS(true);
             });
             document.addEventListener('mouseup', e => {
+                if(player.dead || isMobileMode) return;
                 if(e.button === 0) inputs.fire = false;
                 if(e.button === 2) toggleADS(false);
             });
 
-            // 5. Mobile Touch Logic (Left for Movement, Right for Camera)
+            // 3. Mobile Touch Logic (Left for Movement, Right for Camera)
             const touchZoneLeft = document.getElementById('stick-left');
             const touchZoneRight = document.getElementById('stick-right');
             const thumbLeft = document.getElementById('thumb-left');
             const sensitivity = 0.005; // Camera look sensitivity
 
             const handleJoystickLeft = (e) => {
-                // Determine touch relative to the visual circle, not the whole left zone
+                if (!isMobileMode) return;
+                
                 const rect = document.getElementById('movement-zone-visual').getBoundingClientRect();
-                // Find the touch that originated in the left zone
                 let touch = Array.from(e.changedTouches).find(t => t.clientX < window.innerWidth / 2);
                 if (!touch) return;
                 
-                // Get center of the visual control area
                 const cx = rect.left + rect.width / 2;
                 const cy = rect.top + rect.height / 2;
                 
@@ -1940,42 +1972,37 @@
                     dx *= ratio; dy *= ratio;
                 }
                 
-                // Move visual thumb
                 thumbLeft.style.transform = `translate(${dx}px, ${dy}px)`;
                 
-                // Apply movement inputs
                 inputs.w = dy < -10; inputs.s = dy > 10;
                 inputs.a = dx < -10; inputs.d = dx > 10;
                 inputs.sprint = dist > 30; 
             };
 
             const resetStickLeft = () => {
+                if (!isMobileMode) return;
                 thumbLeft.style.transform = `translate(-50%, -50%)`; 
                 inputs.w=false; inputs.s=false; inputs.a=false; inputs.d=false; inputs.sprint = false;
             };
 
             const activeTouchesRight = new Map();
             const handleLookRight = (e) => {
+                if (!isMobileMode) return;
                 e.preventDefault();
-                const rightZoneRect = touchZoneRight.getBoundingClientRect();
                 
                 for (let touch of e.changedTouches) {
-                    // Only process touches that are within the right 50% screen area (for camera)
                     if (touch.clientX >= window.innerWidth / 2) { 
                         if (!activeTouchesRight.has(touch.identifier)) {
-                            // Start tracking a new touch for camera look
                             activeTouchesRight.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
                         } else {
                             const lastTouch = activeTouchesRight.get(touch.identifier);
                             const dx = touch.clientX - lastTouch.x;
                             const dy = touch.clientY - lastTouch.y;
                             
-                            // Rotate the camera based on touch movement
                             camera.rotation.y -= dx * sensitivity; 
                             camera.rotation.x -= dy * sensitivity; 
-                            camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x)); // Clamp vertical look
+                            camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
 
-                            // Update last position
                             activeTouchesRight.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
                         }
                     }
@@ -1983,13 +2010,12 @@
             };
             
             const handleTouchEnd = (e) => {
+                if (!isMobileMode) return;
                 for (let touch of e.changedTouches) {
-                    // Check if the touch that ended was tracking for the camera
                     if (activeTouchesRight.has(touch.identifier)) {
                         activeTouchesRight.delete(touch.identifier);
                     }
                 }
-                // Check if the touch that ended was for the movement stick
                 if (Array.from(e.changedTouches).some(t => t.clientX < window.innerWidth / 2)) {
                     resetStickLeft();
                 }
@@ -1997,37 +2023,45 @@
 
 
             // Left Zone: Movement
-            touchZoneLeft.addEventListener('touchstart', (e) => {
-                // Only process touches starting in the left zone for joystick visuals/input
-                if (e.touches[0].clientX < window.innerWidth / 2) {
-                    handleJoystickLeft(e);
-                }
-            }, { passive: true });
+            touchZoneLeft.addEventListener('touchstart', handleJoystickLeft, { passive: true });
             touchZoneLeft.addEventListener('touchmove', handleJoystickLeft, { passive: true });
             touchZoneLeft.addEventListener('touchend', handleTouchEnd);
             touchZoneLeft.addEventListener('touchcancel', handleTouchEnd);
             
-            // Right Zone: Camera Look (Full 50% width, invisible)
+            // Right Zone: Camera Look
             touchZoneRight.addEventListener('touchstart', handleLookRight);
             touchZoneRight.addEventListener('touchmove', handleLookRight);
             touchZoneRight.addEventListener('touchend', handleTouchEnd);
             touchZoneRight.addEventListener('touchcancel', handleTouchEnd);
 
 
-            // 6. Mobile Buttons (Must use ontouchstart/touchend to avoid interference with camera look)
-            document.getElementById('btn-fire').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.fire = true; });
-            document.getElementById('btn-fire').addEventListener('touchend', (e) => { e.preventDefault(); inputs.fire = false; });
-            document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); inputs.jump = true; });
-            document.getElementById('btn-jump').addEventListener('touchend', (e) => { e.preventDefault(); inputs.jump = false; });
-            document.getElementById('btn-interact').addEventListener('touchstart', (e) => { e.preventDefault(); tryInteract(); });
-            document.getElementById('btn-build').addEventListener('touchstart', (e) => { e.preventDefault(); buildWall(); });
-            document.getElementById('btn-ads').addEventListener('touchstart', (e) => { e.preventDefault(); toggleADS(true); });
-            document.getElementById('btn-ads').addEventListener('touchend', (e) => { e.preventDefault(); toggleADS(false); });
+            // 4. Mobile Buttons (Must use ontouchstart/touchend to avoid interference with camera look)
+            document.getElementById('btn-fire').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); inputs.fire = true; } });
+            document.getElementById('btn-fire').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); inputs.fire = false; } });
+            document.getElementById('btn-jump').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); inputs.jump = true; } });
+            document.getElementById('btn-jump').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); inputs.jump = false; } });
+            document.getElementById('btn-interact').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); tryInteract(); } });
+            document.getElementById('btn-build').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); buildWall(); } });
+            document.getElementById('btn-ads').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(true); } });
+            document.getElementById('btn-ads').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(false); } });
+            
+            // 5. Mobile Inventory Touch Handling (Need to add mobile interaction logic for inventory buttons)
+            for(let i=0; i<5; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                if (slot) {
+                    slot.ontouchstart = (e) => {
+                        if (isMobileMode) {
+                            e.preventDefault(); 
+                            switchSlot(i);
+                        }
+                    };
+                }
+            }
         }
 
 
         // ===============================================================
-        // === INITIALIZATION & SETUP ====================================
+        // === INITIALIZATION & START GAME ===============================
         // ===============================================================
 
         function init() {
@@ -2062,9 +2096,9 @@
             weaponScene.add(ambient.clone());
             weaponScene.add(sun.clone());
             
-            // 3. Controls and Dynamic Input Setup
+            // 3. Controls (Instantiated, but not enabled/locked yet)
             controls = new PointerLockControls(camera, document.body);
-            setupInputs(gameContainer);
+            setupInputs(); // Set up all listeners, but they are gated by isMobileMode/controls.isLocked
 
             // 4. Raycasters
             raycaster = new THREE.Raycaster();
@@ -2082,16 +2116,31 @@
             // Set player starting height
             camera.position.set(0, getTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
 
-            // 6. Starter Loot & UI
+            // 6. Starter Loot & UI (Initial State)
             giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
             giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1); // Starter minis
             giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1 }, 2);
             player.wood = 50; 
             updateUI();
+            
+            // The game loop starts immediately to render the world behind the start screen
+            animate();
+        }
 
+        window.startGame = (isMobile) => {
+            document.getElementById('start-screen').style.display = 'none';
+            gameStarted = true;
+            
+            if (isMobile) {
+                setMobileMode(true);
+            } else {
+                setMobileMode(false);
+                setupPCLock(); // Enable PC lock behavior
+            }
+            
             // 7. Start Storm Timer
             startStormTimer(); 
-        }
+        };
 
         // ===============================================================
         // === CORE GAME LOOP (ANIMATE) ==================================
@@ -2104,7 +2153,11 @@
             const dt = (now - lastTime) / 1000;
             lastTime = now;
 
-            if(player.dead) return;
+            if(!gameStarted || player.dead) {
+                renderer.clear();
+                renderer.render(scene, camera);
+                return;
+            }
 
             // 0. Healing Update
             if (player.isHealing && player.healingItem) {
@@ -2122,57 +2175,59 @@
             if(player.vehicle) {
                 updateCars(dt);
             } else {
-                const currentSpeed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED;
-                
-                const direction = new THREE.Vector3();
-                camera.getWorldDirection(direction);
-                direction.y = 0;
-                direction.normalize();
-                
-                const right = new THREE.Vector3(-direction.z, 0, direction.x);
+                // Movement is only processed if in mobile mode OR if PC is locked
+                const canMove = isMobileMode || controls.isLocked; 
+                if (canMove) {
+                    const currentSpeed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED;
+                    
+                    const direction = new THREE.Vector3();
+                    camera.getWorldDirection(direction);
+                    direction.y = 0;
+                    direction.normalize();
+                    
+                    const right = new THREE.Vector3(-direction.z, 0, direction.x);
 
-                const yVelocity = velocity.y; 
-                velocity.set(0, yVelocity, 0); 
+                    const yVelocity = velocity.y; 
+                    velocity.set(0, yVelocity, 0); 
 
-                if(inputs.w) velocity.add(direction.clone().multiplyScalar(currentSpeed));
-                if(inputs.s) velocity.add(direction.clone().multiplyScalar(-currentSpeed));
-                if(inputs.a) velocity.add(right.clone().multiplyScalar(-currentSpeed));
-                if(inputs.d) velocity.add(right.clone().multiplyScalar(currentSpeed));
-                
-                camera.position.x += velocity.x * dt;
-                camera.position.z += velocity.z * dt;
-                velocity.y -= GRAVITY * dt; 
-                
-                const groundY = getTerrainHeight(camera.position.x, camera.position.z);
-                let floorY = groundY;
-                
-                downRay.ray.origin.copy(camera.position);
-                const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj)), false); 
-                
-                if(hits.length > 0) {
-                    const closestHit = hits[0];
-                    if (closestHit.point.y > groundY + 0.1) { 
-                        floorY = closestHit.point.y;
+                    if(inputs.w) velocity.add(direction.clone().multiplyScalar(currentSpeed));
+                    if(inputs.s) velocity.add(direction.clone().multiplyScalar(-currentSpeed));
+                    if(inputs.a) velocity.add(right.clone().multiplyScalar(-currentSpeed));
+                    if(inputs.d) velocity.add(right.clone().multiplyScalar(currentSpeed));
+                    
+                    camera.position.x += velocity.x * dt;
+                    camera.position.z += velocity.z * dt;
+                    velocity.y -= GRAVITY * dt; 
+                    
+                    const groundY = getTerrainHeight(camera.position.x, camera.position.z);
+                    let floorY = groundY;
+                    
+                    downRay.ray.origin.copy(camera.position);
+                    const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj)), false); 
+                    
+                    if(hits.length > 0) {
+                        const closestHit = hits[0];
+                        if (closestHit.point.y > groundY + 0.1) { 
+                            floorY = closestHit.point.y;
+                        }
                     }
-                }
-                
-                if (camera.position.y <= floorY + PLAYER_HEIGHT && velocity.y <= 0) {
-                    camera.position.y = floorY + PLAYER_HEIGHT;
-                    velocity.y = 0;
-                    isGrounded = true;
+                    
+                    if (camera.position.y <= floorY + PLAYER_HEIGHT && velocity.y <= 0) {
+                        camera.position.y = floorY + PLAYER_HEIGHT;
+                        velocity.y = 0;
+                        isGrounded = true;
+                    } else {
+                        isGrounded = false;
+                    }
+                    
+                    if(inputs.jump && isGrounded) {
+                        velocity.y = JUMP_FORCE;
+                        isGrounded = false;
+                        inputs.jump = false; 
+                    }
+                    
+                    camera.position.y += velocity.y * dt;
                 } else {
-                    isGrounded = false;
-                }
-                
-                if(inputs.jump && isGrounded) {
-                    velocity.y = JUMP_FORCE;
-                    isGrounded = false;
-                    inputs.jump = false; 
-                }
-                
-                camera.position.y += velocity.y * dt;
-
-                if(!controls.isLocked && !isMobileMode) {
                     velocity.x = 0; 
                     velocity.z = 0;
                 }
@@ -2180,7 +2235,8 @@
 
 
             // 2. Shooting & Projectiles
-            if(inputs.fire && !player.vehicle && !player.isHealing) {
+            const canFire = isMobileMode || controls.isLocked; 
+            if(inputs.fire && !player.vehicle && !player.isHealing && canFire) {
                 const item = player.inventory[player.slot];
                 if(item && item.category === 'weapon') {
                     if(now - lastShot > item.stats.rate * 1000) {
@@ -2221,7 +2277,6 @@
         
         // Final call to start the game
         init();
-        animate();
     </script>
 </body>
 </html>
