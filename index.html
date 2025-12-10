@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V15.0 - Apex Predator</title>
+    <title>Web Battle Royale: V16.0 - Final Apex Predator</title>
     <style>
         /* ======================================= */
-        /* === V15.0 CLEAN & POLISHED UI/UX === */
+        /* === V16.0 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         /* Font fix: Removed external Google Font (Rajdhani, Oswald) to avoid 400 error */
@@ -389,11 +389,11 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V15.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V16.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        const BOT_COUNT = 20; // Changed from 30 to 20
+        const BOT_COUNT = 20; 
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
@@ -407,20 +407,16 @@
             RARE: { color: '#007bff', mul: 1.4, name: "R" },
             EPIC: { color: '#a335ee', mul: 1.6, name: "E" },
             LEGENDARY: { color: '#ffd700', mul: 2.0, name: "L" },
-            MYTHIC: { color: '#ff4d4d', mul: 2.5, name: "M" } // New Mythic Rarity
+            MYTHIC: { color: '#ff4d4d', mul: 2.5, name: "M" } 
         };
 
         const WEAPONS = {
-            // Replaced RASG with Pump Shotgun
             PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 2.0, bulletType: 'hitscan' }, 
-            // Replaced AR with Rapid Fire AR
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.3, bulletType: 'hitscan' }, 
             SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.1, bulletType: 'hitscan' },
             SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 3.0, bulletType: 'hitscan' },
-            RL:   { name: "Rocket", dmg: 130, head: 130, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 80, radius: 2, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, // Damage increased to 130
+            RL:   { name: "Rocket", dmg: 130, head: 130, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 80, radius: 2, recoil: 0, bulletType: 'projectile', projSpeed: 50 }, 
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.3, bulletType: 'hitscan' },
-            
-            // New Mythic Weapon
             CSAR: { name: "Creator AR", dmg: 20, head: 35, rate: 0.2, mag: 40, range: 300, spread: 0.01, pellets: 1, auto: true, icon: '👑', reload: 1500, recoil: 0.2, bulletType: 'hitscan' }
         };
         const MYTHIC_WEAPON_KEY = 'CSAR';
@@ -434,7 +430,6 @@
         };
 
         // --- STORM PHASES ---
-        // Damage is now per-second based on the main loop
         const STORM_PHASES = [
             { time: 240, radius: WORLD_SIZE * 0.5, damage: 3, status: "Wait" }, 
             { time: 60, radius: WORLD_SIZE * 0.4, damage: 3, status: "Shrink" }, 
@@ -442,7 +437,7 @@
             { time: 60, radius: WORLD_SIZE * 0.3, damage: 5, status: "Shrink" }, 
             { time: 60, radius: 10, damage: 10, status: "Deathmatch" } 
         ];
-        const BOT_STORM_DAMAGE = 5; // NPCs take 5 damage per second
+        const BOT_STORM_DAMAGE = 5; 
 
         // ===============================================================
         // === GLOBAL STATE VARIABLES ====================================
@@ -460,7 +455,7 @@
             isHealing: false,
             healingItem: null,
             healingStartTime: 0,
-            lastStormDamage: 0 // Player storm damage timer
+            lastStormDamage: 0 
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false };
@@ -489,8 +484,6 @@
         let stormPhase = 0;
         let stormActive = false;
         let stormTimerInterval;
-
-        // Minimap was removed, so no MINIMAP_SCALE or POI_LOCATIONS used in rendering/logic
 
         // ===============================================================
         // === UTILITY FUNCTIONS =========================================
@@ -575,7 +568,6 @@
             
             const worldPoint = position.clone().project(camera);
             
-            // Convert normalized coordinates to screen space
             const x = (worldPoint.x * 0.5 + 0.5) * window.innerWidth;
             const y = (-worldPoint.y * 0.5 + 0.5) * window.innerHeight;
             
@@ -648,7 +640,7 @@
             
             stormPhaseTimer = nextPhase.time;
             document.getElementById('storm-status').innerText = nextPhase.status;
-            stormDamageRate = nextPhase.damage; // Update damage rate for the phase start
+            stormDamageRate = nextPhase.damage; 
             
             const startRadius = stormRadius;
             const endRadius = nextPhase.radius;
@@ -671,7 +663,6 @@
                     stormActive = true; 
                 } else if (nextPhase.status === "Hold" || nextPhase.status === "Deathmatch") {
                     stormActive = true;
-                    // stormDamageRate is already set
                 } else if (nextPhase.status === "Wait") {
                     stormActive = false;
                 }
@@ -692,7 +683,7 @@
             if (stormActive && distToStorm > stormRadius && stormDamageRate > 0) {
                 document.getElementById('storm-overlay').style.display = 'block';
                 if (now - player.lastStormDamage > 1000) {
-                    takeDamage(stormDamageRate, camera.position); // Storm damage for player is 3 per second
+                    takeDamage(stormDamageRate, camera.position); 
                     player.lastStormDamage = now;
                 }
             } else {
@@ -705,7 +696,7 @@
                 const botDistToStorm = botPos2D.distanceTo(stormCenter);
                 if (stormActive && botDistToStorm > stormRadius && BOT_STORM_DAMAGE > 0) {
                      if (now - (bot.lastStormDamage || 0) > 1000) {
-                        applyDamage(bot, BOT_STORM_DAMAGE, bot.mesh.position, null); // Storm damage for NPC is 5 per second
+                        applyDamage(bot, BOT_STORM_DAMAGE, bot.mesh.position, null); 
                         bot.lastStormDamage = now;
                     }
                 }
@@ -745,33 +736,33 @@
             const h = getTerrainHeight(x, z);
             createBox(x, h+10, z, 5, 20, 5, 0x999999);
             createBox(x, h+21, z, 7, 2, 7, 0xAAAAAA);
-            spawnChest(x, h+23, z); // Added Chest
+            spawnChest(x, h+23, z); 
         }
         function createBuilding(x, z, size, height, depth, color, rotation) {
             const h = getTerrainHeight(x, z);
             const mesh = createBox(x, h + height/2, z, size, height, depth, color);
             mesh.rotation.y = rotation;
-            spawnChest(x+size/4, h+1, z+depth/4); // Added Chest
+            spawnChest(x+size/4, h+1, z+depth/4); 
         }
         function createBunker(x, z, size, height, depth) {
             const h = getTerrainHeight(x, z);
             createBox(x, h + height/2, z, size, height, depth, 0x555555);
-            createBox(x, h + 0.5, z+depth/2, size/2, 1, 0.1, 0xAAAAAA); // Entrance
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h + 0.5, z+depth/2, size/2, 1, 0.1, 0xAAAAAA); 
+            spawnChest(x, h+1, z); 
         }
         function createWoodHouse(x, z, size, height, depth) {
             const h = getTerrainHeight(x, z);
             createBox(x, h+height/2, z, size, height, depth, 0x8B4513);
-            createBox(x, h+height+1, z, size+2, 2, depth+2, 0x555555); // Roof
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h+height+1, z, size+2, 2, depth+2, 0x555555); 
+            spawnChest(x, h+1, z); 
         }
         function createTree(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); // Trunk
-            createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); // Leaves
+            createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); 
+            createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
-        // === 12 NEW POIS ===
+        // === POIS ===
         function createRetailRow(x, z) {
             const h = getTerrainHeight(x, z);
             createBox(x, h+2, z, 30, 4, 10, 0xAAAAAA); 
@@ -788,7 +779,7 @@
             scene.add(water);
             createBox(x+25, h+2, z, 5, 4, 5, 0xAAAA00); 
             spawnLoot(x, h, z, 'weapon');
-            spawnChest(x+25, h+3, z); // Added Chest
+            spawnChest(x+25, h+3, z); 
         }
 
         function createShiftyShafts(x, z) {
@@ -804,7 +795,7 @@
             createBox(x, h+3, z, 10, 6, 15, 0xFFF0F0); 
             createDoor(x, h, z+7, 0);
             createTree(x+15, z);
-            spawnChest(x, h+1, z); // Added Chest
+            spawnChest(x, h+1, z); 
         }
         
         function createTomatoTown(x, z) {
@@ -816,26 +807,25 @@
             spawnChest(x, h+1, z);
         }
         
-        // NEW POIS 
         function createSaltySprings(x, z) {
             const h = getTerrainHeight(x, z);
             createBox(x, h+3, z, 15, 6, 10, 0xD2B48C); 
             createBox(x+10, h+3, z+10, 8, 6, 5, 0xF5F5DC);
-            spawnChest(x, h+1, z); // Added Chest
+            spawnChest(x, h+1, z); 
         }
 
         function createFatalFields(x, z) {
             const h = getTerrainHeight(x, z);
             createBox(x, h+1.5, z, 15, 3, 15, 0x8B4513); 
             createBox(x, h+5, z, 5, 4, 5, 0xFFD700); 
-            spawnChest(x, h+1, z); // Added Chest
+            spawnChest(x, h+1, z); 
         }
 
         function createRiskyReels(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x-20, h+1, z, 1, 10, 40, 0x000000); // Screen
-            createBox(x+10, h+2, z, 15, 4, 15, 0x555555); // Projector Building
-            spawnChest(x+10, h+3, z); // Added Chest
+            createBox(x-20, h+1, z, 1, 10, 40, 0x000000); 
+            createBox(x+10, h+2, z, 15, 4, 15, 0x555555); 
+            spawnChest(x+10, h+3, z); 
         }
 
         function createTheGrotto(x, z) {
@@ -844,58 +834,58 @@
             entrance.position.set(x, h-15, z);
             scene.add(entrance);
             spawnLoot(x, h-10, z, 'weapon');
-            spawnChest(x, h-10, z); // Added Chest
+            spawnChest(x, h-10, z); 
         }
 
         function createSlurpySwamp(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+5, z, 20, 10, 20, 0x00FF00); // Slurp factory building
-            createBox(x-10, h+2, z+15, 5, 4, 5, 0x00AABB); // Slurp puddle
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h+5, z, 20, 10, 20, 0x00FF00); 
+            createBox(x-10, h+2, z+15, 5, 4, 5, 0x00AABB); 
+            spawnChest(x, h+1, z); 
         }
 
         function createMistyMeadows(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+4, z, 10, 8, 10, 0xFFFFFF); // Hotel
-            createBox(x+5, h+2, z-5, 5, 4, 5, 0x00FF00); // Park
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h+4, z, 10, 8, 10, 0xFFFFFF); 
+            createBox(x+5, h+2, z-5, 5, 4, 5, 0x00FF00); 
+            spawnChest(x, h+1, z); 
         }
 
         function createTheFortilla(x, z) {
             const h = getTerrainHeight(x, z) + 5;
-            createBox(x, h, z, 25, 1, 25, 0x888888); // Raft
-            createBox(x+10, h+3, z+10, 5, 6, 5, 0x0000FF); // Tower
-            spawnChest(x+10, h+7, z+10); // Added Chest
+            createBox(x, h, z, 25, 1, 25, 0x888888); 
+            createBox(x+10, h+3, z+10, 5, 6, 5, 0x0000FF); 
+            spawnChest(x+10, h+7, z+10); 
         }
         
         function createSteamyStacks(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x-10, h+15, z, 5, 30, 5, 0xAAAAAA); // Stack 1
-            createBox(x+10, h+15, z, 5, 30, 5, 0xAAAAAA); // Stack 2
-            createBox(x, h+5, z, 30, 10, 30, 0x666666); // Base
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x-10, h+15, z, 5, 30, 5, 0xAAAAAA); 
+            createBox(x+10, h+15, z, 5, 30, 5, 0xAAAAAA); 
+            createBox(x, h+5, z, 30, 10, 30, 0x666666); 
+            spawnChest(x, h+1, z); 
         }
 
         function createSweatySands(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+3, z, 20, 6, 15, 0xFFD700); // Resort
-            createBox(x-10, h+1, z+10, 1, 2, 1, 0xFF0000); // Beach umbrella
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h+3, z, 20, 6, 15, 0xFFD700); 
+            createBox(x-10, h+1, z+10, 1, 2, 1, 0xFF0000); 
+            spawnChest(x, h+1, z); 
         }
         
         function createWeepingWoods(x, z) {
             for(let i=0; i<8; i++) {
                 createTree(x + (Math.random()-0.5)*20, z + (Math.random()-0.5)*20);
             }
-            createBox(x, getTerrainHeight(x, z)+2, z, 5, 4, 5, 0x8B4513); // Cabin
-            spawnChest(x, getTerrainHeight(x, z)+1, z); // Added Chest
+            createBox(x, getTerrainHeight(x, z)+2, z, 5, 4, 5, 0x8B4513); 
+            spawnChest(x, getTerrainHeight(x, z)+1, z); 
         }
         
         function createLazyLake(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+5, z, 15, 10, 15, 0xEEEEEE); // Main building
-            createBox(x+10, h+2, z, 5, 4, 5, 0xFF00FF); // Shop
-            spawnChest(x, h+1, z); // Added Chest
+            createBox(x, h+5, z, 15, 10, 15, 0xEEEEEE); 
+            createBox(x+10, h+2, z, 5, 4, 5, 0xFF00FF); 
+            spawnChest(x, h+1, z); 
         }
 
         function generatePOIs() {
@@ -906,7 +896,7 @@
                 createTower(x, z);
             }
 
-            // POI 2-5 (Existing V13)
+            // Other POIs
             createBuilding(-200, -200, 20, 10, 30, 0x444444, Math.PI/2);
             createBunker(200, -200, 15, 8, 20);
             createWoodHouse(-200, 200, 10, 12, 15); 
@@ -916,7 +906,7 @@
             createPleasantPark(-280, 0);
             createTomatoTown(280, 0);
 
-            // 12 More POIS (All updated with Chests)
+            // 12 More POIS
             createSaltySprings(50, 200); 
             createFatalFields(150, -100); 
             createRiskyReels(-150, 100); 
@@ -938,7 +928,6 @@
         }
 
         function spawnCars() {
-            // Reduced car count (10% less common, meaning 90% of original 5 is 4.5, rounding to 4)
             for(let i=0; i<4; i++) {
                 const x = (Math.random()-0.5)*200;
                 const z = (Math.random()-0.5)*200;
@@ -992,10 +981,8 @@
         }
 
         function spawnBots() {
-            // NPC count changed to 20
             for(let i=0; i<BOT_COUNT; i++) { 
                 let x, z;
-                // Try to spawn them away from the center (Tilted)
                 do {
                     x = (Math.random()-0.5)*WORLD_SIZE*0.8;
                     z = (Math.random()-0.5)*WORLD_SIZE*0.8;
@@ -1006,15 +993,16 @@
                 const mesh = createBotMesh(x, h + 1, z);
                 scene.add(mesh);
                 
-                const botWeaponKeys = Object.keys(WEAPONS).filter(k => k !== MYTHIC_WEAPON_KEY); // Bots cannot spawn with mythic
-                const randomWeapon = botWeaponKeys[Math.floor(Math.random() * botWeaponKeys.length)];
+                // Final requirement: Bots spawn with a random weapon at random rarity
+                const randomWeaponKey = getRandomWeaponKey();
+                const randomRarity = getRandomWeaponRarity();
                 
                 bots.push({ 
                     mesh: mesh, 
                     health: 100, 
                     target: null, 
                     lastShot: 0, 
-                    weapon: createWeaponItem(randomWeapon, 'COMMON'),
+                    weapon: createWeaponItem(randomWeaponKey, randomRarity), // Guaranteed weapon
                     lastMove: performance.now(),
                     velocity: new THREE.Vector3(0, 0, 0),
                     lastStormDamage: 0
@@ -1118,7 +1106,6 @@
                     const currentItem = player.inventory[player.slot];
 
                     if (currentItem && !currentItem.continuous && currentItem.category === currentLoot.data.category) {
-                        // Stack if possible (only for non-continuous consumables for simplicity)
                         if (currentItem.category === 'consumable') {
                              currentItem.count += currentLoot.data.count;
                              scene.remove(currentLoot.mesh);
@@ -1245,12 +1232,9 @@
                 return true;
             }
 
-            // Consumable stacking/using logic
+            // Consumable logic (instant use if full health/shield, or place in inventory)
             if (item.category === 'consumable') {
-                if (!item.continuous && item.type !== 'shield' && item.type !== 'health') {
-                    // Try to stack non-healing consumables first (not implemented)
-                } else if (!item.continuous) {
-                    // Try to use healing consumables instantly
+                if (!item.continuous) {
                     let consumed = false;
                     if (item.type === 'shield' && player.shield < item.max) {
                         player.shield = Math.min(item.max, player.shield + item.val);
@@ -1324,46 +1308,48 @@
 
             camera.rotation.x += item.stats.recoil * 0.01;
             
+            const fireOrigin = camera.position.clone();
+            const fireDirection = new THREE.Vector3();
+            camera.getWorldDirection(fireDirection);
+            
             if (item.stats.bulletType === 'hitscan') {
-                handleHitscan(item, camera);
+                handleHitscan(item, fireOrigin, fireDirection, player);
             } else if (item.stats.bulletType === 'projectile') {
-                handleProjectile(item, camera);
+                handleProjectile(item, fireOrigin, fireDirection);
             }
             
             item.stats.currentMag -= 1;
             updateUI();
         }
 
-        function handleHitscan(item, sourceCamera, shooter=player) {
-            const spread = player.ads ? 0.005 : item.stats.spread;
+        /**
+         * @param {object} item - The weapon stats.
+         * @param {THREE.Vector3} fireOrigin - The world position where the shot originates (player head or bot head).
+         * @param {THREE.Vector3} fireDirection - The normalized vector of the initial shot direction.
+         * @param {object} shooter - The player object or bot object that is shooting.
+         */
+        function handleHitscan(item, fireOrigin, fireDirection, shooter) {
+            // Player uses ADS spread, Bots use base spread
+            const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread; 
             
             for(let p = 0; p < item.stats.pellets; p++) {
-                const rx = (Math.random()-0.5)*spread;
-                const ry = (Math.random()-0.5)*spread;
                 
-                // Fix 5: The Raycaster.setFromCamera expects a proper Camera object or camera-like structure
-                // For NPC shooting, we must ensure the sourceCamera (which is often a placeholder object for bots)
-                // has the necessary matrices. For the player, 'camera' is a real THREE.PerspectiveCamera.
-
-                if (sourceCamera !== camera) {
-                    // This is the NPC custom camera object, we must set its matrixWorld
-                    sourceCamera.updateMatrixWorld();
-                    // NOTE: The previous fix (V14.2) added isPerspectiveCamera: true, 
-                    // this code ensures the matrixWorld is calculated which was the source of the `undefined (reading 'elements')` error.
-                    // The camera needs a projectionMatrix, but since we are faking it and using direct position/direction, 
-                    // we need to set the position and direction before calling setFromCamera.
-                    // For the Raycaster to work with a non-THREE.Camera object, we need to manually compute the ray from the matrix.
-                    // However, the cleanest fix is to ensure the dummy camera has the required properties.
-                    // Since the previous version's fix worked by adding isPerspectiveCamera, we'll try to ensure matrixWorld is valid.
-                    // The error usually happens when setFromCamera is called with a camera whose projectionMatrix or matrixWorld is invalid/undefined.
-                    // Since the dummy camera in updateBots uses object literal, let's pass a standard Camera object if possible.
-                    // Since we can't use a real THREE.Camera for the bots easily, we must rely on the setFromCamera's fallback logic.
-                }
-
-                raycaster.setFromCamera(new THREE.Vector2(rx, ry), sourceCamera);
+                const ray = new THREE.Raycaster(fireOrigin);
                 
+                // Add random spread to the direction vector
+                const spreadDir = fireDirection.clone();
+                const randomX = (Math.random() - 0.5) * spread;
+                const randomY = (Math.random() - 0.5) * spread;
+                
+                // This is a simplified way to add spread (pitch/yaw adjustment)
+                spreadDir.x += randomX;
+                spreadDir.y += randomY;
+                spreadDir.normalize();
+
+                ray.ray.direction.copy(spreadDir);
+
                 const targets = bots.map(b => b.mesh).concat(objects).concat(cars.map(c=>c.mesh));
-                const hits = raycaster.intersectObjects(targets, true);
+                const hits = ray.intersectObjects(targets, true);
                 
                 if(hits.length > 0) {
                     const hit = hits[0];
@@ -1383,19 +1369,20 @@
                     // Check if player was hit (only applicable if shooter is a bot)
                     if (shooter !== player) {
                         const playerDist = hit.point.distanceTo(camera.position);
-                        // A rough check if the player's bounding box was hit
                         if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
                     }
 
                     if(hitBot && hitBot !== shooter) {
                         let dmg = item.stats.dmg;
-                        if (hit.point.y > hitBot.mesh.position.y + 2.0) { // Headshot check on new model
+                        // Headshot check on new model (head is at y=2.4 on bot mesh)
+                        if (hit.point.y > hitBot.mesh.position.y + 2.2) { 
                             dmg = item.stats.head; 
                             isHeadshot = true;
                         }
                         applyDamage(hitBot, dmg, hit.point, shooter, isHeadshot);
                     } else if (hitPlayer) {
                         let dmg = item.stats.dmg;
+                        // Player Headshot check (head is roughly 0.5m above camera position, camera is at PLAYER_HEIGHT)
                         if (hit.point.y > camera.position.y + 0.5) { 
                             dmg = item.stats.head; 
                         }
@@ -1407,21 +1394,18 @@
             }
         }
         
-        function handleProjectile(item, sourceCamera) {
-            const dir = new THREE.Vector3();
-            sourceCamera.getWorldDirection(dir);
-            
+        function handleProjectile(item, fireOrigin, fireDirection) {
             const rocketGeo = new THREE.ConeGeometry(0.2, 0.5, 8);
             const rocketMat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
             const rocketMesh = new THREE.Mesh(rocketGeo, rocketMat);
             
-            rocketMesh.position.copy(sourceCamera.position).add(dir.clone().multiplyScalar(2));
-            rocketMesh.lookAt(rocketMesh.position.clone().add(dir));
+            rocketMesh.position.copy(fireOrigin).add(fireDirection.clone().multiplyScalar(2));
+            rocketMesh.lookAt(rocketMesh.position.clone().add(fireDirection));
             scene.add(rocketMesh);
 
             projectiles.push({
                 mesh: rocketMesh,
-                velocity: dir.multiplyScalar(item.stats.projSpeed),
+                velocity: fireDirection.multiplyScalar(item.stats.projSpeed),
                 damage: item.stats.dmg,
                 radius: item.stats.radius, 
                 source: player 
@@ -1491,13 +1475,13 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
-                    // Kill drop: Random Weapon + Random Healing Item
+                    // FINAL Requirement: Bot Kill drop (Random Weapon + Random Healing Item)
                     const dropWeaponKey = getRandomWeaponKey();
                     const dropWeaponRarity = getRandomWeaponRarity();
                     const dropConsumableKey = getRandomConsumableKey();
 
                     spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, dropWeaponKey, dropWeaponRarity); 
-                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, dropConsumableKey, dropConsumableKey); 
+                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, 'consumable', dropConsumableKey); 
                     
                     checkWin();
                 }
@@ -1535,15 +1519,15 @@
 
 
         // ===============================================================
-        // === BOT AI & LIFE CYCLE (NPC Combat and Storm Damage) =========
+        // === BOT AI & LIFE CYCLE =======================================
         // ===============================================================
 
         function findClosestTarget(bot) {
-            // NPC Teaming: Bots only target the player (or nearest non-player if no player)
-            if (player.health > 0) {
+            // FINAL Requirement: Bots only target the player
+            if (player.health > 0 && !player.dead) {
                 return player;
             } else {
-                return null; // Stop fighting if player is dead
+                return null; 
             }
         }
 
@@ -1562,11 +1546,11 @@
                 const target = findClosestTarget(bot);
                 
                 if(target) {
-                    const targetPos = target === player ? camera.position : target.mesh.position;
+                    const targetPos = camera.position; 
                     const dist = bot.mesh.position.distanceTo(targetPos);
                     
-                    // Only look at target (no smooth rotation for performance)
-                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y, targetPos.z);
+                    // Face the target
+                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 1.8, targetPos.z);
                     
                     // 3. Movement
                     if(dist > 15 && dist < 80) {
@@ -1577,35 +1561,20 @@
                         if (Math.random() > 0.9) bot.mesh.rotateY(Math.PI / 4 * (Math.random() > 0.5 ? 1 : -1));
                     }
                     
-                    // 4. Shoot Logic (NPC shooting player)
+                    // 4. Shoot Logic 
                     const weaponStats = bot.weapon.stats; 
                     if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
                         bot.lastShot = now;
                         
-                        // Critical Fix Implementation: Ensure the dummy camera has projectionMatrix and matrixWorld set up
-                        // This prevents the Raycaster error.
-                        const tempCamera = { 
-                            isPerspectiveCamera: true, 
-                            position: bot.mesh.position.clone().setY(bot.mesh.position.y + 1.8), // Shooting from head height
-                            rotation: bot.mesh.rotation.clone(),
-                            matrixWorld: new THREE.Matrix4(), 
-                            projectionMatrix: camera.projectionMatrix, // Use player's projection for simplicity/compatibility
-                            getWorldDirection: function(targetVector) {
-                                const targetHeight = target === player ? camera.position.y : target.mesh.position.y + 1.8;
-                                targetVector.set(targetPos.x - this.position.x, targetHeight - this.position.y, targetPos.z - this.position.z).normalize();
-                                return targetVector;
-                            }
-                        };
+                        // Calculate firing origin (Bot's head)
+                        const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
                         
-                        // Manually set the dummy camera's matrixWorld based on its position and rotation
-                        const tempMatrix = new THREE.Matrix4();
-                        const tempEuler = new THREE.Euler(tempCamera.rotation.x, tempCamera.rotation.y, tempCamera.rotation.z, 'XYZ');
-                        tempMatrix.makeRotationFromEuler(tempEuler);
-                        tempMatrix.setPosition(tempCamera.position);
-                        tempCamera.matrixWorld.copy(tempMatrix);
+                        // Calculate firing direction (from bot to player's center mass)
+                        const fireDirection = new THREE.Vector3();
+                        fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
 
-
-                        handleHitscan(bot.weapon, tempCamera, bot);
+                        // FINAL FIX IMPLEMENTATION: Pass origin and direction directly to hitscan
+                        handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
                     }
                 } else {
                     // Wander
@@ -1619,7 +1588,7 @@
         }
 
         // ===============================================================
-        // === VEHICLE LOGIC (Car Damage) ================================
+        // === VEHICLE LOGIC =============================================
         // ===============================================================
 
         function updateCars(dt) {
@@ -1661,7 +1630,7 @@
 
 
         // ===============================================================
-        // === UI & RENDER FUNCTIONS (Minimap Removed) ===================
+        // === UI & RENDER FUNCTIONS =====================================
         // ===============================================================
         
         function updateUI() {
@@ -1791,7 +1760,7 @@
                     
                     if(e.code === 'Space' && v) inputs.jump = true; 
                     if(e.code === 'KeyR' && v) inputs.reload = true; 
-                    if(e.code === 'KeyX' && v) useHealingItem(); // Use healing item key
+                    if(e.code === 'KeyX' && v) useHealingItem(); 
                 }
             };
             document.addEventListener('keydown', e => {
@@ -2076,7 +2045,7 @@
             renderer.render(weaponScene, weaponCamera);
             
             // 5. UI Updates
-            // Minimap removed
+            updateUI();
         }
 
         window.addEventListener('resize', () => {
