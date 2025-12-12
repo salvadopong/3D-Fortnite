@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.0 - Final Overhaul</title>
+    <title>Web Battle Royale: V19.1 - Final Overhaul</title>
     <style>
         /* ======================================= */
-        /* === V19.0 CLEAN & POLISHED UI/UX === */
+        /* === V19.1 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         body { 
@@ -559,7 +559,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.1) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -781,7 +781,9 @@
                 }
             } else {
                 // If not scoped (or hip-firing a scoped weapon), crosshair should only appear if it's not a sniper
-                crosshair.style.display = (isClassicScope || isRedDotScope) ? 'none' : 'block';
+                // Also, snipers should have no crosshair when not scoped (hip-firing)
+                const isSniperFamily = item && item.category === 'weapon' && (item.stats.scope === 'classic' || item.stats.scope === 'red_dot');
+                crosshair.style.display = (isSniperFamily && !bool) ? 'none' : 'block';
                 camera.fov = 75;
             }
 
@@ -846,6 +848,7 @@
             
             objects.push(wall);
             // Mark the wall as 'indestructible_wood'
+            // Health is set to a large number or Infinity to make it indestructible by bots/weapons
             buildings.push({ mesh: wall, type: 'indestructible_wood', health: Infinity }); 
             player.wood -= 10;
             updateUI();
@@ -1446,7 +1449,8 @@
                 item.rarity = RARITY_MULTIPLIERS[base.rarity]; // Set rarity object for visuals
             } else if (typeof type === 'object') {
                 item = type; 
-                if (item.category === 'consumable') {
+                if (item.category === 'consumable' && typeof item.rarity === 'string') {
+                    // Ensure item.rarity is the object for UI if it was passed as a string key
                     item.rarity = RARITY_MULTIPLIERS[item.rarity];
                 }
             } else {
@@ -1454,7 +1458,7 @@
             }
 
             let color = 0x808080;
-            if (item.rarity) color = parseInt(item.rarity.color.substring(1), 16);
+            if (item.rarity && item.rarity.color) color = parseInt(item.rarity.color.substring(1), 16);
             else if (item.category === 'consumable') color = 0x00d2ff;
 
             const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE.MeshStandardMaterial({color: color}));
@@ -1584,14 +1588,17 @@
                     } else {
                         // Hit a building/object
                         const buildingHit = buildings.find(b => b.mesh === hit.object);
-                        if (buildingHit && buildingHit.type !== 'indestructible_wood') {
-                            // Only destroy non-wood buildings
-                            buildingHit.health -= 50; 
-                            if (buildingHit.health <= 0) {
-                                scene.remove(buildingHit.mesh);
-                                objects = objects.filter(obj => obj !== buildingHit.mesh);
-                                buildings = buildings.filter(bldg => bldg !== buildingHit);
+                        if (buildingHit) {
+                            if (buildingHit.type !== 'indestructible_wood') {
+                                // Only destroy non-wood buildings (for weapons, not for the bot logic)
+                                buildingHit.health -= 50; 
+                                if (buildingHit.health <= 0) {
+                                    scene.remove(buildingHit.mesh);
+                                    objects = objects.filter(obj => obj !== buildingHit.mesh);
+                                    buildings = buildings.filter(bldg => bldg !== buildingHit);
+                                }
                             }
+                            // If it's 'indestructible_wood', no damage is done (rule 7)
                         }
                         playSound('impact_hit');
                     }
@@ -1652,6 +1659,7 @@
             // 1. Damage Player
             if (hitPoint.distanceTo(camera.position) < projectile.radius) {
                 const dist = hitPoint.distanceTo(camera.position);
+                // Damage slightly changes due to how close the NPC was to the impact point (max 5m radius)
                 const reduction = Math.max(0, dist / projectile.radius);
                 const damage = projectile.damage * (1 - reduction);
                 takeDamage(damage, hitPoint);
@@ -1713,7 +1721,12 @@
                     
                     const dropConsumableKey = getRandomConsumableKey();
                     const consumableBase = CONSUMABLES[dropConsumableKey];
-                    const healingItemDrop = { category: 'consumable', ...consumableBase, count: 1, rarity: consumableBase.rarity };
+                    const healingItemDrop = { 
+                        category: 'consumable', 
+                        ...CONSUMABLES[dropConsumableKey], // Use spread to copy base properties
+                        count: 1, 
+                        rarity: CONSUMABLES[dropConsumableKey].rarity // Pass the string key rarity
+                    };
                     
                     spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
                     spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
@@ -1815,6 +1828,7 @@
                     const dist = bot.mesh.position.distanceTo(targetPos);
                     
                     // 3. Combat/Follow Movement (Only follow if within 30m)
+                    // Rule 5: If the bot is further than 30 metres than it will not automatically try and follow the player
                     if (dist < 30) {
                         // Face the target
                         bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
@@ -1827,6 +1841,10 @@
                         } else {
                             bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.5);
                         }
+                        
+                        // Reset wander cooldown if actively pursuing
+                        bot.moveCooldown = 1000; 
+
                     } else {
                         // Wander logic if further than 30m
                         bot.moveCooldown -= dt * 1000;
@@ -1929,16 +1947,29 @@
             player.inventory.forEach((item, i) => {
                 const el = document.getElementById('slot-'+i);
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
+                
+                let rarityKey = ''; // Default to empty/no rarity class
+                
                 if(item) {
                     const icon = item.category === 'weapon' ? item.stats.icon : item.icon;
                     const name = item.name; 
                     const count = item.category === 'consumable' ? item.count : '';
 
                     el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-name">${name} ${count ? '['+count+']' : ''}</div>`;
-                    let rarityKey = 'common';
-                    if (item.rarity) {
-                        rarityKey = Object.keys(RARITY_MULTIPLIERS).find(key => RARITY_MULTIPLIERS[key] === item.rarity).toLowerCase();
+                    
+                    // === FIX APPLIED HERE ===
+                    if (item.rarity && item.rarity.color) {
+                         // Find the string key for the rarity object (e.g., 'COMMON')
+                         const rarityEntry = Object.entries(RARITY_MULTIPLIERS).find(([, value]) => value === item.rarity);
+                         if (rarityEntry) {
+                            rarityKey = rarityEntry[0].toLowerCase(); // e.g., 'common'
+                         } else if (typeof item.rarity === 'string') {
+                            // Fallback if rarity was stored as a string key for consumables (less ideal, but safe)
+                             rarityKey = item.rarity.toLowerCase();
+                         }
                     }
+                    // === END FIX ===
+
                     el.className = `slot ${i===player.slot ? 'active' : ''} rarity-${rarityKey}`;
                 } else {
                     el.className = `slot ${i===player.slot ? 'active' : ''}`;
@@ -1982,7 +2013,9 @@
             
             if(item && item.category === 'weapon') {
                 const geo = new THREE.BoxGeometry(0.1, 0.1, 0.4);
-                const mat = new THREE.MeshStandardMaterial({ color: item.rarity.color });
+                // Ensure rarity color is used if available, default to white
+                const color = item.rarity && item.rarity.color ? item.rarity.color : '#FFFFFF'; 
+                const mat = new THREE.MeshStandardMaterial({ color: color });
                 viewModel = new THREE.Mesh(geo, mat);
                 viewModel.position.set(0.2, -0.2, -0.5);
                 weaponScene.add(viewModel);
@@ -2273,10 +2306,17 @@
             player.wood = 0; 
             player.inventory = [null, null, null, null, null];
             
-            // New Starting Loot
+            // New Starting Loot (Rule 12: AR, 3 Small Shield, 1 Chug Jug)
             giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
-            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 3, rarity: 'COMMON' }, 1); 
-            giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1, rarity: 'LEGENDARY' }, 2);
+            // Small Shield Potion is COMMON
+            const miniItem = { category: 'consumable', ...CONSUMABLES.MINI, count: 3, rarity: 'COMMON' };
+            miniItem.rarity = RARITY_MULTIPLIERS[miniItem.rarity]; // Ensure the rarity property is the object
+            giveItem(miniItem, 1); 
+            // Chug Jug is LEGENDARY
+            const chugItem = { category: 'consumable', ...CONSUMABLES.CHUG, count: 1, rarity: 'LEGENDARY' };
+            chugItem.rarity = RARITY_MULTIPLIERS[chugItem.rarity]; // Ensure the rarity property is the object
+            giveItem(chugItem, 2);
+            
             player.slot = 0; // Select starting weapon
             
             // 6. World Generation
