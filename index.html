@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V17.5 - Unified Mobile Interact</title>
+    <title>Web Battle Royale: V18.0 - Final Overhaul</title>
     <style>
         /* ======================================= */
-        /* === V17.5 CLEAN & POLISHED UI/UX === */
+        /* === V18.0 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         body { 
@@ -15,7 +15,7 @@
             font-family: 'Verdana', sans-serif; 
             user-select: none; 
             background: #000;
-            touch-action: none; /* Prevents default browser swipe/zoom behavior */
+            touch-action: none; 
         }
 
         #ui-layer { 
@@ -24,26 +24,48 @@
             color: white;
         }
 
-        /* --- PRE-GAME START SCREEN MODAL --- */
+        /* --- PRE-GAME START SCREEN MODAL (Polished) --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; z-index: 1000;
             text-align: center;
         }
-        #start-screen h1 { font-size: 36px; margin-bottom: 20px; color: #00d2ff; }
-        .start-button {
-            padding: 15px 30px; margin: 10px; font-size: 20px;
-            background: #28a745; color: white; border: none; 
-            border-radius: 6px; cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            font-family: 'Verdana', sans-serif; font-weight: bold;
+        #start-screen h1 { 
+            font-size: 80px; 
+            margin-bottom: 30px; 
+            color: #00d2ff; 
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.8), 0 0 30px rgba(0, 210, 255, 0.5);
+            font-weight: 900;
         }
-        .start-button:hover { background: #1e7e34; }
+        #start-screen p { 
+            font-size: 20px; 
+            margin-bottom: 40px; 
+            color: #ccc;
+        }
+        .start-button {
+            padding: 15px 40px; margin: 15px; font-size: 22px;
+            background: #28a745; color: white; border: none; 
+            border-radius: 8px; cursor: pointer;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            font-family: 'Verdana', sans-serif; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            min-width: 250px;
+        }
+        .start-button:hover { background: #1e7e34; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6); }
         .start-button:active { transform: scale(0.98); }
-        .start-button.mobile-option { background: #ffaa00; }
+        .start-button.mobile-option { 
+            background: #ffaa00; 
+            border: 2px solid #fff;
+        }
         .start-button.mobile-option:hover { background: #cc8800; }
+        
+        #victory-royales-stat {
+            position: absolute; bottom: 40px; font-size: 18px;
+            color: #ffd700; font-weight: bold;
+            text-shadow: 1px 1px 5px #000;
+        }
         
         /* --- Crosshair --- */
         #crosshair { 
@@ -65,20 +87,34 @@
             display: none; pointer-events: none; z-index: 100; 
             border: 2px solid #333;
         }
-        #scope-lines {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 100%; height: 100%; display: none;
+        /* Red Dot Scope for DMR, Scoped SMG */
+        #red-dot-scope {
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            display: none;
+            pointer-events: none;
         }
-        #scope-lines::after { content:''; position: absolute; width: 1px; height: 100%; background: #000; left: 50%; }
-        #scope-lines::before { content:''; position: absolute; width: 100%; height: 1px; background: #000; top: 50%; }
+        .red-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ff0000; box-shadow: 0 0 5px #ff0000;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .red-line {
+            position: absolute; background: #ff0000; opacity: 0.5;
+        }
+        .red-line.h { width: 100%; height: 1px; top: 50%; }
+        .red-line.v { height: 100%; width: 1px; left: 50%; }
         
-        /* Storm Visuals */
+        /* Storm Visuals (Fog Effect) */
         #storm-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(138, 43, 226, 0.4); 
-            box-shadow: inset 0 0 100px 50px rgba(75, 0, 130, 0.8);
+            /* Purple fog gradient mix-blend-mode for the storm */
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.0) 30%, rgba(75, 0, 130, 0.4) 60%, rgba(75, 0, 130, 0.8) 100%);
+            mix-blend-mode: multiply; 
             display: none; pointer-events: none; 
             transition: opacity 0.5s;
+            z-index: 50; 
         }
 
 
@@ -192,7 +228,7 @@
             top: 20px; 
             bottom: auto;
             right: 20px;
-            z-index: 20; /* Ensure inventory is above the right joystick area */
+            z-index: 20;
         }
         .slot { 
             width: 75px; height: 75px; 
@@ -203,7 +239,7 @@
             align-items: center; justify-content: center; 
             color: white; position: relative; 
             transition: transform 0.1s, border-color 0.1s; 
-            pointer-events: auto; /* IMPORTANT: Enable touch interaction */
+            pointer-events: auto;
             overflow: hidden;
             font-family: 'Verdana', sans-serif;
         }
@@ -252,28 +288,17 @@
         .dmg-txt.headshot { color: #ff0000; font-size: 30px; text-shadow: 0 0 10px red; }
         @keyframes popUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(1.2); } }
 
-        /* --- MOBILE CONTROLS (50/50 Split) --- */
+        /* --- MOBILE CONTROLS --- */
         #mobile-controls {
             display: none; 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; /* Default: Let UI pass through */
+            pointer-events: none; 
         }
         
-        /* Left 50% for Movement Joystick */
-        #stick-left { 
-            position: absolute; top: 0; left: 0; width: 50%; height: 100%; 
-            pointer-events: auto; /* Active for movement input */
-        }
-        
-        /* Right 50% for Camera Look (Invisible Joystick) */
-        #stick-right { 
-            position: absolute; top: 0; right: 0; width: 50%; height: 100%; 
-            background: none; /* Invisible */
-            pointer-events: auto; /* Active for camera movement input */
-            z-index: 1; /* Must be low to allow UI elements to be on top */
-        } 
+        #stick-left { position: absolute; top: 0; left: 0; width: 50%; height: 100%; pointer-events: auto; }
+        #stick-right { position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: none; pointer-events: auto; z-index: 1; } 
 
-        /* Movement Zone Visuals (Bottom Left Corner) */
+        /* Movement Zone Visuals */
         #movement-zone-visual {
             position: absolute; bottom: 50px; left: 40px; 
             width: 150px; height: 150px;
@@ -290,28 +315,23 @@
             pointer-events: none;
         }
 
-        /* Action buttons are now positioned ABSOLUTELY relative to the UI layer, 
-           and their pointer-events are set to 'auto' so they can be pressed 
-           even when over the stick-right zone. */
         .action-btn {
             position: absolute; width: 65px; height: 65px;
             border-radius: 50%; background: rgba(20, 20, 20, 0.7);
             border: 2px solid rgba(255,255,255,0.5);
             color: white; font-weight: bold; font-size: 14px;
             display: flex; justify-content: center; align-items: center;
-            pointer-events: auto; /* Re-enable pointer events for buttons */
+            pointer-events: auto; 
             backdrop-filter: blur(4px);
             text-align: center;
             font-family: 'Verdana', sans-serif;
             text-transform: uppercase;
-            z-index: 5; /* Ensure buttons are above the joystick zone */
+            z-index: 5; 
         }
         .action-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
-        /* Button Positioning (Relative to the entire screen/UI Layer) */
         #btn-fire { bottom: 100px; right: 20px; width: 80px; height: 80px; border-color: #ff4444; background: rgba(255,0,0,0.3); font-size: 18px; }
         #btn-jump { bottom: 200px; right: 30px; }
-        /* Changed from Pickup to Interact (Unified Button) */
         #btn-interact { bottom: 160px; right: 100px; border-color: #ffd700; color: #ffd700; } 
         #btn-build { bottom: 240px; right: 100px; border-color: #8B4513; }
         #btn-ads { bottom: 60px; right: 120px; width: 55px; height: 55px; font-size: 12px; }
@@ -325,11 +345,12 @@
             font-family: 'Verdana', sans-serif;
         }
         
-        /* --- VICTORY ROYALE ANIMATION --- */
+        /* --- VICTORY ROYALE ANIMATION (Enhanced) --- */
         #victory-overlay {
             display: none; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: linear-gradient(0deg, rgba(255, 215, 0, 0.2), rgba(255, 0, 0, 0.3)); 
+            backdrop-filter: blur(5px);
             z-index: 1000;
             flex-direction: column; justify-content: center; align-items: center;
             pointer-events: none;
@@ -341,33 +362,39 @@
         #victory-text {
             font-size: 0px; 
             color: #ffd700; 
-            text-shadow: 0 0 40px orange, 0 0 80px red; 
+            text-shadow: 0 0 50px #ffaa00, 0 0 100px #ff0000; 
             font-weight: 900;
-            animation: textGrow 2s ease-out forwards, 
-                       pulse 1s infinite alternate 2s;
+            animation: textGrow 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
+                       pulse 1.5s infinite alternate 2s;
             position: relative;
             transform: scale(0);
             pointer-events: auto;
+            letter-spacing: -10px;
+            opacity: 0;
+            white-space: nowrap;
         }
         
         #victory-text::after {
             content: '#1!';
-            display: block;
+            display: inline-block;
             font-size: 0.5em;
-            text-align: center;
+            vertical-align: top;
             opacity: 0;
-            animation: fadeUp 1s ease-out 2s forwards;
+            animation: fadeUp 1s ease-out 2.5s forwards;
+            color: #ff4d4d;
+            text-shadow: 0 0 10px #ff0000;
+            margin-left: 10px;
         }
 
         @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
         @keyframes textGrow {
-            0% { font-size: 0px; transform: scale(0); opacity: 0; }
-            50% { font-size: 150px; transform: scale(1.1); opacity: 1; }
-            100% { font-size: 100px; transform: scale(1); opacity: 1; }
+            0% { font-size: 0px; transform: scale(0) rotate(-10deg); opacity: 0; letter-spacing: 50px; }
+            50% { font-size: 150px; transform: scale(1.1) rotate(5deg); opacity: 1; letter-spacing: 0px; }
+            100% { font-size: 100px; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0px; }
         }
         @keyframes pulse {
-            0% { text-shadow: 0 0 40px orange; }
-            100% { text-shadow: 0 0 60px red; }
+            0% { text-shadow: 0 0 40px orange, 0 0 80px red; transform: scale(1); }
+            100% { text-shadow: 0 0 50px yellow, 0 0 90px crimson; transform: scale(1.05); }
         }
         @keyframes fadeUp {
             0% { transform: translateY(50px); opacity: 0; }
@@ -391,12 +418,13 @@
 <body>
 
     <div id="start-screen">
-        <h1>BATTLE ROYALE - V17.5</h1>
-        <p>Are you playing on a mobile device or a tablet (e.g., iPad)?</p>
+        <h1>FORTNITE</h1>
+        <p>Select your mode and platform:</p>
         <div>
-            <button class="start-button mobile-option" onclick="startGame(true)">Yes, I'm on Mobile / iPad</button>
-            <button class="start-button" onclick="startGame(false)">No, I'm on PC / Desktop</button>
+            <button class="start-button mobile-option" onclick="startGame(true)">Mobile Mode (21 Bots)</button>
+            <button class="start-button" onclick="startGame(false)">PC / Laptop Mode (26 Bots)</button>
         </div>
+        <div id="victory-royales-stat">Victory Royales: 0</div>
     </div>
     
     <div id="game-container"></div>
@@ -407,7 +435,16 @@
             <div class="ch-line ch-v"></div>
         </div>
         
-        <div id="scope-overlay"><div id="scope-lines"></div></div>
+        <div id="scope-overlay">
+            <div id="scope-lines"></div>
+        </div>
+        
+        <div id="red-dot-scope">
+             <div class="red-line h"></div>
+             <div class="red-line v"></div>
+             <div class="red-dot"></div>
+        </div>
+
         <div id="storm-overlay"></div>
 
         <div id="top-hud">
@@ -456,13 +493,12 @@
             <div id="stick-left">
                 <div id="movement-zone-visual"><div class="stick-thumb" id="thumb-left"></div></div>
             </div>
-            
-            <div id="stick-right">
-                </div>
+            <div id="stick-right"></div>
 
             <div id="btn-fire" class="action-btn">FIRE</div>
             <div id="btn-jump" class="action-btn">JUMP</div>
-            <div id="btn-interact" class="action-btn">INTERACT</div> <div id="btn-build" class="action-btn">BUILD</div>
+            <div id="btn-interact" class="action-btn">INTERACT</div> 
+            <div id="btn-build" class="action-btn">BUILD</div>
             <div id="btn-ads" class="action-btn">AIM</div>
         </div>
     </div>
@@ -492,40 +528,48 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V17.5) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V18.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        const BOT_COUNT = 20; 
+        let BOT_COUNT = 21; // Default for mobile
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
         const JUMP_FORCE = 15;
         const PLAYER_HEIGHT = 1.8;
+        const SHOTGUN_PELLETS = 4; // New constant for shotguns
         
         // --- WEAPONS CONFIG ---
         const RARITY_MULTIPLIERS = {
-            COMMON: { dmg: 1.0, reload: 1.0, color: '#b0b0b0', name: "C" },
-            UNCOMMON: { dmg: 1.2, reload: 0.9, color: '#28a745', name: "U" },
-            RARE: { dmg: 1.4, reload: 0.8, color: '#007bff', name: "R" },
-            EPIC: { dmg: 1.6, reload: 0.7, color: '#a335ee', name: "E" },
-            LEGENDARY: { dmg: 2.0, reload: 0.6, color: '#ffd700', name: "L" },
-            MYTHIC: { dmg: 2.5, reload: 0.5, color: '#ff4d4d', name: "M" } 
+            COMMON: { dmg: 1.0, reload: 1.0, color: '#b0b0b0' },
+            UNCOMMON: { dmg: 1.15, reload: 0.9, color: '#28a745' },
+            RARE: { dmg: 1.3, reload: 0.8, color: '#007bff' },
+            EPIC: { dmg: 1.45, reload: 0.7, color: '#a335ee' },
+            LEGENDARY: { dmg: 1.6, reload: 0.6, color: '#ffd700' },
+            MYTHIC: { dmg: 1.8, reload: 0.5, color: '#ff4d4d' } 
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
         const WEAPONS_BASE = {
-            // RECOIL IS 0.0 IN V17.5
-            PSHG: { name: "Pump Shotgun", dmg: 20, head: 35, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: 3, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
+            // DMG * 1.5 multiplier for Pump Shotgun
+            PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
+            AUTO_SHG: { name: "Auto Shotgun", dmg: 15, head: 25, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
-            SMG:  { name: "SMG", dmg: 9,  head: 14, rate: 0.1, mag: 35, range: 80, spread: 0.06, pellets: 1, auto: true, icon: '🖊️', reload: 1800, recoil: 0.0, bulletType: 'hitscan' },
-            SNIPER:{name: "Sniper", dmg: 110,head: 250,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan' },
-            HR:   { name: "Heavy Rifle", dmg: 30, head: 50, rate: 0.5, mag: 8, range: 250, spread: 0.02, pellets: 1, auto: false, icon: '🎯', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            RL:   { name: "Rocket", dmg: 100, head: 100, rate: 2.0, mag: 1,  range: 300,spread: 0.01, pellets: 1, auto: false,icon:'🚀', reload: 4000, blast: 5, radius: 5, recoil: 0.0, bulletType: 'projectile', projSpeed: 50 }, 
+            DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
+            STINGER: { name: "Stinger SMG", dmg: 12, head: 18, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
+            BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
+            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 85, head: 105, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
+            DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 65, head: 90, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
+            // Sniper Base Damage: 100 Body, 130 Head on common
+            SNIPER:{name: "Sniper", dmg: 100,head: 130,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
         };
-        const MYTHIC_WEAPON_KEY = 'RL'; 
-
+        const MYTHIC_WEAPON_KEY = 'STRANGLED_RIFLE'; 
+        
         // --- CONSUMABLES CONFIG ---
         const CONSUMABLES = {
             MINI: { name: "Small Shield", val: 25, type: 'shield', max: 50, icon: '💧', time: 1, continuous: false, instant: true, maxStack: 6 },
@@ -560,7 +604,10 @@
             isHealing: false,
             healingItem: null,
             healingStartTime: 0,
-            lastStormDamage: 0 
+            lastStormDamage: 0,
+            isBursting: false,
+            burstCount: 0,
+            burstTimer: null
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false };
@@ -570,6 +617,7 @@
         let lastShot = 0;
         let isMobileMode = false; 
         let gameStarted = false;
+        let victoryRoyales = 0; // Local storage tracked
         
         // Dynamic Arrays for Entities
         let bots = [];
@@ -592,6 +640,16 @@
         let stormTimerInterval;
 
         // ===============================================================
+        // === SOUND EFFECT UTILITIES (PLACEHOLDER) =======================
+        // ===============================================================
+
+        function playSound(type) {
+            // Note: These are placeholders. In a full environment, you would use:
+            // new Audio('path/to/sound.mp3').play();
+            // console.log(`[SOUND]: Playing ${type} sound.`); 
+        }
+
+        // ===============================================================
         // === UTILITY FUNCTIONS =========================================
         // ===============================================================
 
@@ -604,7 +662,7 @@
             if (dist > WORLD_SIZE * 0.45) y += (dist - WORLD_SIZE * 0.45) * 0.2;
             return y;
         }
-
+        
         function createBox(x, y, z, w, h, d, col, type='solid') {
             const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({color: col}));
             mesh.position.set(x, y, z);
@@ -638,36 +696,50 @@
         
         function handleGameOver(win) {
             player.dead = true;
-            // Only try to unlock controls if they were ever locked (i.e., not mobile mode)
             if (controls && controls.isLocked) controls.unlock(); 
             
             if (win) {
+                // Update Victory Royale count
+                victoryRoyales = (parseInt(localStorage.getItem('victoryRoyales')) || 0) + 1;
+                localStorage.setItem('victoryRoyales', victoryRoyales);
+
                 document.getElementById('victory-overlay').style.display = 'flex';
+                playSound('victory');
             } else {
                 document.getElementById('go-title').innerText = "GAME OVER";
                 document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('game-over').style.display = 'flex';
+                playSound('defeat');
             }
         }
 
         function toggleADS(bool) {
             player.ads = bool;
             const item = player.inventory[player.slot];
-            const isSniper = item && item.category === 'weapon' && item.stats.icon === '🔭';
+            const isClassicScope = item && item.category === 'weapon' && item.stats.scope === 'classic';
+            const isRedDotScope = item && item.category === 'weapon' && item.stats.scope === 'red_dot';
+            
             const scopeOverlay = document.getElementById('scope-overlay');
-            const scopeLines = document.getElementById('scope-lines');
+            const redDotScope = document.getElementById('red-dot-scope');
             const crosshair = document.getElementById('crosshair');
 
-            if(isSniper) {
-                scopeOverlay.style.display = bool ? 'block' : 'none';
-                scopeLines.style.display = bool ? 'block' : 'none';
-                crosshair.style.display = 'none';
-                camera.fov = bool ? 15 : 75;
+            scopeOverlay.style.display = 'none';
+            redDotScope.style.display = 'none';
+            crosshair.style.display = 'block';
+            camera.fov = 75;
+
+            if (bool) {
+                if (isClassicScope) {
+                    scopeOverlay.style.display = 'block';
+                    crosshair.style.display = 'none';
+                    camera.fov = 15;
+                } else if (isRedDotScope) {
+                    redDotScope.style.display = 'block';
+                    crosshair.style.display = 'none';
+                    camera.fov = 45;
+                }
             } else {
-                scopeOverlay.style.display = 'none';
-                scopeLines.style.display = 'none';
-                crosshair.style.display = 'block';
-                camera.fov = bool ? 45 : 75;
+                // Resetting
             }
 
             camera.updateProjectionMatrix();
@@ -696,11 +768,12 @@
         function reload() {
             const item = player.inventory[player.slot];
             if (!item || item.category !== 'weapon' || item.stats.currentMag === item.stats.mag || player.isReloading) return;
+            
+            playSound('reload');
 
             player.isReloading = true;
             updateUI(); 
 
-            // Use the rarity-modified reload time
             const reloadTime = item.stats.reload * item.rarity.reload;
 
             setTimeout(() => {
@@ -712,6 +785,8 @@
 
         function buildWall() {
             if (player.wood < 10) return;
+            
+            playSound('build');
 
             const wallGeo = new THREE.BoxGeometry(4, 4, 0.1);
             const wallMat = new THREE.MeshStandardMaterial({ color: 0x8B4513, transparent: true, opacity: 0.8 });
@@ -800,6 +875,7 @@
                 if (now - player.lastStormDamage > 1000) {
                     takeDamage(stormDamageRate, camera.position); 
                     player.lastStormDamage = now;
+                    playSound('storm_damage');
                 }
             } else {
                 document.getElementById('storm-overlay').style.display = 'none';
@@ -811,7 +887,8 @@
                 const botDistToStorm = botPos2D.distanceTo(stormCenter);
                 if (stormActive && botDistToStorm > stormRadius && BOT_STORM_DAMAGE > 0) {
                      if (now - (bot.lastStormDamage || 0) > 1000) {
-                        applyDamage(bot, BOT_STORM_DAMAGE, bot.mesh.position, null); 
+                        // Bots take damage only to health, not shield
+                        bot.health = Math.max(0, bot.health - BOT_STORM_DAMAGE); 
                         bot.lastStormDamage = now;
                     }
                 }
@@ -846,7 +923,7 @@
             objects.push(terrain); 
         }
 
-        // Helper functions for existing POIs
+        // --- POI UTILITIES ---
         function createTower(x, z) {
             const h = getTerrainHeight(x, z);
             createBox(x, h+10, z, 5, 20, 5, 0x999999);
@@ -858,12 +935,6 @@
             const mesh = createBox(x, h + height/2, z, size, height, depth, color);
             mesh.rotation.y = rotation;
             spawnChest(x+size/4, h+1, z+depth/4); 
-        }
-        function createBunker(x, z, size, height, depth) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + height/2, z, size, height, depth, 0x555555);
-            createBox(x, h + 0.5, z+depth/2, size/2, 1, 0.1, 0xAAAAAA); 
-            spawnChest(x, h+1, z); 
         }
         function createWoodHouse(x, z, size, height, depth) {
             const h = getTerrainHeight(x, z);
@@ -877,129 +948,97 @@
             createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
-        // === POIS ===
-        function createRetailRow(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h+2, z, 30, 4, 10, 0xAAAAAA); 
-            createBox(x+10, h+4.5, z+5, 5, 1, 1, 0xFF0000);
-            createBox(x-10, h+4.5, z+5, 5, 1, 1, 0x0000FF);
-            spawnChest(x+12, h+1, z-2);
-            spawnChest(x-12, h+1, z+2);
-        }
+        // === 13 ORIGINAL & 13 NEW POIs ===
+        function createRetailRow(x, z) { createBuilding(x, z, 15, 8, 15, 0xFF7F50, 0); }
+        function createLootLake(x, z) { createBox(x, getTerrainHeight(x, z)+0.1, z, 50, 0.2, 50, 0x00BFFF); }
+        function createShiftyShafts(x, z) { createBox(x, getTerrainHeight(x, z)-5, z, 30, 10, 30, 0x696969); spawnChest(x, getTerrainHeight(x, z)-4, z); }
+        function createPleasantPark(x, z) { createWoodHouse(x, z, 10, 8, 10); }
+        function createTomatoTown(x, z) { createBox(x, getTerrainHeight(x, z)+5, z, 10, 10, 10, 0xFF6347); createBox(x, getTerrainHeight(x, z)+11, z, 5, 2, 5, 0xFF0000); }
+        function createSaltySprings(x, z) { createBuilding(x, z, 12, 6, 12, 0x808080, Math.PI/4); }
+        function createFatalFields(x, z) { createWoodHouse(x, z, 20, 5, 20); }
+        function createRiskyReels(x, z) { createBox(x, getTerrainHeight(x, z)+10, z, 2, 20, 10, 0x000000); }
+        function createTheGrotto(x, z) { createBox(x, getTerrainHeight(x, z)-10, z, 40, 20, 40, 0x222222); spawnChest(x, getTerrainHeight(x, z)-9, z); }
+        function createSlurpySwamp(x, z) { createBox(x, getTerrainHeight(x, z)+0.1, z, 30, 0.2, 30, 0x00FF7F); }
+        function createMistyMeadows(x, z) { createBuilding(x, z, 18, 10, 18, 0x9370DB, -Math.PI/4); }
+        function createTheFortilla(x, z) { createBox(x, getTerrainHeight(x, z), z, 40, 0.5, 40, 0xADD8E6); createBox(x+10, getTerrainHeight(x, z)+2, z, 5, 4, 5, 0xAAAAAA); }
+        function createSteamyStacks(x, z) { createBox(x, getTerrainHeight(x, z)+15, z, 8, 30, 8, 0xEEEEEE); createBox(x+10, getTerrainHeight(x, z)+15, z+10, 8, 30, 8, 0xEEEEEE); }
+        function createSweatySands(x, z) { createBox(x, getTerrainHeight(x, z)+0.5, z, 25, 1, 25, 0xF4A460); createWoodHouse(x-5, z-5, 8, 6, 8); }
+        function createWeepingWoods(x, z) { for(let i=0; i<5; i++) createTree(x + Math.random()*20-10, z + Math.random()*20-10); }
+        function createLazyLake(x, z) { createBuilding(x, z, 20, 10, 10, 0x00FFFF, 0); createBuilding(x+15, z+15, 10, 8, 10, 0xADD8E6, Math.PI/2); }
 
-        function createLootLake(x, z) {
+        // --- NEW POIS ---
+        function createEmberIsland(x, z) {
             const h = getTerrainHeight(x, z);
-            const water = new THREE.Mesh(new THREE.CylinderGeometry(20, 20, 1, 32), new THREE.MeshStandardMaterial({color: 0x00AADD, transparent: true, opacity: 0.7}));
-            water.position.set(x, h-0.5, z);
-            scene.add(water);
-            createBox(x+25, h+2, z, 5, 4, 5, 0xAAAA00); 
-            spawnLoot(x, h, z, 'weapon');
-            spawnChest(x+25, h+3, z); 
+            createBox(x, h + 10, z, 10, 20, 10, 0xAA0000); 
+            spawnChest(x, h+21, z); 
         }
-
-        function createShiftyShafts(x, z) {
+        function createFlushFactory(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+0.5, z, 10, 1, 10, 0x777777); 
-            createBox(x, h-2, z-5, 2, 4, 1, 0x777777); 
-            spawnChest(x+3, h+1, z);
-            spawnChest(x-3, h+1, z);
-        }
-        
-        function createPleasantPark(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h+3, z, 10, 6, 15, 0xFFF0F0); 
-            createDoor(x, h, z+7, 0);
-            createTree(x+15, z);
+            createBox(x, h + 5, z, 20, 10, 20, 0x778899); 
+            createBox(x, h + 11, z, 15, 2, 15, 0xAAAAAA); 
             spawnChest(x, h+1, z); 
         }
-        
-        function createTomatoTown(x, z) {
+        function createJunkJunction(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+3, z, 12, 6, 12, 0xAA0000); 
-            const hat = new THREE.Mesh(new THREE.ConeGeometry(2, 4, 32), new THREE.MeshStandardMaterial({color: 0xFF0000}));
-            hat.position.set(x, h+7, z);
-            scene.add(hat);
-            spawnChest(x, h+1, z);
+            createBox(x, h + 2, z, 25, 4, 25, 0x666666); 
+            spawnChest(x, h+3, z); 
         }
-        
-        function createSaltySprings(x, z) {
+        function createTacoTime(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+3, z, 15, 6, 10, 0xD2B48C); 
-            createBox(x+10, h+3, z+10, 8, 6, 5, 0xF5F5DC);
+            createBox(x, h + 3, z, 10, 6, 10, 0xFFFF00); 
+            createBox(x, h + 7, z, 8, 2, 8, 0xFF0000); 
             spawnChest(x, h+1, z); 
         }
-
-        function createFatalFields(x, z) {
+        function createHauntedHills(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+1.5, z, 15, 3, 15, 0x8B4513); 
-            createBox(x, h+5, z, 5, 4, 5, 0xFFD700); 
+            createBox(x, h + 6, z, 15, 12, 15, 0x333333); 
+            createBox(x, h + 1, z, 5, 2, 5, 0xFFFFFF); 
             spawnChest(x, h+1, z); 
         }
-
-        function createRiskyReels(x, z) {
+        function createPressurePlant(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x-20, h+1, z, 1, 10, 40, 0x000000); 
-            createBox(x+10, h+2, z, 15, 4, 15, 0x555555); 
-            spawnChest(x+10, h+3, z); 
-        }
-
-        function createTheGrotto(x, z) {
-            const h = getTerrainHeight(x, z);
-            const entrance = new THREE.Mesh(new THREE.SphereGeometry(15, 32, 32), new THREE.MeshStandardMaterial({color: 0x444444}));
-            entrance.position.set(x, h-15, z);
-            scene.add(entrance);
-            spawnLoot(x, h-10, z, 'weapon');
-            spawnChest(x, h-10, z); 
-        }
-
-        function createSlurpySwamp(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h+5, z, 20, 10, 20, 0x00FF00); 
-            createBox(x-10, h+2, z+15, 5, 4, 5, 0x00AABB); 
+            createBox(x, h + 10, z, 25, 20, 25, 0xDDDDDD); 
+            createBox(x, h + 21, z, 10, 2, 10, 0x0000FF); 
             spawnChest(x, h+1, z); 
         }
-
-        function createMistyMeadows(x, z) {
+        function createTheAuthority(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+4, z, 10, 8, 10, 0xFFFFFF); 
-            createBox(x+5, h+2, z-5, 5, 4, 5, 0x00FF00); 
+            createBox(x, h + 15, z, 30, 30, 30, 0x555555); 
+            createBox(x, h + 31, z, 20, 2, 20, 0xAAAAAA); 
             spawnChest(x, h+1, z); 
         }
-
-        function createTheFortilla(x, z) {
-            const h = getTerrainHeight(x, z) + 5;
-            createBox(x, h, z, 25, 1, 25, 0x888888); 
-            createBox(x+10, h+3, z+10, 5, 6, 5, 0x0000FF); 
-            spawnChest(x+10, h+7, z+10); 
-        }
-        
-        function createSteamyStacks(x, z) {
+        function createTheBlock(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x-10, h+15, z, 5, 30, 5, 0xAAAAAA); 
-            createBox(x+10, h+15, z, 5, 30, 5, 0xAAAAAA); 
-            createBox(x, h+5, z, 30, 10, 30, 0x666666); 
+            createBox(x, h + 2, z, 40, 4, 40, 0xCC7700); 
+            spawnChest(x+10, h+3, z-10); 
+        }
+        function createVikingVillage(x, z) {
+            const h = getTerrainHeight(x, z);
+            createBox(x, h + 4, z, 10, 8, 10, 0x8B4513); 
+            createBox(x, h + 9, z, 12, 2, 12, 0xAAAAAA); 
             spawnChest(x, h+1, z); 
         }
-
-        function createSweatySands(x, z) {
+        function createDustyDepot(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+3, z, 20, 6, 15, 0xFFD700); 
-            createBox(x-10, h+1, z+10, 1, 2, 1, 0xFF0000); 
+            createBox(x-10, h + 3, z, 5, 6, 5, 0xAA8800); 
+            createBox(x+10, h + 3, z, 5, 6, 5, 0xAA8800); 
+            createBox(x, h + 3, z, 5, 6, 5, 0xAA8800); 
             spawnChest(x, h+1, z); 
         }
-        
-        function createWeepingWoods(x, z) {
-            for(let i=0; i<8; i++) {
-                createTree(x + (Math.random()-0.5)*20, z + (Math.random()-0.5)*20);
-            }
-            createBox(x, getTerrainHeight(x, z)+2, z, 5, 4, 5, 0x8B4513); 
-            spawnChest(x, getTerrainHeight(x, z)+1, z); 
-        }
-        
-        function createLazyLake(x, z) {
+        function createGraveYard(x, z) {
             const h = getTerrainHeight(x, z);
-            createBox(x, h+5, z, 15, 10, 15, 0xEEEEEE); 
-            createBox(x+10, h+2, z, 5, 4, 5, 0xFF00FF); 
+            createBox(x, h + 1, z, 20, 2, 20, 0x444444); 
+            spawnChest(x, h+2, z); 
+        }
+        function createParadisePalms(x, z) {
+            const h = getTerrainHeight(x, z);
+            createBox(x, h + 5, z, 20, 10, 20, 0xFFA07A); 
+            createTree(x+15, z-15); 
+            spawnChest(x, h+1, z); 
+        }
+        function createStarrySuburbs(x, z) {
+            const h = getTerrainHeight(x, z);
+            createBox(x, h + 4, z, 15, 8, 15, 0x800080); 
             spawnChest(x, h+1, z); 
         }
 
@@ -1013,15 +1052,12 @@
 
             // Other POIs
             createBuilding(-200, -200, 20, 10, 30, 0x444444, Math.PI/2);
-            createBunker(200, -200, 15, 8, 20);
             createWoodHouse(-200, 200, 10, 12, 15); 
             createRetailRow(250, 250);
             createLootLake(-250, 250);
             createShiftyShafts(-250, -250);
             createPleasantPark(-280, 0);
             createTomatoTown(280, 0);
-
-            // 12 More POIS
             createSaltySprings(50, 200); 
             createFatalFields(150, -100); 
             createRiskyReels(-150, 100); 
@@ -1033,7 +1069,23 @@
             createSweatySands(-300, 150); 
             createWeepingWoods(-100, 250); 
             createLazyLake(200, 0); 
-            
+
+            // 13 New POIs
+            createEmberIsland(-150, -150);
+            createFlushFactory(150, 150);
+            createJunkJunction(-300, 50);
+            createTacoTime(300, -50);
+            createHauntedHills(50, -250);
+            createPressurePlant(-50, 300);
+            createTheAuthority(-300, -100);
+            createTheBlock(100, 300);
+            createVikingVillage(250, -150);
+            createDustyDepot(-200, -300);
+            createGraveYard(200, 250);
+            createParadisePalms(-50, -50);
+            createStarrySuburbs(0, -200);
+
+
             // Trees
             for(let i=0; i<50; i++) {
                 const x = (Math.random()-0.5)*400;
@@ -1067,7 +1119,6 @@
             chests.push(chest);
         }
         
-        // NPC model change to look like a simple Roblox character
         function createBotMesh(x, y, z) {
             const group = new THREE.Group();
             
@@ -1113,13 +1164,16 @@
                 
                 bots.push({ 
                     mesh: mesh, 
-                    health: 100, 
+                    health: 100, // 100 Health
+                    shield: 100, // 100 Shield (200 Total HP)
                     target: null, 
                     lastShot: 0, 
                     weapon: createWeaponItem(randomWeaponKey, randomRarity), 
                     lastMove: performance.now(),
                     velocity: new THREE.Vector3(0, 0, 0),
-                    lastStormDamage: 0
+                    lastStormDamage: 0,
+                    moveCooldown: 0, 
+                    currentDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize() 
                 });
             }
         }
@@ -1132,8 +1186,8 @@
         function useHealingItem() {
             const item = player.inventory[player.slot];
             if (!item || item.category !== 'consumable' || item.count <= 0) return;
-            if (player.isHealing && player.healingItem !== item) finishHealing(); // Cancel current heal if trying to use another item
-
+            if (player.isHealing && player.healingItem !== item) finishHealing(); 
+            
             // 1. Instant use for Small Shields (MINI)
             if (item.instant) {
                  if (item.type === 'shield' && player.shield < item.max) {
@@ -1141,6 +1195,7 @@
                     item.count -= 1; 
                     if (item.count <= 0) player.inventory[player.slot] = null;
                     updateUI();
+                    playSound('use_mini');
                     return;
                 }
             }
@@ -1148,12 +1203,10 @@
 
             // 2. Timed/Continuous use for others
             if (player.isHealing) {
-                // If healing and press the same continuous item, do nothing
-                if (player.healingItem === item && item.continuous) return;
-                
-                // If healing and press the same non-continuous item, cancel it. (Handled in finishHealing)
-                if (player.healingItem === item && !item.continuous) finishHealing();
-                
+                if (player.healingItem === item) {
+                    if (!item.continuous) finishHealing(); // Cancel non-continuous heal
+                    return;
+                }
                 return;
             }
 
@@ -1171,11 +1224,15 @@
                 updateUI();
                 
                 if (!item.continuous && !item.instant) {
+                    playSound('use_timed_start');
                     setTimeout(() => {
                         applyHealing(item);
                         finishHealing();
+                        playSound('use_timed_finish');
                     }, item.time);
-                } 
+                } else if (item.continuous) {
+                    playSound('use_chug_start');
+                }
             }
         }
         
@@ -1189,7 +1246,6 @@
             
             item.count -= 1;
             if (item.count <= 0) {
-                // Find and clear the slot that contained this item
                 const slotIndex = player.inventory.findIndex(i => i === item);
                 if (slotIndex !== -1) player.inventory[slotIndex] = null;
             }
@@ -1212,8 +1268,9 @@
                 player.lastHealTick = performance.now();
             }
 
-            if (timeElapsed >= item.time) {
+            if (timeElapsed >= item.time || (player.health === 100 && player.shield === 100)) {
                 finishHealing();
+                playSound('use_chug_finish');
             }
         }
 
@@ -1223,7 +1280,6 @@
             player.lastHealTick = 0;
             document.getElementById('healing-bar-wrap').style.display = 'none';
             
-            // Continuous items (Chug Jug) are consumed upon completion
             const item = player.inventory[player.slot];
             if (item && item.continuous) {
                  item.count -= 1;
@@ -1236,12 +1292,10 @@
 
         function tryInteract() {
             if (player.isHealing) {
-                // If a timed heal is running, clicking E/Interact will cancel it.
                 if (player.healingItem && !player.healingItem.continuous) {
                     finishHealing();
                     return;
                 }
-                // If a continuous heal is running, we won't interrupt it with a general interaction.
                 if (player.healingItem && player.healingItem.continuous) return;
             }
 
@@ -1251,10 +1305,7 @@
             for(let i=loot.length-1; i>=0; i--) {
                 const currentLoot = loot[i];
                 if(pos.distanceTo(currentLoot.mesh.position) < 4) {
-                    
                     const currentItem = player.inventory[player.slot];
-
-                    // Stackable Consumable logic (e.g., MINI, BIG, MEDKIT)
                     if (currentItem && currentItem.category === 'consumable' && currentItem.name === currentLoot.data.name) {
                         if (currentItem.count < currentItem.maxStack) {
                             currentItem.count = Math.min(currentItem.maxStack, currentItem.count + currentLoot.data.count);
@@ -1265,9 +1316,7 @@
                         }
                     }
 
-                    // Weapon/Item Slot Swap/Pickup logic
                     if (currentItem) {
-                        // Drop the current item at a nearby location
                         dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
                     }
                     
@@ -1275,6 +1324,7 @@
                         scene.remove(currentLoot.mesh);
                         loot.splice(i, 1);
                         updateUI();
+                        playSound('pickup_item');
                         return;
                     }
                 }
@@ -1285,9 +1335,9 @@
                 if(pos.distanceTo(chests[i].position) < 4) {
                     scene.remove(chests[i]);
                     chests.splice(i, 1);
-                    // Spawn random weapon (rare or better) and a shield item
                     spawnLoot(pos.x+1, pos.y, pos.z, 'weapon', 'RARE');
                     spawnLoot(pos.x-1, pos.y, pos.z, 'consumable', 'MINI'); 
+                    playSound('open_chest');
                     return;
                 }
             }
@@ -1296,14 +1346,13 @@
             for(let door of doors) {
                 if(pos.distanceTo(door.mesh.position) < 5) {
                     door.open = !door.open;
-                    
                     const rotation = door.open ? door.initialRotation + Math.PI / 2 : door.initialRotation;
                     door.mesh.rotation.y = rotation;
                     
                     const shiftDir = new THREE.Vector3();
                     shiftDir.setFromEuler(new THREE.Euler(0, door.initialRotation + Math.PI / 4, 0));
                     door.mesh.position.sub(shiftDir.multiplyScalar(0.75)); 
-                    
+                    playSound('open_door');
                     return;
                 }
             }
@@ -1317,9 +1366,11 @@
                         camera.position.y += 2; 
                         camera.position.x = c.mesh.position.x + 5; 
                         camera.position.z = c.mesh.position.z + 5; 
+                        playSound('exit_vehicle');
                     } else {
                         player.vehicle = c;
                         c.driving = true;
+                        playSound('enter_vehicle');
                     }
                     updateUI();
                     return;
@@ -1337,6 +1388,9 @@
                         scene.remove(b.mesh);
                         objects = objects.filter(obj => obj !== b.mesh);
                         buildings = buildings.filter(bldg => bldg !== b);
+                        playSound('harvest_break');
+                    } else {
+                        playSound('harvest_hit');
                     }
                     return;
                 }
@@ -1349,6 +1403,7 @@
             
             spawnLoot(position.x, position.y + 1, position.z, itemToDrop);
             player.inventory[slotIndex] = null;
+            playSound('drop_item');
         }
 
         /**
@@ -1373,96 +1428,66 @@
             };
         }
         
-        /**
-         * Gets a random rarity key, optionally starting from a minimum rarity.
-         */
-        function getRandomRarity(minRarityKey = 'COMMON') {
-            const minIndex = RARITY_KEYS.indexOf(minRarityKey);
-            if (minIndex === -1) return 'COMMON';
-            
-            // Filter out MYTHIC for generic spawn
-            const availableRarities = RARITY_KEYS.slice(minIndex).filter(k => k !== 'MYTHIC'); 
-            
-            return availableRarities[Math.floor(Math.random() * availableRarities.length)];
+        function getRandomRarity() {
+            // Skew drop chances
+            const rarityPool = ['COMMON', 'COMMON', 'UNCOMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'];
+            const index = Math.floor(Math.random() * rarityPool.length);
+            return rarityPool[index];
         }
-        
+
         function getRandomWeaponKey() {
-            // Exclude MYTHIC (RL) from general random spawn, unless specified by MYTHIC_WEAPON_KEY
+            // Include Strangled Rifle only if we are forced to spawn a Mythic
             const keys = Object.keys(WEAPONS_BASE).filter(k => k !== MYTHIC_WEAPON_KEY);
             return keys[Math.floor(Math.random()*keys.length)];
         }
-        
+
         function getRandomConsumableKey() {
             const keys = Object.keys(CONSUMABLES);
-            return keys[Math.floor(Math.random()*keys.length)];
+            return keys[Math.floor(Math.random() * keys.length)];
         }
 
-        function giveItem(item, slot = -1) {
-            if(item.category === 'mat') {
-                player.wood += item.count;
-                return true;
-            }
-            
-            // Consumable stacking logic
-            if (item.category === 'consumable') {
-                for (let i = 0; i < player.inventory.length; i++) {
-                    const existingItem = player.inventory[i];
-                    if (existingItem && existingItem.category === 'consumable' && existingItem.name === item.name) {
-                        const newCount = Math.min(existingItem.maxStack, existingItem.count + item.count);
-                        if (newCount > existingItem.count) {
-                            existingItem.count = newCount;
-                            updateUI();
-                            return true; 
-                        }
-                    }
+        function giveItem(itemData, slot) {
+            if (itemData.category === 'weapon') {
+                player.inventory[slot] = itemData;
+            } else if (itemData.category === 'consumable') {
+                const existing = player.inventory.find(i => i && i.name === itemData.name);
+                if (existing) {
+                    existing.count = Math.min(existing.maxStack, existing.count + itemData.count);
+                } else if (player.inventory[slot] === null) {
+                    player.inventory[slot] = itemData;
+                } else {
+                    return false; // Can't auto-stack and slot is full
                 }
+            } else if (itemData === 'mythic') {
+                const mythicWeapon = createWeaponItem(MYTHIC_WEAPON_KEY, 'MYTHIC');
+                player.inventory[slot] = mythicWeapon;
             }
-
-            // Find empty slot if no slot provided
-            if(slot === -1) {
-                slot = player.inventory.findIndex(i => i === null);
-                if(slot === -1) return false; 
-            }
-            
-            player.inventory[slot] = item;
-            updateUI();
-            if(slot === player.slot) switchSlot(slot);
             return true;
         }
 
-        function spawnLoot(x, y, z, itemOrType, rarityOrKey) {
+        function spawnLoot(x, y, z, type, rarity = null) {
             let item;
-            if (typeof itemOrType === 'object') {
-                item = itemOrType; 
+            if(type === 'weapon' || type === 'mythic') {
+                const typeKey = type === 'mythic' ? MYTHIC_WEAPON_KEY : getRandomWeaponKey();
+                const rarityKey = type === 'mythic' ? 'MYTHIC' : (rarity || getRandomRarity());
+                item = createWeaponItem(typeKey, rarityKey);
+            } else if (type === 'consumable') {
+                const consKey = rarity || getRandomConsumableKey();
+                const base = CONSUMABLES[consKey];
+                item = { category: 'consumable', ...base, count: 1 };
+            } else if (typeof type === 'object') {
+                item = type; // Drop existing item object
             } else {
-                if (itemOrType === 'weapon') {
-                    const key = rarityOrKey && WEAPONS_BASE[rarityOrKey] ? rarityOrKey : getRandomWeaponKey();
-                    const rar = getRandomRarity(rarityOrKey || 'COMMON');
-                    item = createWeaponItem(key, rar);
-                } else if (itemOrType === 'consumable') {
-                    const key = rarityOrKey || getRandomConsumableKey();
-                    const consumableBase = CONSUMABLES[key];
-                    item = { category: 'consumable', ...consumableBase, count: 1 };
-                } else if (itemOrType === 'mythic') {
-                    item = createWeaponItem(MYTHIC_WEAPON_KEY, 'MYTHIC');
-                }
+                return;
             }
-            
-            if (!item) return;
 
-            const isWeapon = item.category === 'weapon';
-            const geo = isWeapon ? new THREE.BoxGeometry(0.5, 0.1, 0.2) : new THREE.SphereGeometry(0.2);
-            const mat = new THREE.MeshBasicMaterial({ color: isWeapon ? item.rarity.color : 0x00ff00 });
-            const mesh = new THREE.Mesh(geo, mat);
-            
-            const h = getTerrainHeight(x, z);
-            mesh.position.set(x, h+0.5, z);
+            let color = 0x808080;
+            if (item.rarity) color = parseInt(item.rarity.color.substring(1), 16);
+            else if (item.category === 'consumable') color = 0x00d2ff;
+
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE.MeshStandardMaterial({color: color}));
+            mesh.position.set(x, y, z);
             scene.add(mesh);
-            
-            const light = new THREE.PointLight(isWeapon ? item.rarity.color : 0x00ff00, 1, 3);
-            light.position.set(0, 0.2, 0);
-            mesh.add(light);
-
             loot.push({ mesh: mesh, data: item });
         }
 
@@ -1471,49 +1496,84 @@
         // === SHOOTING & DAMAGE SYSTEM ==================================
         // ===============================================================
 
-        function shoot(item) {
+        function shoot(item, isBurst = false) {
             if (item.stats.currentMag <= 0 || player.isReloading || player.isHealing) {
                 if (!player.isReloading) reload();
                 return;
             }
-
-            // Recoil is 0.0, so no camera movement here
             
-            const fireOrigin = camera.position.clone();
+            if (item.stats.burst && !isBurst) {
+                if (player.isBursting) return;
+                player.isBursting = true;
+                player.burstCount = 0;
+                
+                const burstShot = () => {
+                    if (player.burstCount < item.stats.burst && item.stats.currentMag > 0) {
+                        doSingleShot(item);
+                        player.burstCount++;
+                        player.burstTimer = setTimeout(burstShot, 100); 
+                    } else {
+                        player.isBursting = false;
+                        if (item.stats.currentMag > 0) {
+                             player.burstTimer = setTimeout(() => {
+                                 // Allow next burst after cooldown
+                             }, item.stats.burstDelay);
+                        }
+                    }
+                };
+                burstShot();
+                return;
+            } else if (item.stats.burst && isBurst) {
+                doSingleShot(item);
+                return;
+            }
+            
+            doSingleShot(item);
+        }
+        
+        function doSingleShot(item) {
+             const fireOrigin = camera.position.clone();
             const fireDirection = new THREE.Vector3();
             camera.getWorldDirection(fireDirection);
+
+            playSound('shoot');
             
             if (item.stats.bulletType === 'hitscan') {
                 handleHitscan(item, fireOrigin, fireDirection, player);
-            } else if (item.stats.bulletType === 'projectile') {
-                handleProjectile(item, fireOrigin, fireDirection);
-            }
+            } // else if (item.stats.bulletType === 'projectile') { ... }
             
             item.stats.currentMag -= 1;
+            lastShot = performance.now();
             updateUI();
         }
 
         /**
          * @param {object} item - The weapon stats.
-         * @param {THREE.Vector3} fireOrigin - The world position where the shot originates (player head or bot head).
+         * @param {THREE.Vector3} fireOrigin - The world position where the shot originates.
          * @param {THREE.Vector3} fireDirection - The normalized vector of the initial shot direction.
          * @param {object} shooter - The player object or bot object that is shooting.
          */
         function handleHitscan(item, fireOrigin, fireDirection, shooter) {
-            // Player uses ADS spread, Bots use base spread
             const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread; 
             
             for(let p = 0; p < item.stats.pellets; p++) {
                 
                 const ray = new THREE.Raycaster(fireOrigin);
-                
                 const spreadDir = fireDirection.clone();
+                
+                // Add spread
                 const randomX = (Math.random() - 0.5) * spread;
                 const randomY = (Math.random() - 0.5) * spread;
-                
                 spreadDir.x += randomX;
                 spreadDir.y += randomY;
                 spreadDir.normalize();
+
+                // Bot miss chance (30% chance)
+                if (shooter !== player && Math.random() < 0.3) { 
+                    spreadDir.x += (Math.random() - 0.5) * 0.5;
+                    spreadDir.y += (Math.random() - 0.5) * 0.5;
+                    spreadDir.normalize();
+                }
 
                 ray.ray.direction.copy(spreadDir);
 
@@ -1526,8 +1586,8 @@
                     let hitPlayer = false;
                     let isHeadshot = false;
 
+                    // Find the root bot mesh 
                     let obj = hit.object;
-                    // Traverse up the parent hierarchy to find the root bot mesh (which is a Group)
                     while(obj && obj.parent && obj.parent.type !== 'Scene') {
                         const b = bots.find(bot => bot.mesh === obj.parent);
                         if(b) { hitBot = b; break; }
@@ -1535,7 +1595,7 @@
                     }
                     if(!hitBot) hitBot = bots.find(bot => bot.mesh === hit.object);
                     
-                    // Check if player was hit (only applicable if shooter is a bot)
+                    // Check if player was hit
                     if (shooter !== player) {
                         const playerDist = hit.point.distanceTo(camera.position);
                         if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
@@ -1554,93 +1614,33 @@
                             dmg = item.stats.head; 
                         }
                         takeDamage(dmg, hit.point); 
+                        playSound('player_hit');
                     } else {
                         // Hit a building/object
+                        playSound('impact_hit');
                     }
                 }
             }
         }
         
-        function handleProjectile(item, fireOrigin, fireDirection) {
-            const rocketGeo = new THREE.ConeGeometry(0.2, 0.5, 8);
-            const rocketMat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
-            const rocketMesh = new THREE.Mesh(rocketGeo, rocketMat);
-            
-            rocketMesh.position.copy(fireOrigin).add(fireDirection.clone().multiplyScalar(2));
-            rocketMesh.lookAt(rocketMesh.position.clone().add(fireDirection));
-            scene.add(rocketMesh);
-
-            projectiles.push({
-                mesh: rocketMesh,
-                velocity: fireDirection.multiplyScalar(item.stats.projSpeed),
-                damage: item.stats.dmg,
-                radius: item.stats.blast, 
-                source: player,
-                rarity: item.rarity 
-            });
-        }
-
-        function updateProjectiles(dt) {
-            for(let i = projectiles.length - 1; i >= 0; i--) {
-                const proj = projectiles[i];
-                proj.mesh.position.add(proj.velocity.clone().multiplyScalar(dt));
-
-                let explosion = false;
-                const targets = objects; 
-                
-                // Check map boundary
-                if (Math.abs(proj.mesh.position.x) > WORLD_SIZE/2 || Math.abs(proj.mesh.position.z) > WORLD_SIZE/2) {
-                    explosion = true;
-                } else {
-                    // Raycast check against buildings
-                    const ray = new THREE.Raycaster(proj.mesh.position, proj.velocity.clone().normalize());
-                    const hits = ray.intersectObjects(targets, true);
-                    if(hits.length > 0 && hits[0].distance < proj.velocity.length() * dt * 2) {
-                        explosion = true;
-                    }
-                }
-                
-                if (explosion) {
-                    applyExplosiveDamage(proj.mesh.position, proj.radius, proj.damage, proj.source, proj.rarity);
-                    scene.remove(proj.mesh);
-                    projectiles.splice(i, 1);
-                }
-            }
-        }
-        
-        function applyExplosiveDamage(center, radius, baseDamage, source, rarity) {
-            
-            // Apply Rarity damage multiplier for explosion (100 damage max at radius 5m for Common)
-            const maxDmg = 100 * rarity.dmg;
-            
-            // Player damage
-            const playerDist = center.distanceTo(camera.position);
-            if (playerDist < radius + PLAYER_HEIGHT) {
-                const distanceRatio = Math.max(0, 1 - (playerDist / radius));
-                const damage = maxDmg * distanceRatio; // Scale damage based on distance
-                takeDamage(damage, center);
-            }
-            
-            // Bot damage
-            bots.forEach(bot => {
-                const botDist = center.distanceTo(bot.mesh.position);
-                if (botDist < radius + 1) {
-                    const distanceRatio = Math.max(0, 1 - (botDist / radius));
-                    const damage = maxDmg * distanceRatio; // Scale damage based on distance
-                    applyDamage(bot, damage, center, source);
-                }
-            });
-
-            // Visually, maybe add a sphere
-            const explosion = new THREE.Mesh(new THREE.SphereGeometry(radius, 8, 8), new THREE.MeshBasicMaterial({color: 0xFFA500, transparent: true, opacity: 0.5}));
-            explosion.position.copy(center);
-            scene.add(explosion);
-            
-            setTimeout(() => scene.remove(explosion), 500);
-        }
-
         function applyDamage(target, amount, hitPoint, source, isHeadshot = false) {
-            target.health -= amount;
+            amount = Math.round(amount);
+            let remainingDmg = amount;
+
+            if(target.shield > 0) {
+                target.shield -= remainingDmg;
+                if(target.shield < 0) { 
+                    remainingDmg = -target.shield; 
+                    target.shield = 0; 
+                } else {
+                    remainingDmg = 0;
+                }
+            } 
+            
+            if (remainingDmg > 0) {
+                target.health -= remainingDmg;
+            }
+            
             showDmg(amount, hitPoint, isHeadshot);
             
             if(target.health <= 0) {
@@ -1649,17 +1649,15 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
-                    // Bot Kill drop (Bot's Weapon + Random Healing Item)
                     const botWeapon = target.weapon;
                     const dropConsumableKey = getRandomConsumableKey();
                     const consumableBase = CONSUMABLES[dropConsumableKey];
                     const healingItemDrop = { category: 'consumable', ...consumableBase, count: 1 };
                     
-                    // Drop the weapon the bot was holding
                     spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
-                    // Drop a healing item
                     spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
                     
+                    playSound('elimination');
                     checkWin();
                 }
             }
@@ -1696,11 +1694,10 @@
 
 
         // ===============================================================
-        // === BOT AI & LIFE CYCLE =======================================
+        // === BOT AI & LIFE CYCLE (Improved) ============================
         // ===============================================================
 
         function findClosestTarget(bot) {
-            // Bots only target the player
             if (player.health > 0 && !player.dead) {
                 return player;
             } else {
@@ -1710,6 +1707,8 @@
 
         function updateBots(dt, now) {
             document.getElementById('alive-count').innerText = bots.length + 1;
+            const BOT_MOVE_SPEED = WALK_SPEED * 0.3; 
+            const BOT_MOVE_COOLDOWN_RANGE = 2000; 
 
             for(let i = bots.length - 1; i >= 0; i--) {
                 const bot = bots[i];
@@ -1729,39 +1728,42 @@
                     // Face the target
                     bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
                     
-                    // 3. Movement
-                    if(dist > 15 && dist < 80) {
-                        const moveSpeed = WALK_SPEED * dt * 0.5;
-                        bot.mesh.translateZ(moveSpeed);
-                    } else if (dist < 8) {
-                        // Jitter when close
-                        if (Math.random() > 0.9) bot.mesh.rotateY(Math.PI / 4 * (Math.random() > 0.5 ? 1 : -1));
+                    // 3. Combat Movement (Move towards or slightly away)
+                    if(dist > 50) {
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2); 
+                    } else if (dist < 10) {
+                        bot.mesh.rotation.y += Math.PI/2 * (Math.random() > 0.5 ? 1 : -1) * dt;
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
+                    } else {
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.5);
                     }
-                    
+
                     // 4. Shoot Logic 
                     const weaponStats = bot.weapon.stats; 
                     if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
                         bot.lastShot = now;
                         
-                        // Calculate firing origin (Bot's head)
                         const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                        
-                        // Calculate firing direction (from bot to player's center mass)
                         const fireDirection = new THREE.Vector3();
                         fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
 
                         handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
                     }
                 } else {
-                    // Wander
-                    if (now - bot.lastMove > 5000 * Math.random()) {
-                        bot.mesh.rotateY(Math.PI * 2 * (Math.random() - 0.5));
-                        bot.lastMove = now;
+                    // 3. Constant World Movement (Wander, even when not close)
+                    bot.moveCooldown -= dt * 1000;
+                    if (bot.moveCooldown <= 0) {
+                        // Pick new direction and set a new cooldown
+                        bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
+                        bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
+                        bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
                     }
-                    bot.mesh.translateZ(WALK_SPEED * dt * 0.2);
+
+                    bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
                 }
             }
         }
+
 
         // ===============================================================
         // === VEHICLE LOGIC =============================================
@@ -1778,7 +1780,6 @@
                         car.mesh.rotation.y += rotationSpeed * Math.sign(car.speed || 1);
                     }
                     
-                    const oldPos = car.mesh.position.clone();
                     car.mesh.translateZ(car.speed * dt);
                     
                     // Car Hit Damage
@@ -1825,7 +1826,8 @@
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
                 if(item) {
                     const icon = item.category === 'weapon' ? item.stats.icon : item.icon;
-                    const name = item.category === 'weapon' ? `${item.rarity.name}-${item.name}` : item.name;
+                    // Removed rarity letter from slot name (e.g., just "SMG")
+                    const name = item.name; 
                     const count = item.category === 'consumable' ? item.count : '';
 
                     el.innerHTML += `<div class="slot-icon">${icon}</div><div class="slot-name">${name} ${count ? '['+count+']' : ''}</div>`;
@@ -1852,8 +1854,6 @@
             document.getElementById('interact-msg').innerText = msg;
             
             const showInteract = player.vehicle || chests.some(c => camera.position.distanceTo(c.position) < 6) || loot.some(l => camera.position.distanceTo(l.mesh.position) < 4) || doors.some(d => camera.position.distanceTo(d.mesh.position) < 5);
-            
-            // Show Interact message if close to anything interactive OR if the current slot has a usable item.
             const currentItem = player.inventory[player.slot];
             const showHealingPrompt = currentItem && currentItem.category === 'consumable' && currentItem.count > 0;
             
@@ -1885,17 +1885,32 @@
                 viewModel.position.set(0.2, -0.2, -0.5);
                 weaponScene.add(viewModel);
                 
-                const ch = document.getElementById('crosshair');
-                ch.style.display = item.stats.icon === '🔭' ? 'none' : 'block';
+                // Handle Crosshair/Scope for the new weapon
+                let scopeType = item.stats.scope;
+                const crosshair = document.getElementById('crosshair');
+                const redDotScope = document.getElementById('red-dot-scope');
+                
+                crosshair.style.display = (scopeType) ? 'none' : 'block';
+                redDotScope.style.display = 'none';
+
+                if (player.ads) {
+                    // Re-apply ads state based on the new weapon
+                    toggleADS(true); 
+                } else {
+                    // Ensure FOV is reset if not ADS
+                    camera.fov = 75;
+                    camera.updateProjectionMatrix();
+                }
+
             } else {
                 document.getElementById('crosshair').style.display = 'block';
+                toggleADS(false);
             }
-            toggleADS(false);
             updateUI(); 
         }
 
         // ===============================================================
-        // === INPUT & CONTROL MANAGEMENT ================================
+        // === INPUT & CONTROL MANAGEMENT (Mobile Fix) ====================
         // ===============================================================
         
         function setMobileMode(enable) {
@@ -1908,17 +1923,15 @@
                 if (controls) controls.enabled = false;
                 mobileControls.style.display = 'block';
                 inventory.classList.add('mobile');
-                // Remove PC specific listeners if mobile
                 gameContainer.removeEventListener('mousedown', lockPointer);
             } else {
                 if (controls) controls.enabled = true;
                 mobileControls.style.display = 'none';
                 inventory.classList.remove('mobile');
-                // Add PC specific listener
                 gameContainer.addEventListener('mousedown', lockPointer);
             }
         }
-
+        
         function lockPointer() {
             if (controls && !isMobileMode) {
                 controls.lock();
@@ -1945,7 +1958,6 @@
                     
                     if(e.code === 'Space' && v) inputs.jump = true; 
                     if(e.code === 'KeyR' && v) inputs.reload = true; 
-                    // PC Healing key
                     if(e.code === 'KeyX' && v) useHealingItem(); 
                 }
             };
@@ -1957,7 +1969,6 @@
                     if(e.code === 'Digit3') switchSlot(2);
                     if(e.code === 'Digit4') switchSlot(3);
                     if(e.code === 'Digit5') switchSlot(4);
-                    // PC Interact/Pickup key
                     if(e.code === 'KeyE') tryInteract(); 
                     if(e.code === 'KeyB') buildWall(); 
                 }
@@ -1980,7 +1991,7 @@
             const touchZoneLeft = document.getElementById('stick-left');
             const touchZoneRight = document.getElementById('stick-right');
             const thumbLeft = document.getElementById('thumb-left');
-            const sensitivity = 0.005; // Camera look sensitivity
+            const sensitivity = 0.005; 
 
             const handleJoystickLeft = (e) => {
                 if (!isMobileMode) return;
@@ -2029,11 +2040,14 @@
                             const dx = touch.clientX - lastTouch.x;
                             const dy = touch.clientY - lastTouch.y;
                             
+                            // *** MOBILE CAMERA FIX: Apply rotation directly for smooth, non-janky control ***
                             camera.rotation.y -= dx * sensitivity; 
                             camera.rotation.x -= dy * sensitivity; 
-                            camera.rotation.x = Math.max(-1.5, Math.min(1.5, camera.rotation.x));
-
-                            activeTouchesRight.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+                            camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); // Clamp pitch
+                            
+                            // Update the last position for differential calculation
+                            lastTouch.x = touch.clientX;
+                            lastTouch.y = touch.clientY;
                         }
                     }
                 }
@@ -2059,33 +2073,41 @@
             touchZoneLeft.addEventListener('touchcancel', handleTouchEnd);
             
             // Right Zone: Camera Look
-            touchZoneRight.addEventListener('touchstart', handleLookRight);
-            touchZoneRight.addEventListener('touchmove', handleLookRight);
+            touchZoneRight.addEventListener('touchstart', handleLookRight, { passive: false }); 
+            touchZoneRight.addEventListener('touchmove', handleLookRight, { passive: false });
             touchZoneRight.addEventListener('touchend', handleTouchEnd);
             touchZoneRight.addEventListener('touchcancel', handleTouchEnd);
 
 
-            // 4. Mobile Buttons (Must use ontouchstart/touchend to avoid interference with camera look)
-            document.getElementById('btn-fire').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); inputs.fire = true; } });
-            document.getElementById('btn-fire').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); inputs.fire = false; } });
+            // 4. Mobile Buttons
+            document.getElementById('btn-fire').addEventListener('touchstart', (e) => { 
+                if (isMobileMode) { 
+                    e.preventDefault(); 
+                    inputs.fire = true; 
+                } 
+            });
+            document.getElementById('btn-fire').addEventListener('touchend', (e) => { 
+                if (isMobileMode) { 
+                    e.preventDefault(); 
+                    inputs.fire = false; 
+                } 
+            });
             document.getElementById('btn-jump').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); inputs.jump = true; } });
             document.getElementById('btn-jump').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); inputs.jump = false; } });
             
-            // === UNIFIED INTERACT BUTTON LOGIC ===
             document.getElementById('btn-interact').addEventListener('touchstart', (e) => { 
                 if (isMobileMode) { 
                     e.preventDefault(); 
-                    tryInteract();     // Check for pickups, chests, doors, vehicles
-                    useHealingItem();  // Check for consumable use
+                    tryInteract();     
+                    useHealingItem(); 
                 } 
             });
-            // ===================================
             
             document.getElementById('btn-build').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); buildWall(); } });
             document.getElementById('btn-ads').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(true); } });
             document.getElementById('btn-ads').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(false); } });
             
-            // 5. Mobile Inventory Touch Handling (Need to add mobile interaction logic for inventory buttons)
+            // 5. Mobile Inventory Touch Handling
             for(let i=0; i<5; i++) {
                 const slot = document.getElementById(`slot-${i}`);
                 if (slot) {
@@ -2105,6 +2127,10 @@
         // ===============================================================
 
         function init() {
+            // Load Victory Royales from Local Storage
+            victoryRoyales = parseInt(localStorage.getItem('victoryRoyales')) || 0;
+            document.getElementById('victory-royales-stat').innerText = `Victory Royales: ${victoryRoyales}`;
+            
             // 1. Scene Setup
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87CEEB);
@@ -2138,27 +2164,15 @@
             
             // 3. Controls (Instantiated, but not enabled/locked yet)
             controls = new PointerLockControls(camera, document.body);
-            setupInputs(); // Set up all listeners, but they are gated by isMobileMode/controls.isLocked
+            setupInputs(); 
 
             // 4. Raycasters
             raycaster = new THREE.Raycaster();
             downRay = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, PLAYER_HEIGHT + 0.1);
             
-            // 5. World Generation
-            generateTerrain(); 
-            generatePOIs(); 
-            spawnBots();
-            spawnCars();
-
-            // Spawn the Mythic Weapon near the center (Tilted Towers)
-            spawnLoot(10, getTerrainHeight(10, 10) + 1, 10, 'mythic');
-
-            // Set player starting height
-            camera.position.set(0, getTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
-
-            // 6. Starter Loot & UI (Initial State)
+            // 5. Starter Loot & UI (Initial State)
             giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
-            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1); // Starter minis
+            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1); 
             giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1 }, 2);
             player.wood = 50; 
             updateUI();
@@ -2171,12 +2185,26 @@
             document.getElementById('start-screen').style.display = 'none';
             gameStarted = true;
             
+            isMobileMode = isMobile;
+            BOT_COUNT = isMobile ? 20 : 25; // Player + 20 bots = 21 total, Player + 25 bots = 26 total
+            
             if (isMobile) {
                 setMobileMode(true);
             } else {
                 setMobileMode(false);
-                setupPCLock(); // Enable PC lock behavior
+                setupPCLock(); 
             }
+            
+            // 6. World Generation (Needs to happen AFTER BOT_COUNT is set)
+            generateTerrain(); 
+            generatePOIs(); 
+            spawnBots();
+            spawnCars();
+            // Ensure the rare Strangled Rifle spawns
+            spawnLoot(10, getTerrainHeight(10, 10) + 1, 10, 'mythic'); 
+
+            // Set player starting height
+            camera.position.set(0, getTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
             
             // 7. Start Storm Timer
             startStormTimer(); 
@@ -2204,7 +2232,6 @@
                 if (player.healingItem.continuous) {
                     applyContinuousHealing(player.healingItem, dt);
                 } else if (!player.healingItem.instant) {
-                    // Stop movement while performing timed heal
                     inputs.fire = false;
                     inputs.w = inputs.a = inputs.s = inputs.d = false;
                 }
@@ -2215,13 +2242,13 @@
             if(player.vehicle) {
                 updateCars(dt);
             } else {
-                // Movement is only processed if in mobile mode OR if PC is locked
                 const canMove = isMobileMode || controls.isLocked; 
                 if (canMove) {
                     const currentSpeed = inputs.sprint ? SPRINT_SPEED : WALK_SPEED;
                     
                     const direction = new THREE.Vector3();
-                    camera.getWorldDirection(direction);
+                    direction.setFromMatrixColumn(camera.matrix, 0); 
+                    direction.crossVectors(camera.up, direction);
                     direction.y = 0;
                     direction.normalize();
                     
@@ -2264,6 +2291,7 @@
                         velocity.y = JUMP_FORCE;
                         isGrounded = false;
                         inputs.jump = false; 
+                        playSound('jump');
                     }
                     
                     camera.position.y += velocity.y * dt;
@@ -2279,8 +2307,11 @@
             if(inputs.fire && !player.vehicle && !player.isHealing && canFire) {
                 const item = player.inventory[player.slot];
                 if(item && item.category === 'weapon') {
-                    if(now - lastShot > item.stats.rate * 1000) {
-                        lastShot = now;
+                    if (item.stats.burst) {
+                        if (now - lastShot > item.stats.burstDelay) {
+                            shoot(item);
+                        }
+                    } else if(now - lastShot > item.stats.rate * 1000) {
                         shoot(item);
                     }
                 }
@@ -2289,7 +2320,7 @@
                 inputs.reload = false;
             }
             
-            updateProjectiles(dt);
+            // updateProjectiles(dt); // Placeholder
 
             // 3. AI Update
             updateBots(dt, now);
