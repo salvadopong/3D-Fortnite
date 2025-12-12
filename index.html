@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V18.0 - Final Overhaul</title>
+    <title>Web Battle Royale: V19.0 - Final Overhaul</title>
     <style>
         /* ======================================= */
-        /* === V18.0 CLEAN & POLISHED UI/UX === */
+        /* === V19.0 CLEAN & POLISHED UI/UX === */
         /* ======================================= */
         
         body { 
@@ -87,13 +87,12 @@
             display: none; pointer-events: none; z-index: 100; 
             border: 2px solid #333;
         }
-        /* Red Dot Scope for DMR, Scoped SMG */
+        /* Red Dot Scope for DMR, Scoped SMG, Falcon Sniper (ZOOMED) */
         #red-dot-scope {
-            position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%);
-            width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none;
             pointer-events: none;
+            background: rgba(0,0,0,0.1); /* Subtle darkening */
         }
         .red-dot {
             width: 8px; height: 8px; border-radius: 50%;
@@ -109,7 +108,6 @@
         /* Storm Visuals (Fog Effect) */
         #storm-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Purple fog gradient mix-blend-mode for the storm */
             background: radial-gradient(circle at center, rgba(138, 43, 226, 0.0) 30%, rgba(75, 0, 130, 0.4) 60%, rgba(75, 0, 130, 0.8) 100%);
             mix-blend-mode: multiply; 
             display: none; pointer-events: none; 
@@ -162,6 +160,7 @@
             border-radius: 12px; overflow: hidden; position: relative;
         }
         .bar-fill { height: 100%; transition: width 0.3s; }
+        #overshield-bar { background: linear-gradient(90deg, #ff4d4d, #ffaa00); }
         #shield-bar { background: linear-gradient(90deg, #00d2ff, #0072ff); }
         #health-bar { background: linear-gradient(90deg, #11998e, #38ef7d); }
         .stat-icon { font-size: 28px; width: 30px; text-align: center; }
@@ -209,7 +208,7 @@
         /* Reload Indicator */
         #reload-msg {
             position: absolute; bottom: 150px; left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(calc(-50% - 130px)); /* Shifted left to accommodate mobile controls */
             background: rgba(255, 0, 0, 0.9);
             color: white; padding: 8px 20px; border-radius: 5px;
             font-size: 16px; font-weight: 800;
@@ -335,16 +334,34 @@
         #btn-interact { bottom: 160px; right: 100px; border-color: #ffd700; color: #ffd700; } 
         #btn-build { bottom: 240px; right: 100px; border-color: #8B4513; }
         #btn-ads { bottom: 60px; right: 120px; width: 55px; height: 55px; font-size: 12px; }
+        #btn-reload { top: 180px; right: 20px; width: 50px; height: 50px; font-size: 10px; border-color: #00d2ff; display: none; }
 
 
-        /* --- Game Over (Standard) --- */
+        /* --- Game Over (Revised) --- */
         #game-over {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center; align-items: center;
+            background: linear-gradient(0deg, rgba(200, 0, 0, 0.8), rgba(50, 0, 0, 0.9)); 
+            backdrop-filter: blur(5px);
+            flex-direction: column; justify-content: center; align-items: center;
             color: white; z-index: 999; pointer-events: auto;
             font-family: 'Verdana', sans-serif;
+            text-align: center;
         }
-        
+        #go-title {
+            font-size: 100px;
+            color: #ff4d4d;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.5);
+            margin-bottom: 20px;
+            font-weight: 900;
+            animation: slideIn 1s ease-out;
+        }
+        #go-stats {
+            font-size: 30px;
+            color: #ccc;
+            margin-bottom: 50px;
+            animation: slideIn 1s ease-out 0.5s backwards;
+        }
+
         /* --- VICTORY ROYALE ANIMATION (Enhanced) --- */
         #victory-overlay {
             display: none; 
@@ -400,6 +417,10 @@
             0% { transform: translateY(50px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
 
         button.restart-btn { 
             margin-top: 30px; padding: 15px 50px; font-size: 22px; 
@@ -413,16 +434,21 @@
             animation: fadeUp 1s ease-out 3s forwards;
         }
         button.restart-btn:hover { background: #0056b3; }
+        
+        #game-over button.restart-btn {
+            animation: slideIn 1s ease-out 1s backwards;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1>FORTNITE</h1>
-        <p>Select your mode and platform:</p>
+        <h1>WEB BATTLE ROYALE</h1>
+        <p>A fast-paced shooter experience.</p>
         <div>
-            <button class="start-button mobile-option" onclick="startGame(true)">Mobile Mode (21 Bots)</button>
-            <button class="start-button" onclick="startGame(false)">PC / Laptop Mode (26 Bots)</button>
+            <button class="start-button mobile-option" onclick="startGame(true)">Mobile Mode (21 Players)</button>
+            <button class="start-button" onclick="startGame(false)">PC / Laptop Mode (21 Players)</button>
         </div>
         <div id="victory-royales-stat">Victory Royales: 0</div>
     </div>
@@ -466,8 +492,12 @@
 
         <div id="status-area">
             <div class="stat-row">
+                <div class="stat-icon">🔥</div>
+                <div class="bar-wrap"><div id="overshield-bar" class="bar-fill" style="width: 50%;"></div><div class="stat-val" id="overshield-val">50</div></div>
+            </div>
+            <div class="stat-row">
                 <div class="stat-icon">🛡️</div>
-                <div class="bar-wrap"><div id="shield-bar" class="bar-fill" style="width: 50%;"></div><div class="stat-val" id="shield-val">50</div></div>
+                <div class="bar-wrap"><div id="shield-bar" class="bar-fill" style="width: 100%;"></div><div class="stat-val" id="shield-val">100</div></div>
             </div>
             <div class="stat-row">
                 <div class="stat-icon">❤️</div>
@@ -500,6 +530,7 @@
             <div id="btn-interact" class="action-btn">INTERACT</div> 
             <div id="btn-build" class="action-btn">BUILD</div>
             <div id="btn-ads" class="action-btn">AIM</div>
+            <div id="btn-reload" class="action-btn">RELOAD</div>
         </div>
     </div>
 
@@ -509,9 +540,9 @@
     </div>
     
     <div id="game-over">
-        <h1 id="go-title">GAME OVER</h1>
+        <h1 id="go-title">ELIMINATED</h1>
         <h3 id="go-stats">Eliminations: 0</h3>
-        <button class="restart-btn" onclick="location.reload()" style="animation: none; opacity: 1;">RETURN TO LOBBY</button>
+        <button class="restart-btn" onclick="location.reload()">RETURN TO LOBBY</button>
     </div>
 
     <script type="importmap">
@@ -528,17 +559,22 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V18.0) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.0) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        let BOT_COUNT = 21; // Default for mobile
+        let BOT_COUNT = 20; // Player + 20 bots = 21 total
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
         const JUMP_FORCE = 15;
         const PLAYER_HEIGHT = 1.8;
-        const SHOTGUN_PELLETS = 4; // New constant for shotguns
+        const SHOTGUN_PELLETS = 4;
+        
+        // --- OVERSEHIELD CONSTANTS ---
+        const OVER_SHIELD_MAX = 50;
+        const OVER_SHIELD_REGEN_RATE = 5; // 5 HP per second
+        const OVER_SHIELD_REGEN_DELAY = 10000; // 10 seconds delay
         
         // --- WEAPONS CONFIG ---
         const RARITY_MULTIPLIERS = {
@@ -552,7 +588,6 @@
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
         const WEAPONS_BASE = {
-            // DMG * 1.5 multiplier for Pump Shotgun
             PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             AUTO_SHG: { name: "Auto Shotgun", dmg: 15, head: 25, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
@@ -562,29 +597,33 @@
             BOLT_SNIPER: { name: "Bolt Sniper", dmg: 85, head: 105, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
             SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 65, head: 90, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 65, head: 90, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // Changed to red_dot
             STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            // Sniper Base Damage: 100 Body, 130 Head on common
             SNIPER:{name: "Sniper", dmg: 100,head: 130,rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
+            ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 }
         };
         const MYTHIC_WEAPON_KEY = 'STRANGLED_RIFLE'; 
-        
-        // --- CONSUMABLES CONFIG ---
-        const CONSUMABLES = {
-            MINI: { name: "Small Shield", val: 25, type: 'shield', max: 50, icon: '💧', time: 1, continuous: false, instant: true, maxStack: 6 },
-            BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false, instant: false, maxStack: 3 },
-            CHUG: { name: "Chug Jug", val: 3, shieldVal: 3, type: 'continuous', max: 100, icon: '🥤', time: 20000, continuous: true, instant: false, maxStack: 1 },
-            MEDKIT: { name: "Med Kit", val: 100, type: 'health', max: 100, icon: '🩹', time: 10000, continuous: false, instant: false, maxStack: 3 }
-        };
+        const BOT_WEAPON_KEY = 'PISTOL'; // Bots only use Pistol
 
-        // --- STORM PHASES ---
+        
+        // --- CONSUMABLES CONFIG (Rarity Updated) ---
+        const CONSUMABLES = {
+            MINI: { name: "Small Shield", val: 25, type: 'shield', max: 50, icon: '💧', time: 1, continuous: false, instant: true, maxStack: 6, rarity: 'COMMON' },
+            BIG:  { name: "Big Shield", val: 50, type: 'shield', max: 100, icon: '⚗️', time: 5000, continuous: false, instant: false, maxStack: 3, rarity: 'UNCOMMON' },
+            CHUG: { name: "Chug Jug", val: 3, shieldVal: 3, type: 'continuous', max: 100, icon: '🥤', time: 20000, continuous: true, instant: false, maxStack: 1, rarity: 'LEGENDARY' },
+            MEDKIT: { name: "Med Kit", val: 100, type: 'health', max: 100, icon: '🩹', time: 10000, continuous: false, instant: false, maxStack: 3, rarity: 'RARE' }
+        };
+        const CONSUMABLE_KEYS = Object.keys(CONSUMABLES);
+
+
+        // --- STORM PHASES (Wait Time Updated) ---
         const STORM_PHASES = [
-            { time: 240, radius: WORLD_SIZE * 0.5, damage: 3, status: "Wait" }, 
+            { time: 60, radius: WORLD_SIZE * 0.5, damage: 3, status: "Wait" }, // Changed from 240 to 60 seconds (1:00)
             { time: 60, radius: WORLD_SIZE * 0.4, damage: 3, status: "Shrink" }, 
             { time: 120, radius: WORLD_SIZE * 0.4, damage: 3, status: "Hold" }, 
             { time: 60, radius: WORLD_SIZE * 0.3, damage: 5, status: "Shrink" }, 
-            { time: 60, radius: 10, damage: 10, status: "Deathmatch" } 
+            { time: 60, radius: 0, damage: 10, status: "Deathmatch" } // Changed final radius to 0 (entire map cover)
         ];
         const BOT_STORM_DAMAGE = 5; 
 
@@ -597,7 +636,7 @@
         let raycaster, downRay;
         
         let player = { 
-            health: 100, shield: 50, wood: 0, 
+            health: 100, shield: 100, overshield: OVER_SHIELD_MAX, wood: 0, 
             inventory: [null, null, null, null, null], slot: 0, 
             dead: false, ads: false, vehicle: null, eliminations: 0,
             isReloading: false,
@@ -607,7 +646,10 @@
             lastStormDamage: 0,
             isBursting: false,
             burstCount: 0,
-            burstTimer: null
+            burstTimer: null,
+            // Overshield Tracking
+            lastOvershieldDamage: 0, 
+            overshieldRegenTimer: null
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false };
@@ -617,7 +659,7 @@
         let lastShot = 0;
         let isMobileMode = false; 
         let gameStarted = false;
-        let victoryRoyales = 0; // Local storage tracked
+        let victoryRoyales = 0;
         
         // Dynamic Arrays for Entities
         let bots = [];
@@ -699,14 +741,12 @@
             if (controls && controls.isLocked) controls.unlock(); 
             
             if (win) {
-                // Update Victory Royale count
                 victoryRoyales = (parseInt(localStorage.getItem('victoryRoyales')) || 0) + 1;
                 localStorage.setItem('victoryRoyales', victoryRoyales);
 
                 document.getElementById('victory-overlay').style.display = 'flex';
                 playSound('victory');
             } else {
-                document.getElementById('go-title').innerText = "GAME OVER";
                 document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('game-over').style.display = 'flex';
                 playSound('defeat');
@@ -725,21 +765,24 @@
 
             scopeOverlay.style.display = 'none';
             redDotScope.style.display = 'none';
-            crosshair.style.display = 'block';
-            camera.fov = 75;
-
-            if (bool) {
+            
+            // Check for Sniper/Scoped weapons
+            const isScoped = isClassicScope || isRedDotScope;
+            
+            if (bool && isScoped) {
+                crosshair.style.display = 'none';
                 if (isClassicScope) {
                     scopeOverlay.style.display = 'block';
-                    crosshair.style.display = 'none';
                     camera.fov = 15;
                 } else if (isRedDotScope) {
                     redDotScope.style.display = 'block';
-                    crosshair.style.display = 'none';
-                    camera.fov = 45;
+                    // Falcon Sniper has a 'zoomed' red dot (smaller FOV)
+                    camera.fov = (item.stats.name === WEAPONS_BASE.FALCON_SNIPER.name) ? 30 : 45;
                 }
             } else {
-                // Resetting
+                // If not scoped (or hip-firing a scoped weapon), crosshair should only appear if it's not a sniper
+                crosshair.style.display = (isClassicScope || isRedDotScope) ? 'none' : 'block';
+                camera.fov = 75;
             }
 
             camera.updateProjectionMatrix();
@@ -802,7 +845,8 @@
             scene.add(wall);
             
             objects.push(wall);
-            buildings.push({ mesh: wall, type: 'wall', health: 100 }); 
+            // Mark the wall as 'indestructible_wood'
+            buildings.push({ mesh: wall, type: 'indestructible_wood', health: Infinity }); 
             player.wood -= 10;
             updateUI();
         }
@@ -845,13 +889,13 @@
                 stormPhaseTimer -= 1;
                 document.getElementById('storm-timer').innerText = formatTime(stormPhaseTimer);
                 
-                if (nextPhase.status === "Shrink") {
+                if (nextPhase.status === "Shrink" || nextPhase.status === "Deathmatch") {
                     const elapsed = performance.now() - startTime;
                     const duration = nextPhase.time * 1000;
                     const t = Math.min(1, elapsed / duration);
                     stormRadius = startRadius + (endRadius - startRadius) * t;
                     stormActive = true; 
-                } else if (nextPhase.status === "Hold" || nextPhase.status === "Deathmatch") {
+                } else if (nextPhase.status === "Hold") {
                     stormActive = true;
                 } else if (nextPhase.status === "Wait") {
                     stormActive = false;
@@ -887,7 +931,6 @@
                 const botDistToStorm = botPos2D.distanceTo(stormCenter);
                 if (stormActive && botDistToStorm > stormRadius && BOT_STORM_DAMAGE > 0) {
                      if (now - (bot.lastStormDamage || 0) > 1000) {
-                        // Bots take damage only to health, not shield
                         bot.health = Math.max(0, bot.health - BOT_STORM_DAMAGE); 
                         bot.lastStormDamage = now;
                     }
@@ -948,100 +991,6 @@
             createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
-        // === 13 ORIGINAL & 13 NEW POIs ===
-        function createRetailRow(x, z) { createBuilding(x, z, 15, 8, 15, 0xFF7F50, 0); }
-        function createLootLake(x, z) { createBox(x, getTerrainHeight(x, z)+0.1, z, 50, 0.2, 50, 0x00BFFF); }
-        function createShiftyShafts(x, z) { createBox(x, getTerrainHeight(x, z)-5, z, 30, 10, 30, 0x696969); spawnChest(x, getTerrainHeight(x, z)-4, z); }
-        function createPleasantPark(x, z) { createWoodHouse(x, z, 10, 8, 10); }
-        function createTomatoTown(x, z) { createBox(x, getTerrainHeight(x, z)+5, z, 10, 10, 10, 0xFF6347); createBox(x, getTerrainHeight(x, z)+11, z, 5, 2, 5, 0xFF0000); }
-        function createSaltySprings(x, z) { createBuilding(x, z, 12, 6, 12, 0x808080, Math.PI/4); }
-        function createFatalFields(x, z) { createWoodHouse(x, z, 20, 5, 20); }
-        function createRiskyReels(x, z) { createBox(x, getTerrainHeight(x, z)+10, z, 2, 20, 10, 0x000000); }
-        function createTheGrotto(x, z) { createBox(x, getTerrainHeight(x, z)-10, z, 40, 20, 40, 0x222222); spawnChest(x, getTerrainHeight(x, z)-9, z); }
-        function createSlurpySwamp(x, z) { createBox(x, getTerrainHeight(x, z)+0.1, z, 30, 0.2, 30, 0x00FF7F); }
-        function createMistyMeadows(x, z) { createBuilding(x, z, 18, 10, 18, 0x9370DB, -Math.PI/4); }
-        function createTheFortilla(x, z) { createBox(x, getTerrainHeight(x, z), z, 40, 0.5, 40, 0xADD8E6); createBox(x+10, getTerrainHeight(x, z)+2, z, 5, 4, 5, 0xAAAAAA); }
-        function createSteamyStacks(x, z) { createBox(x, getTerrainHeight(x, z)+15, z, 8, 30, 8, 0xEEEEEE); createBox(x+10, getTerrainHeight(x, z)+15, z+10, 8, 30, 8, 0xEEEEEE); }
-        function createSweatySands(x, z) { createBox(x, getTerrainHeight(x, z)+0.5, z, 25, 1, 25, 0xF4A460); createWoodHouse(x-5, z-5, 8, 6, 8); }
-        function createWeepingWoods(x, z) { for(let i=0; i<5; i++) createTree(x + Math.random()*20-10, z + Math.random()*20-10); }
-        function createLazyLake(x, z) { createBuilding(x, z, 20, 10, 10, 0x00FFFF, 0); createBuilding(x+15, z+15, 10, 8, 10, 0xADD8E6, Math.PI/2); }
-
-        // --- NEW POIS ---
-        function createEmberIsland(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 10, z, 10, 20, 10, 0xAA0000); 
-            spawnChest(x, h+21, z); 
-        }
-        function createFlushFactory(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 5, z, 20, 10, 20, 0x778899); 
-            createBox(x, h + 11, z, 15, 2, 15, 0xAAAAAA); 
-            spawnChest(x, h+1, z); 
-        }
-        function createJunkJunction(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 2, z, 25, 4, 25, 0x666666); 
-            spawnChest(x, h+3, z); 
-        }
-        function createTacoTime(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 3, z, 10, 6, 10, 0xFFFF00); 
-            createBox(x, h + 7, z, 8, 2, 8, 0xFF0000); 
-            spawnChest(x, h+1, z); 
-        }
-        function createHauntedHills(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 6, z, 15, 12, 15, 0x333333); 
-            createBox(x, h + 1, z, 5, 2, 5, 0xFFFFFF); 
-            spawnChest(x, h+1, z); 
-        }
-        function createPressurePlant(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 10, z, 25, 20, 25, 0xDDDDDD); 
-            createBox(x, h + 21, z, 10, 2, 10, 0x0000FF); 
-            spawnChest(x, h+1, z); 
-        }
-        function createTheAuthority(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 15, z, 30, 30, 30, 0x555555); 
-            createBox(x, h + 31, z, 20, 2, 20, 0xAAAAAA); 
-            spawnChest(x, h+1, z); 
-        }
-        function createTheBlock(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 2, z, 40, 4, 40, 0xCC7700); 
-            spawnChest(x+10, h+3, z-10); 
-        }
-        function createVikingVillage(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 4, z, 10, 8, 10, 0x8B4513); 
-            createBox(x, h + 9, z, 12, 2, 12, 0xAAAAAA); 
-            spawnChest(x, h+1, z); 
-        }
-        function createDustyDepot(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x-10, h + 3, z, 5, 6, 5, 0xAA8800); 
-            createBox(x+10, h + 3, z, 5, 6, 5, 0xAA8800); 
-            createBox(x, h + 3, z, 5, 6, 5, 0xAA8800); 
-            spawnChest(x, h+1, z); 
-        }
-        function createGraveYard(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 1, z, 20, 2, 20, 0x444444); 
-            spawnChest(x, h+2, z); 
-        }
-        function createParadisePalms(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 5, z, 20, 10, 20, 0xFFA07A); 
-            createTree(x+15, z-15); 
-            spawnChest(x, h+1, z); 
-        }
-        function createStarrySuburbs(x, z) {
-            const h = getTerrainHeight(x, z);
-            createBox(x, h + 4, z, 15, 8, 15, 0x800080); 
-            spawnChest(x, h+1, z); 
-        }
-
         function generatePOIs() {
             // POI 1: Tilted Towers (Center)
             for(let i=0; i<3; i++) {
@@ -1053,38 +1002,21 @@
             // Other POIs
             createBuilding(-200, -200, 20, 10, 30, 0x444444, Math.PI/2);
             createWoodHouse(-200, 200, 10, 12, 15); 
-            createRetailRow(250, 250);
-            createLootLake(-250, 250);
-            createShiftyShafts(-250, -250);
-            createPleasantPark(-280, 0);
-            createTomatoTown(280, 0);
-            createSaltySprings(50, 200); 
-            createFatalFields(150, -100); 
-            createRiskyReels(-150, 100); 
-            createTheGrotto(100, -250); 
-            createSlurpySwamp(-100, -300); 
-            createMistyMeadows(300, 150); 
-            createTheFortilla(0, 300); 
-            createSteamyStacks(300, -300); 
-            createSweatySands(-300, 150); 
-            createWeepingWoods(-100, 250); 
-            createLazyLake(200, 0); 
-
-            // 13 New POIs
-            createEmberIsland(-150, -150);
-            createFlushFactory(150, 150);
-            createJunkJunction(-300, 50);
-            createTacoTime(300, -50);
-            createHauntedHills(50, -250);
-            createPressurePlant(-50, 300);
-            createTheAuthority(-300, -100);
-            createTheBlock(100, 300);
-            createVikingVillage(250, -150);
-            createDustyDepot(-200, -300);
-            createGraveYard(200, 250);
-            createParadisePalms(-50, -50);
-            createStarrySuburbs(0, -200);
-
+            createBuilding(250, 250, 15, 8, 15, 0xFF7F50, 0); // Retail Row
+            createBox(-250, getTerrainHeight(-250, 250)+0.1, 250, 50, 0.2, 50, 0x00BFFF); // Loot Lake
+            createBox(-250, getTerrainHeight(-250, -250)-5, -250, 30, 10, 30, 0x696969); // Shifty Shafts
+            createWoodHouse(-280, 0, 10, 8, 10); // Pleasant Park
+            createBox(280, getTerrainHeight(280, 0)+5, 0, 10, 10, 10, 0xFF6347); // Tomato Town
+            createBuilding(50, 200, 12, 6, 12, 0x808080, Math.PI/4); // Salty Springs
+            createWoodHouse(150, -100, 20, 5, 20); // Fatal Fields
+            createBox(-150, getTerrainHeight(-150, 100)+10, 100, 2, 20, 10, 0x000000); // Risky Reels
+            createBox(100, getTerrainHeight(100, -250)-10, -250, 40, 20, 40, 0x222222); // The Grotto
+            createBox(-100, getTerrainHeight(-100, -300)+0.1, -300, 30, 0.2, 30, 0x00FF7F); // Slurpy Swamp
+            createBuilding(300, 150, 18, 10, 18, 0x9370DB, -Math.PI/4); // Misty Meadows
+            createBox(0, getTerrainHeight(0, 300), 300, 40, 0.5, 40, 0xADD8E6); // The Fortilla
+            createBox(300, getTerrainHeight(300, -300)+15, -300, 8, 30, 8, 0xEEEEEE); // Steamy Stacks
+            createBox(-300, getTerrainHeight(-300, 150)+0.5, 150, 25, 1, 25, 0xF4A460); // Sweaty Sands
+            createWoodHouse(200, 0, 20, 10, 10); // Lazy Lake
 
             // Trees
             for(let i=0; i<50; i++) {
@@ -1159,16 +1091,17 @@
                 const mesh = createBotMesh(x, h + 1, z);
                 scene.add(mesh);
                 
-                const randomWeaponKey = getRandomWeaponKey();
-                const randomRarity = getRandomRarity(); 
+                // Bots only hold a common Pistol
+                const botWeapon = createWeaponItem(BOT_WEAPON_KEY, 'COMMON');
+                botWeapon.stats.currentMag = botWeapon.stats.mag; // Start fully loaded
                 
                 bots.push({ 
                     mesh: mesh, 
-                    health: 100, // 100 Health
-                    shield: 100, // 100 Shield (200 Total HP)
+                    health: 100, 
+                    shield: 100, 
                     target: null, 
                     lastShot: 0, 
-                    weapon: createWeaponItem(randomWeaponKey, randomRarity), 
+                    weapon: botWeapon, 
                     lastMove: performance.now(),
                     velocity: new THREE.Vector3(0, 0, 0),
                     lastStormDamage: 0,
@@ -1190,12 +1123,21 @@
             
             // 1. Instant use for Small Shields (MINI)
             if (item.instant) {
-                 if (item.type === 'shield' && player.shield < item.max) {
-                    player.shield = Math.min(item.max, player.shield + item.val);
+                 if (item.type === 'shield' && (player.shield < item.max || player.overshield < OVER_SHIELD_MAX)) {
+                    // Try to fill shield first
+                    if(player.shield < 100) {
+                        player.shield = Math.min(item.max, player.shield + item.val);
+                    } else if (player.overshield < OVER_SHIELD_MAX) {
+                        player.overshield = Math.min(OVER_SHIELD_MAX, player.overshield + item.val);
+                    } else {
+                        return; // Cannot use
+                    }
                     item.count -= 1; 
                     if (item.count <= 0) player.inventory[player.slot] = null;
                     updateUI();
                     playSound('use_mini');
+                    // Reset regen timer if healing overshield
+                    if (player.overshield < OVER_SHIELD_MAX) player.lastOvershieldDamage = performance.now();
                     return;
                 }
             }
@@ -1204,16 +1146,16 @@
             // 2. Timed/Continuous use for others
             if (player.isHealing) {
                 if (player.healingItem === item) {
-                    if (!item.continuous) finishHealing(); // Cancel non-continuous heal
+                    if (!item.continuous) finishHealing();
                     return;
                 }
                 return;
             }
 
             let canUse = false;
-            if (item.type === 'shield' && player.shield < item.max) canUse = true;
+            if (item.type === 'shield' && (player.shield < item.max || player.overshield < OVER_SHIELD_MAX)) canUse = true;
             if (item.type === 'health' && player.health < item.max) canUse = true;
-            if (item.type === 'continuous') canUse = (player.health < 100 || player.shield < 100);
+            if (item.type === 'continuous') canUse = (player.health < 100 || player.shield < 100 || player.overshield < OVER_SHIELD_MAX);
 
             if (canUse) {
                 player.isHealing = true;
@@ -1239,7 +1181,8 @@
         function applyHealing(item) {
             // Non-continuous, non-instant (Big Shield, Medkit)
             if (item.type === 'shield') {
-                player.shield = Math.min(item.max, player.shield + item.val);
+                // Big Shield fills regular shield up to max, ignores overshield
+                player.shield = Math.min(item.max, player.shield + item.val); 
             } else if (item.type === 'health') {
                 player.health = Math.min(item.max, player.health + item.val);
             } 
@@ -1259,7 +1202,9 @@
             
             const interval = 1000; 
             if (!player.lastHealTick || (performance.now() - player.lastHealTick) >= interval) {
-                if(player.shield < 100) {
+                if(player.overshield < OVER_SHIELD_MAX) {
+                    player.overshield = Math.min(OVER_SHIELD_MAX, player.overshield + item.shieldVal); 
+                } else if(player.shield < 100) {
                     player.shield = Math.min(100, player.shield + item.shieldVal); 
                 } else if (player.health < 100) {
                     player.health = Math.min(100, player.health + item.val);
@@ -1268,7 +1213,7 @@
                 player.lastHealTick = performance.now();
             }
 
-            if (timeElapsed >= item.time || (player.health === 100 && player.shield === 100)) {
+            if (timeElapsed >= item.time || (player.health === 100 && player.shield === 100 && player.overshield === OVER_SHIELD_MAX)) {
                 finishHealing();
                 playSound('use_chug_finish');
             }
@@ -1306,9 +1251,12 @@
                 const currentLoot = loot[i];
                 if(pos.distanceTo(currentLoot.mesh.position) < 4) {
                     const currentItem = player.inventory[player.slot];
-                    if (currentItem && currentItem.category === 'consumable' && currentItem.name === currentLoot.data.name) {
-                        if (currentItem.count < currentItem.maxStack) {
-                            currentItem.count = Math.min(currentItem.maxStack, currentItem.count + currentLoot.data.count);
+                    
+                    // Try to stack consumables
+                    if (currentLoot.data.category === 'consumable') {
+                        const stackSlot = player.inventory.find(item => item && item.name === currentLoot.data.name && item.count < item.maxStack);
+                        if (stackSlot) {
+                            stackSlot.count = Math.min(stackSlot.maxStack, stackSlot.count + currentLoot.data.count);
                             scene.remove(currentLoot.mesh);
                             loot.splice(i, 1);
                             updateUI();
@@ -1316,16 +1264,19 @@
                         }
                     }
 
-                    if (currentItem) {
-                        dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
-                    }
-                    
-                    if(giveItem(currentLoot.data, player.slot)) {
-                        scene.remove(currentLoot.mesh);
-                        loot.splice(i, 1);
-                        updateUI();
-                        playSound('pickup_item');
-                        return;
+                    // If current slot is free or dropping current item
+                    if (!currentItem || currentLoot.data.category === 'weapon') {
+                        if (currentItem) {
+                            dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
+                        }
+                        
+                        if(giveItem(currentLoot.data, player.slot)) {
+                            scene.remove(currentLoot.mesh);
+                            loot.splice(i, 1);
+                            updateUI();
+                            playSound('pickup_item');
+                            return;
+                        }
                     }
                 }
             }
@@ -1335,8 +1286,26 @@
                 if(pos.distanceTo(chests[i].position) < 4) {
                     scene.remove(chests[i]);
                     chests.splice(i, 1);
-                    spawnLoot(pos.x+1, pos.y, pos.z, 'weapon', 'RARE');
-                    spawnLoot(pos.x-1, pos.y, pos.z, 'consumable', 'MINI'); 
+                    
+                    // Chest Loot Logic
+                    const lootDropPos = chests[i].position.clone();
+                    
+                    // Rocket Launcher 20% chance
+                    if (Math.random() < 0.2) {
+                         spawnLoot(lootDropPos.x + 0.5, lootDropPos.y, lootDropPos.z + 0.5, 'weapon', 'LEGENDARY', 'ROCKET_LAUNCHER');
+                    }
+                    
+                    // Mythic Strangled Rifle 30% chance
+                    if (Math.random() < 0.3) {
+                         spawnLoot(lootDropPos.x, lootDropPos.y, lootDropPos.z, 'mythic');
+                    } else {
+                        // Standard Legendary Weapon Drop
+                        spawnLoot(lootDropPos.x - 0.5, lootDropPos.y, lootDropPos.z - 0.5, 'weapon', 'LEGENDARY');
+                    }
+                    
+                    // Guaranteed Consumable
+                    spawnLoot(lootDropPos.x + 1, lootDropPos.y, lootDropPos.z, 'consumable', CONSUMABLE_KEYS[Math.floor(Math.random() * CONSUMABLE_KEYS.length)]);
+                    
                     playSound('open_chest');
                     return;
                 }
@@ -1357,7 +1326,7 @@
                 }
             }
 
-            // 4. Check Cars (Entry/Exit)
+            // 4. Check Cars (Entry/Exit) (Unchanged logic)
             for(let c of cars) {
                 if(pos.distanceTo(c.mesh.position) < 5) {
                     if(player.vehicle) {
@@ -1377,7 +1346,7 @@
                 }
             }
             
-            // 5. Check Resources (Harvesting)
+            // 5. Check Resources (Harvesting) (Unchanged logic)
             for (let b of buildings) {
                 if (b.type === 'tree' && pos.distanceTo(b.mesh.position) < 5) {
                     player.wood += 5;
@@ -1429,20 +1398,19 @@
         }
         
         function getRandomRarity() {
-            // Skew drop chances
             const rarityPool = ['COMMON', 'COMMON', 'UNCOMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'];
             const index = Math.floor(Math.random() * rarityPool.length);
             return rarityPool[index];
         }
 
         function getRandomWeaponKey() {
-            // Include Strangled Rifle only if we are forced to spawn a Mythic
-            const keys = Object.keys(WEAPONS_BASE).filter(k => k !== MYTHIC_WEAPON_KEY);
+            const keys = Object.keys(WEAPONS_BASE).filter(k => k !== MYTHIC_WEAPON_KEY && k !== 'ROCKET_LAUNCHER');
             return keys[Math.floor(Math.random()*keys.length)];
         }
 
         function getRandomConsumableKey() {
-            const keys = Object.keys(CONSUMABLES);
+            // Find a random consumable key from the list
+            const keys = CONSUMABLE_KEYS;
             return keys[Math.floor(Math.random() * keys.length)];
         }
 
@@ -1456,7 +1424,7 @@
                 } else if (player.inventory[slot] === null) {
                     player.inventory[slot] = itemData;
                 } else {
-                    return false; // Can't auto-stack and slot is full
+                    return false; 
                 }
             } else if (itemData === 'mythic') {
                 const mythicWeapon = createWeaponItem(MYTHIC_WEAPON_KEY, 'MYTHIC');
@@ -1465,18 +1433,22 @@
             return true;
         }
 
-        function spawnLoot(x, y, z, type, rarity = null) {
+        function spawnLoot(x, y, z, type, rarity = null, weaponKey = null) {
             let item;
             if(type === 'weapon' || type === 'mythic') {
-                const typeKey = type === 'mythic' ? MYTHIC_WEAPON_KEY : getRandomWeaponKey();
+                const typeKey = type === 'mythic' ? MYTHIC_WEAPON_KEY : (weaponKey || getRandomWeaponKey());
                 const rarityKey = type === 'mythic' ? 'MYTHIC' : (rarity || getRandomRarity());
                 item = createWeaponItem(typeKey, rarityKey);
             } else if (type === 'consumable') {
-                const consKey = rarity || getRandomConsumableKey();
+                const consKey = rarity; // rarity here is the CONSUMABLE_KEYS value
                 const base = CONSUMABLES[consKey];
                 item = { category: 'consumable', ...base, count: 1 };
+                item.rarity = RARITY_MULTIPLIERS[base.rarity]; // Set rarity object for visuals
             } else if (typeof type === 'object') {
-                item = type; // Drop existing item object
+                item = type; 
+                if (item.category === 'consumable') {
+                    item.rarity = RARITY_MULTIPLIERS[item.rarity];
+                }
             } else {
                 return;
             }
@@ -1532,7 +1504,7 @@
         }
         
         function doSingleShot(item) {
-             const fireOrigin = camera.position.clone();
+            const fireOrigin = camera.position.clone();
             const fireDirection = new THREE.Vector3();
             camera.getWorldDirection(fireDirection);
 
@@ -1540,19 +1512,15 @@
             
             if (item.stats.bulletType === 'hitscan') {
                 handleHitscan(item, fireOrigin, fireDirection, player);
-            } // else if (item.stats.bulletType === 'projectile') { ... }
+            } else if (item.stats.bulletType === 'projectile') {
+                handleProjectile(item, fireOrigin, fireDirection);
+            }
             
             item.stats.currentMag -= 1;
             lastShot = performance.now();
             updateUI();
         }
 
-        /**
-         * @param {object} item - The weapon stats.
-         * @param {THREE.Vector3} fireOrigin - The world position where the shot originates.
-         * @param {THREE.Vector3} fireDirection - The normalized vector of the initial shot direction.
-         * @param {object} shooter - The player object or bot object that is shooting.
-         */
         function handleHitscan(item, fireOrigin, fireDirection, shooter) {
             const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread; 
             
@@ -1586,7 +1554,6 @@
                     let hitPlayer = false;
                     let isHeadshot = false;
 
-                    // Find the root bot mesh 
                     let obj = hit.object;
                     while(obj && obj.parent && obj.parent.type !== 'Scene') {
                         const b = bots.find(bot => bot.mesh === obj.parent);
@@ -1595,7 +1562,6 @@
                     }
                     if(!hitBot) hitBot = bots.find(bot => bot.mesh === hit.object);
                     
-                    // Check if player was hit
                     if (shooter !== player) {
                         const playerDist = hit.point.distanceTo(camera.position);
                         if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
@@ -1617,16 +1583,107 @@
                         playSound('player_hit');
                     } else {
                         // Hit a building/object
+                        const buildingHit = buildings.find(b => b.mesh === hit.object);
+                        if (buildingHit && buildingHit.type !== 'indestructible_wood') {
+                            // Only destroy non-wood buildings
+                            buildingHit.health -= 50; 
+                            if (buildingHit.health <= 0) {
+                                scene.remove(buildingHit.mesh);
+                                objects = objects.filter(obj => obj !== buildingHit.mesh);
+                                buildings = buildings.filter(bldg => bldg !== buildingHit);
+                            }
+                        }
                         playSound('impact_hit');
                     }
                 }
             }
         }
         
+        function handleProjectile(item, fireOrigin, fireDirection) {
+            const rocketGeo = new THREE.SphereGeometry(0.3, 8, 8);
+            const rocketMat = new THREE.MeshBasicMaterial({ color: 0xff4d4d });
+            const rocketMesh = new THREE.Mesh(rocketGeo, rocketMat);
+            rocketMesh.position.copy(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(1))); 
+            scene.add(rocketMesh);
+            
+            projectiles.push({
+                mesh: rocketMesh,
+                velocity: fireDirection.clone().multiplyScalar(50), 
+                damage: item.stats.explosionDamage,
+                radius: item.stats.explosionRadius,
+                shooter: player,
+                isExpired: false
+            });
+        }
+        
+        function updateProjectiles(dt) {
+            for(let i=projectiles.length - 1; i >= 0; i--) {
+                const p = projectiles[i];
+                if (p.isExpired) continue;
+                
+                const oldPos = p.mesh.position.clone();
+                p.mesh.position.add(p.velocity.clone().multiplyScalar(dt));
+                
+                // Raycast for collision detection
+                const collisionRay = new THREE.Raycaster(oldPos, p.velocity.clone().normalize(), 0, p.mesh.position.distanceTo(oldPos));
+                const targets = bots.map(b => b.mesh).concat(objects).concat(cars.map(c=>c.mesh));
+                const hits = collisionRay.intersectObjects(targets, true);
+
+                if (hits.length > 0) {
+                    const hit = hits[0];
+                    explode(p, hit.point);
+                    p.isExpired = true; 
+                }
+
+                // Check world bounds
+                if (Math.abs(p.mesh.position.x) > WORLD_SIZE / 2 || Math.abs(p.mesh.position.z) > WORLD_SIZE / 2) {
+                    explode(p, p.mesh.position);
+                    p.isExpired = true;
+                }
+            }
+            
+            projectiles = projectiles.filter(p => !p.isExpired);
+        }
+
+        function explode(projectile, hitPoint) {
+            // Visual/Sound effect (Placeholder)
+            playSound('explosion');
+            
+            // 1. Damage Player
+            if (hitPoint.distanceTo(camera.position) < projectile.radius) {
+                const dist = hitPoint.distanceTo(camera.position);
+                const reduction = Math.max(0, dist / projectile.radius);
+                const damage = projectile.damage * (1 - reduction);
+                takeDamage(damage, hitPoint);
+                showDmg(damage, camera.position.clone().setY(camera.position.y - 0.5));
+            }
+
+            // 2. Damage Bots
+            bots.forEach(bot => {
+                if (hitPoint.distanceTo(bot.mesh.position) < projectile.radius) {
+                    const dist = hitPoint.distanceTo(bot.mesh.position);
+                    const reduction = Math.max(0, dist / projectile.radius);
+                    const damage = projectile.damage * (1 - reduction);
+                    applyDamage(bot, damage, bot.mesh.position, projectile.shooter, false);
+                }
+            });
+            
+            // 3. Remove projectile mesh
+            scene.remove(projectile.mesh);
+        }
+
+        
         function applyDamage(target, amount, hitPoint, source, isHeadshot = false) {
             amount = Math.round(amount);
             let remainingDmg = amount;
 
+            if(target === player) {
+                 // Damage Player Logic is in takeDamage
+                 takeDamage(amount, hitPoint); 
+                 return;
+            }
+
+            // Damage Bot Logic
             if(target.shield > 0) {
                 target.shield -= remainingDmg;
                 if(target.shield < 0) { 
@@ -1649,13 +1706,18 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
-                    const botWeapon = target.weapon;
+                    // Bot Loot Drop Logic: Random Weapon + Random Healing + 50 Wood
+                    const randomWeaponKey = getRandomWeaponKey();
+                    const randomRarity = getRandomRarity(); 
+                    const botWeapon = createWeaponItem(randomWeaponKey, randomRarity);
+                    
                     const dropConsumableKey = getRandomConsumableKey();
                     const consumableBase = CONSUMABLES[dropConsumableKey];
-                    const healingItemDrop = { category: 'consumable', ...consumableBase, count: 1 };
+                    const healingItemDrop = { category: 'consumable', ...consumableBase, count: 1, rarity: consumableBase.rarity };
                     
                     spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
                     spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
+                    player.wood += 50; 
                     
                     playSound('elimination');
                     checkWin();
@@ -1668,8 +1730,21 @@
             if (amount <= 0 || player.dead) return;
             
             let remainingDmg = amount;
+            player.lastOvershieldDamage = performance.now(); // Reset regen timer on any damage
 
-            if(player.shield > 0) {
+            // 1. Damage Overshield first
+            if(player.overshield > 0) {
+                player.overshield -= remainingDmg;
+                if(player.overshield < 0) { 
+                    remainingDmg = -player.overshield; 
+                    player.overshield = 0; 
+                } else {
+                    remainingDmg = 0;
+                }
+            }
+
+            // 2. Damage Shield
+            if (remainingDmg > 0 && player.shield > 0) {
                 player.shield -= remainingDmg;
                 if(player.shield < 0) { 
                     remainingDmg = -player.shield; 
@@ -1677,19 +1752,33 @@
                 } else {
                     remainingDmg = 0;
                 }
-            } 
+            }
             
+            // 3. Damage Health
             if (remainingDmg > 0) {
                 player.health -= remainingDmg;
             }
             
-            showDmg(amount, camera.position.clone().setY(camera.position.y - 0.5)); 
+            // showDmg(amount, camera.position.clone().setY(camera.position.y - 0.5)); // Already called by applyDamage in hitscan/projectile
             updateUI();
             
             if(player.health <= 0) {
                 player.dead = true;
                 handleGameOver(false);
             }
+        }
+
+        function overshieldRegen(dt) {
+             // Regen only if player is alive, fully shielded, and overshield is not max
+             if (player.dead || player.shield < 100 || player.overshield === OVER_SHIELD_MAX) return;
+
+             const timeSinceDamage = performance.now() - player.lastOvershieldDamage;
+             
+             if (timeSinceDamage >= OVER_SHIELD_REGEN_DELAY) {
+                 const regenAmount = OVER_SHIELD_REGEN_RATE * dt;
+                 player.overshield = Math.min(OVER_SHIELD_MAX, player.overshield + regenAmount);
+                 updateUI();
+             }
         }
 
 
@@ -1725,18 +1814,30 @@
                     const targetPos = camera.position; 
                     const dist = bot.mesh.position.distanceTo(targetPos);
                     
-                    // Face the target
-                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
-                    
-                    // 3. Combat Movement (Move towards or slightly away)
-                    if(dist > 50) {
-                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2); 
-                    } else if (dist < 10) {
-                        bot.mesh.rotation.y += Math.PI/2 * (Math.random() > 0.5 ? 1 : -1) * dt;
-                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
+                    // 3. Combat/Follow Movement (Only follow if within 30m)
+                    if (dist < 30) {
+                        // Face the target
+                        bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
+                        
+                        if(dist > 15) {
+                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2); 
+                        } else if (dist < 8) {
+                            bot.mesh.rotation.y += Math.PI/2 * (Math.random() > 0.5 ? 1 : -1) * dt;
+                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
+                        } else {
+                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.5);
+                        }
                     } else {
-                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.5);
+                        // Wander logic if further than 30m
+                        bot.moveCooldown -= dt * 1000;
+                        if (bot.moveCooldown <= 0) {
+                            bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
+                            bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
+                            bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
+                        }
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
                     }
+                    
 
                     // 4. Shoot Logic 
                     const weaponStats = bot.weapon.stats; 
@@ -1750,15 +1851,13 @@
                         handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
                     }
                 } else {
-                    // 3. Constant World Movement (Wander, even when not close)
+                    // Constant World Movement (Wander)
                     bot.moveCooldown -= dt * 1000;
                     if (bot.moveCooldown <= 0) {
-                        // Pick new direction and set a new cooldown
                         bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
                         bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
                         bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
                     }
-
                     bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
                 }
             }
@@ -1782,7 +1881,6 @@
                     
                     car.mesh.translateZ(car.speed * dt);
                     
-                    // Car Hit Damage
                     if (Math.abs(car.speed) > 5) {
                         const currentPos = car.mesh.position;
                         
@@ -1793,11 +1891,9 @@
                         });
                     }
 
-                    // Keep car on ground
                     const h = getTerrainHeight(car.mesh.position.x, car.mesh.position.z);
                     car.mesh.position.y = h;
 
-                    // Update player position if driving
                     if(player.vehicle === car) {
                         camera.position.copy(car.mesh.position).add(new THREE.Vector3(0, PLAYER_HEIGHT + 1, 0));
                     }
@@ -1813,20 +1909,28 @@
         function updateUI() {
             player.health = Math.max(0, player.health);
             player.shield = Math.max(0, player.shield);
+            player.overshield = Math.max(0, player.overshield);
+            
             document.getElementById('health-val').innerText = Math.ceil(player.health);
             document.getElementById('health-bar').style.width = player.health + '%';
             document.getElementById('shield-val').innerText = Math.ceil(player.shield);
             document.getElementById('shield-bar').style.width = player.shield + '%';
+            document.getElementById('overshield-val').innerText = Math.ceil(player.overshield);
+            document.getElementById('overshield-bar').style.width = (player.overshield / OVER_SHIELD_MAX) * 100 + '%';
             document.getElementById('wood-val').innerText = player.wood;
             
+            const item = player.inventory[player.slot];
+            const isWeapon = item && item.category === 'weapon';
+            const showReload = isWeapon && item.stats.currentMag < item.stats.mag;
             document.getElementById('reload-msg').style.display = player.isReloading ? 'block' : 'none';
+            document.getElementById('btn-reload').style.display = isMobileMode && isWeapon && showReload && !player.isReloading ? 'flex' : 'none';
+
 
             player.inventory.forEach((item, i) => {
                 const el = document.getElementById('slot-'+i);
                 el.innerHTML = `<div class="slot-key">${i+1}</div>`;
                 if(item) {
                     const icon = item.category === 'weapon' ? item.stats.icon : item.icon;
-                    // Removed rarity letter from slot name (e.g., just "SMG")
                     const name = item.name; 
                     const count = item.category === 'consumable' ? item.count : '';
 
@@ -1844,18 +1948,16 @@
             let msg = player.vehicle ? "Exit Vehicle (E)" : "Interact (E)";
             if(!player.vehicle && player.inventory[player.slot]) {
                 const currentItem = player.inventory[player.slot];
-                if (currentItem.category === 'consumable' && (currentItem.type === 'health' || currentItem.type === 'shield' || currentItem.type === 'continuous')) {
+                if (currentItem.category === 'consumable' && currentItem.count > 0 && 
+                    ((currentItem.type === 'shield' && (player.shield < 100 || player.overshield < OVER_SHIELD_MAX)) || (currentItem.type === 'health' && player.health < 100) || currentItem.type === 'continuous')) {
                      msg = `Use ${currentItem.name} (E/X)`;
                 } else {
                     msg = "Swap/Interact (E)";
                 }
             }
 
-            document.getElementById('interact-msg').innerText = msg;
-            
             const showInteract = player.vehicle || chests.some(c => camera.position.distanceTo(c.position) < 6) || loot.some(l => camera.position.distanceTo(l.mesh.position) < 4) || doors.some(d => camera.position.distanceTo(d.mesh.position) < 5);
-            const currentItem = player.inventory[player.slot];
-            const showHealingPrompt = currentItem && currentItem.category === 'consumable' && currentItem.count > 0;
+            const showHealingPrompt = item && item.category === 'consumable' && item.count > 0;
             
             document.getElementById('interact-msg').style.display = (showInteract || showHealingPrompt) ? 'block' : 'none';
         }
@@ -1886,22 +1988,7 @@
                 weaponScene.add(viewModel);
                 
                 // Handle Crosshair/Scope for the new weapon
-                let scopeType = item.stats.scope;
-                const crosshair = document.getElementById('crosshair');
-                const redDotScope = document.getElementById('red-dot-scope');
-                
-                crosshair.style.display = (scopeType) ? 'none' : 'block';
-                redDotScope.style.display = 'none';
-
-                if (player.ads) {
-                    // Re-apply ads state based on the new weapon
-                    toggleADS(true); 
-                } else {
-                    // Ensure FOV is reset if not ADS
-                    camera.fov = 75;
-                    camera.updateProjectionMatrix();
-                }
-
+                toggleADS(player.ads); 
             } else {
                 document.getElementById('crosshair').style.display = 'block';
                 toggleADS(false);
@@ -1987,7 +2074,7 @@
                 if(e.button === 2) toggleADS(false);
             });
 
-            // 3. Mobile Touch Logic (Left for Movement, Right for Camera)
+            // 3. Mobile Touch Logic
             const touchZoneLeft = document.getElementById('stick-left');
             const touchZoneRight = document.getElementById('stick-right');
             const thumbLeft = document.getElementById('thumb-left');
@@ -2040,12 +2127,10 @@
                             const dx = touch.clientX - lastTouch.x;
                             const dy = touch.clientY - lastTouch.y;
                             
-                            // *** MOBILE CAMERA FIX: Apply rotation directly for smooth, non-janky control ***
                             camera.rotation.y -= dx * sensitivity; 
                             camera.rotation.x -= dy * sensitivity; 
-                            camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); // Clamp pitch
+                            camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x)); 
                             
-                            // Update the last position for differential calculation
                             lastTouch.x = touch.clientX;
                             lastTouch.y = touch.clientY;
                         }
@@ -2065,14 +2150,11 @@
                 }
             };
 
-
-            // Left Zone: Movement
             touchZoneLeft.addEventListener('touchstart', handleJoystickLeft, { passive: true });
             touchZoneLeft.addEventListener('touchmove', handleJoystickLeft, { passive: true });
             touchZoneLeft.addEventListener('touchend', handleTouchEnd);
             touchZoneLeft.addEventListener('touchcancel', handleTouchEnd);
             
-            // Right Zone: Camera Look
             touchZoneRight.addEventListener('touchstart', handleLookRight, { passive: false }); 
             touchZoneRight.addEventListener('touchmove', handleLookRight, { passive: false });
             touchZoneRight.addEventListener('touchend', handleTouchEnd);
@@ -2106,8 +2188,9 @@
             document.getElementById('btn-build').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); buildWall(); } });
             document.getElementById('btn-ads').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(true); } });
             document.getElementById('btn-ads').addEventListener('touchend', (e) => { if (isMobileMode) { e.preventDefault(); toggleADS(false); } });
+            document.getElementById('btn-reload').addEventListener('touchstart', (e) => { if (isMobileMode) { e.preventDefault(); reload(); } });
             
-            // 5. Mobile Inventory Touch Handling
+            // 5. Mobile Inventory Touch Handling (Unchanged)
             for(let i=0; i<5; i++) {
                 const slot = document.getElementById(`slot-${i}`);
                 if (slot) {
@@ -2127,7 +2210,6 @@
         // ===============================================================
 
         function init() {
-            // Load Victory Royales from Local Storage
             victoryRoyales = parseInt(localStorage.getItem('victoryRoyales')) || 0;
             document.getElementById('victory-royales-stat').innerText = `Victory Royales: ${victoryRoyales}`;
             
@@ -2138,7 +2220,6 @@
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
             
-            // Weapon Viewmodel Layer
             weaponScene = new THREE.Scene();
             weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 100);
 
@@ -2162,20 +2243,13 @@
             weaponScene.add(ambient.clone());
             weaponScene.add(sun.clone());
             
-            // 3. Controls (Instantiated, but not enabled/locked yet)
+            // 3. Controls
             controls = new PointerLockControls(camera, document.body);
             setupInputs(); 
 
             // 4. Raycasters
             raycaster = new THREE.Raycaster();
             downRay = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, PLAYER_HEIGHT + 0.1);
-            
-            // 5. Starter Loot & UI (Initial State)
-            giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
-            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 5 }, 1); 
-            giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1 }, 2);
-            player.wood = 50; 
-            updateUI();
             
             // The game loop starts immediately to render the world behind the start screen
             animate();
@@ -2186,7 +2260,6 @@
             gameStarted = true;
             
             isMobileMode = isMobile;
-            BOT_COUNT = isMobile ? 20 : 25; // Player + 20 bots = 21 total, Player + 25 bots = 26 total
             
             if (isMobile) {
                 setMobileMode(true);
@@ -2195,19 +2268,29 @@
                 setupPCLock(); 
             }
             
-            // 6. World Generation (Needs to happen AFTER BOT_COUNT is set)
+            // Reset Player Stats to new baseline
+            player.health = 100; player.shield = 100; player.overshield = OVER_SHIELD_MAX;
+            player.wood = 0; 
+            player.inventory = [null, null, null, null, null];
+            
+            // New Starting Loot
+            giveItem(createWeaponItem('RFAR', 'COMMON'), 0);
+            giveItem({ category: 'consumable', ...CONSUMABLES.MINI, count: 3, rarity: 'COMMON' }, 1); 
+            giveItem({ category: 'consumable', ...CONSUMABLES.CHUG, count: 1, rarity: 'LEGENDARY' }, 2);
+            player.slot = 0; // Select starting weapon
+            
+            // 6. World Generation
             generateTerrain(); 
             generatePOIs(); 
             spawnBots();
             spawnCars();
-            // Ensure the rare Strangled Rifle spawns
-            spawnLoot(10, getTerrainHeight(10, 10) + 1, 10, 'mythic'); 
 
             // Set player starting height
             camera.position.set(0, getTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
             
             // 7. Start Storm Timer
             startStormTimer(); 
+            switchSlot(0); // Set view model and UI
         };
 
         // ===============================================================
@@ -2227,7 +2310,7 @@
                 return;
             }
 
-            // 0. Healing Update
+            // 0. Healing & Overshield Regen Update
             if (player.isHealing && player.healingItem) {
                 if (player.healingItem.continuous) {
                     applyContinuousHealing(player.healingItem, dt);
@@ -2236,9 +2319,10 @@
                     inputs.w = inputs.a = inputs.s = inputs.d = false;
                 }
             }
+            overshieldRegen(dt);
 
 
-            // 1. Player Physics & Movement
+            // 1. Player Physics & Movement (Unchanged)
             if(player.vehicle) {
                 updateCars(dt);
             } else {
@@ -2270,7 +2354,8 @@
                     let floorY = groundY;
                     
                     downRay.ray.origin.copy(camera.position);
-                    const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj)), false); 
+                    // Exclude indestructible wood walls from floor checks to allow walking near them
+                    const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj) && !buildings.some(b => b.mesh === obj && b.type === 'indestructible_wood')), false); 
                     
                     if(hits.length > 0) {
                         const closestHit = hits[0];
@@ -2320,7 +2405,7 @@
                 inputs.reload = false;
             }
             
-            // updateProjectiles(dt); // Placeholder
+            updateProjectiles(dt);
 
             // 3. AI Update
             updateBots(dt, now);
