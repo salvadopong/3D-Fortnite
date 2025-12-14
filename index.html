@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.4 - UI Revolution</title>
+    <title>Web Battle Royale: V19.5 - Enhanced Combat</title>
     <style>
         /* ======================================= */
-        /* === V19.4 COMPLETE UI REVOLUTION === */
+        /* === V19.5 ENHANCED UI & GAMEPLAY === */
         /* ======================================= */
         
         * {
@@ -76,7 +76,7 @@
         }
         
         #start-screen h1::after {
-            content: 'V19.4';
+            content: 'V19.5';
             display: block;
             font-size: 1.5rem;
             color: #ffd700;
@@ -345,7 +345,7 @@
             100% { opacity: 1; }
         }
 
-        /* === REVOLUTIONARY NEW HUD DESIGN === */
+        /* === ENHANCED HUD DESIGN (SMALLER UI) === */
         #hud-container {
             position: absolute;
             top: 0; left: 0;
@@ -399,26 +399,26 @@
         #alive-count { color: #4CAF50; }
         #storm-timer { color: #a335ee; }
 
-        /* Player Stats - Left Side (Modern Cards) */
+        /* Player Stats - Left Side (Compact Design) */
         #player-stats {
             position: absolute;
             bottom: 1.5rem;
             left: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            width: 350px;
+            gap: 0.8rem;
+            width: 250px;
             z-index: 20;
         }
         
         .stat-card {
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(15px);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.5),
+                0 6px 20px rgba(0, 0, 0, 0.5),
                 inset 0 1px 0 rgba(255,255,255,0.05);
             transition: all 0.3s ease;
         }
@@ -431,49 +431,49 @@
         .stat-header {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 0.8rem;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
         }
         
         .stat-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
+            font-size: 1rem;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            border-radius: 6px;
         }
         
         .stat-title {
             flex: 1;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: white;
+            color: rgba(255,255,255,0.9);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #ffd700;
-            min-width: 60px;
+            min-width: 45px;
             text-align: right;
         }
         
         .stat-bar-container {
-            height: 12px;
+            height: 8px;
             background: rgba(255,255,255,0.1);
-            border-radius: 6px;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
         }
         
         .stat-bar {
             height: 100%;
-            border-radius: 6px;
+            border-radius: 4px;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -511,7 +511,7 @@
         /* Resources Bar */
         #resources-bar {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-top: 0.5rem;
         }
         
@@ -519,19 +519,19 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             background: rgba(255,255,255,0.05);
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid rgba(255,255,255,0.1);
         }
         
         .resource-icon {
-            font-size: 1.3rem;
+            font-size: 1rem;
             color: #deb887;
         }
         
         .resource-amount {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
             color: white;
         }
@@ -542,17 +542,17 @@
             bottom: 1.5rem;
             right: 1.5rem;
             display: flex;
-            gap: 0.8rem;
+            gap: 0.6rem;
             z-index: 20;
         }
         
         .inventory-slot {
-            width: 80px;
-            height: 100px;
+            width: 70px;
+            height: 85px;
             background: rgba(10, 10, 30, 0.9);
             backdrop-filter: blur(15px);
-            border-radius: 12px;
-            border: 3px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -562,74 +562,74 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
         
         .inventory-slot:hover {
-            transform: translateY(-5px) scale(1.05);
+            transform: translateY(-3px) scale(1.03);
             border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
         }
         
         .inventory-slot.active {
             border-color: #ff4d4d;
-            transform: translateY(-8px) scale(1.1);
+            transform: translateY(-5px) scale(1.08);
             background: rgba(30, 30, 50, 0.95);
             box-shadow: 
-                0 20px 40px rgba(0,0,0,0.7),
-                0 0 30px rgba(255, 77, 77, 0.3);
+                0 12px 30px rgba(0,0,0,0.7),
+                0 0 20px rgba(255, 77, 77, 0.3);
         }
         
         .slot-key {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            font-size: 0.9rem;
+            top: 5px;
+            left: 5px;
+            font-size: 0.7rem;
             color: rgba(255,255,255,0.7);
             font-weight: 600;
             background: rgba(0,0,0,0.5);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
         }
         
         .slot-icon {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 10px currentColor;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 8px currentColor;
         }
         
         .slot-name {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: rgba(255,255,255,0.9);
             text-transform: uppercase;
             text-align: center;
-            max-width: 70px;
+            max-width: 60px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            padding: 0 0.3rem;
+            padding: 0 0.2rem;
         }
         
         .slot-count {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            font-size: 0.9rem;
+            bottom: 5px;
+            right: 5px;
+            font-size: 0.7rem;
             font-weight: 700;
             color: #ffd700;
             background: rgba(0,0,0,0.5);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
         }
         
         /* Rarity Borders */
-        .rarity-common { border-bottom: 5px solid #b0b0b0; }
-        .rarity-uncommon { border-bottom: 5px solid #28a745; }
-        .rarity-rare { border-bottom: 5px solid #007bff; }
-        .rarity-epic { border-bottom: 5px solid #a335ee; }
-        .rarity-legendary { border-bottom: 5px solid #ffd700; }
-        .rarity-mythic { border-bottom: 5px solid #ff4d4d; }
+        .rarity-common { border-bottom: 4px solid #b0b0b0; }
+        .rarity-uncommon { border-bottom: 4px solid #28a745; }
+        .rarity-rare { border-bottom: 4px solid #007bff; }
+        .rarity-epic { border-bottom: 4px solid #a335ee; }
+        .rarity-legendary { border-bottom: 4px solid #ffd700; }
+        .rarity-mythic { border-bottom: 4px solid #ff4d4d; }
 
         /* Center HUD Elements */
         #center-hud {
@@ -648,17 +648,17 @@
         #interact-prompt {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 170, 0, 0.95));
             color: #000;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 700;
             display: none;
             text-transform: uppercase;
             letter-spacing: 1px;
             box-shadow: 
-                0 10px 30px rgba(255, 215, 0, 0.4),
-                0 5px 15px rgba(0,0,0,0.3);
-            border: 3px solid rgba(255,255,255,0.5);
+                0 8px 25px rgba(255, 215, 0, 0.4),
+                0 4px 12px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.5);
             backdrop-filter: blur(10px);
             animation: pulsePrompt 1.5s infinite alternate;
             pointer-events: none;
@@ -673,14 +673,14 @@
         #reload-indicator {
             background: linear-gradient(135deg, rgba(255, 0, 0, 0.95), rgba(255, 68, 68, 0.95));
             color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
-            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
             font-weight: 700;
             display: none;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
             border: 2px solid rgba(255,255,255,0.3);
             backdrop-filter: blur(10px);
         }
@@ -688,17 +688,17 @@
         /* Healing Progress */
         #healing-progress {
             position: absolute;
-            bottom: 12rem;
+            bottom: 10rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
-            height: 40px;
+            width: 350px;
+            height: 35px;
             background: rgba(0, 0, 0, 0.8);
-            border-radius: 20px;
+            border-radius: 15px;
             display: none;
             overflow: hidden;
-            border: 3px solid rgba(0, 210, 255, 0.5);
-            box-shadow: 0 10px 40px rgba(0, 210, 255, 0.3);
+            border: 2px solid rgba(0, 210, 255, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 210, 255, 0.3);
             backdrop-filter: blur(10px);
         }
         
@@ -736,7 +736,7 @@
             justify-content: center;
             color: white;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             text-shadow: 0 2px 5px rgba(0,0,0,0.8);
             letter-spacing: 1px;
         }
@@ -931,51 +931,102 @@
             display: none;
         }
 
-        /* --- GAME OVER SCREENS --- */
+        /* === ULTIMATE VICTORY & ELIMINATED SCREENS === */
         #victory-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: linear-gradient(135deg,
-                rgba(255, 215, 0, 0.4),
-                rgba(255, 0, 0, 0.5));
-            backdrop-filter: blur(15px);
+                rgba(255, 215, 0, 0.85),
+                rgba(255, 140, 0, 0.9));
+            backdrop-filter: blur(25px);
             z-index: 1000;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             pointer-events: none;
-            animation: fadeIn 0.8s ease-out forwards;
+            animation: fadeIn 0.5s ease-out forwards;
+            overflow: hidden;
+        }
+        
+        .victory-particles {
+            position: absolute;
+            width: 100%; height: 100%;
+        }
+        
+        .victory-particle {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: victoryParticleFloat 8s infinite linear;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes victoryParticleFloat {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translateY(90vh) rotate(0deg) scale(1); }
+            90% { opacity: 1; transform: translateY(10vh) rotate(360deg) scale(1); }
+            100% { transform: translateY(0) rotate(720deg) scale(0); opacity: 0; }
         }
         
         #victory-text {
             font-size: 0;
-            background: linear-gradient(135deg, #ffd700, #ffaa00, #ff6600);
+            background: linear-gradient(135deg, #ffd700, #ffaa00, #ff6600, #ff0000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 900;
-            animation: victoryText 3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
-                       victoryPulse 2s infinite alternate 3s;
+            animation: victoryText 3.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                       victoryPulse 2s infinite alternate 3.5s;
             position: relative;
             text-shadow: 
                 0 10px 40px rgba(255, 215, 0, 0.5),
-                0 0 60px rgba(255, 170, 0, 0.3);
+                0 0 60px rgba(255, 170, 0, 0.3),
+                0 0 100px rgba(255, 100, 0, 0.2);
             letter-spacing: -10px;
             opacity: 0;
             white-space: nowrap;
+            z-index: 2;
+        }
+        
+        #victory-text::after {
+            content: 'V19.5';
+            display: block;
+            font-size: 2rem;
+            margin-top: 1rem;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            animation: versionPulse 3s infinite alternate;
+        }
+        
+        @keyframes versionPulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
         }
         
         @keyframes victoryText {
             0% { font-size: 0; transform: scale(0) rotate(-20deg); opacity: 0; letter-spacing: 100px; }
-            50% { font-size: 8rem; transform: scale(1.3) rotate(10deg); opacity: 1; letter-spacing: -5px; }
-            100% { font-size: 5rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
+            30% { font-size: 8rem; transform: scale(1.4) rotate(15deg); opacity: 1; letter-spacing: -10px; }
+            50% { font-size: 8rem; transform: scale(1.4) rotate(-5deg); opacity: 1; letter-spacing: -5px; }
+            70% { font-size: 8rem; transform: scale(1.2) rotate(5deg); opacity: 1; letter-spacing: -2px; }
+            100% { font-size: 6rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
         }
         
         @keyframes victoryPulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
+            0% { transform: scale(1); text-shadow: 0 10px 40px rgba(255, 215, 0, 0.5); }
+            100% { transform: scale(1.08); text-shadow: 0 15px 50px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 170, 0, 0.4); }
+        }
+        
+        #victory-stats {
+            font-size: 2.5rem;
+            color: white;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 4s forwards;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 2;
         }
         
         #game-over {
@@ -984,9 +1035,9 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: linear-gradient(135deg,
-                rgba(200, 0, 0, 0.9),
-                rgba(50, 0, 0, 0.95));
-            backdrop-filter: blur(15px);
+                rgba(200, 0, 0, 0.95),
+                rgba(50, 0, 0, 0.98));
+            backdrop-filter: blur(25px);
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -994,26 +1045,57 @@
             z-index: 999;
             pointer-events: auto;
             text-align: center;
+            overflow: hidden;
+        }
+        
+        .eliminated-particles {
+            position: absolute;
+            width: 100%; height: 100%;
+        }
+        
+        .eliminated-particle {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: rgba(255, 50, 50, 0.6);
+            border-radius: 50%;
+            animation: eliminatedParticleFall 5s infinite linear;
+        }
+        
+        @keyframes eliminatedParticleFall {
+            0% { transform: translateY(-100px) rotate(0deg) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+            90% { opacity: 1; transform: translateY(100vh) rotate(360deg) scale(1); }
+            100% { transform: translateY(110vh) rotate(720deg) scale(0); opacity: 0; }
         }
         
         #go-title {
-            font-size: 6rem;
-            background: linear-gradient(135deg, #ff4d4d, #ff0000);
+            font-size: 0;
+            background: linear-gradient(135deg, #ff4d4d, #ff0000, #8b0000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 2rem;
             font-weight: 900;
-            animation: slideIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: eliminatedText 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             text-shadow: 0 10px 40px rgba(255, 0, 0, 0.5);
+            letter-spacing: -10px;
+            opacity: 0;
+        }
+        
+        @keyframes eliminatedText {
+            0% { font-size: 0; transform: scale(0) rotate(-10deg); opacity: 0; letter-spacing: 50px; }
+            40% { font-size: 7rem; transform: scale(1.3) rotate(5deg); opacity: 1; letter-spacing: -5px; }
+            60% { font-size: 7rem; transform: scale(1.1) rotate(-2deg); opacity: 1; letter-spacing: -2px; }
+            100% { font-size: 5rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
         }
         
         #go-stats {
             font-size: 2.5rem;
             color: rgba(255,255,255,0.9);
             margin-bottom: 4rem;
-            animation: slideIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s backwards;
+            animation: slideIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2.5s backwards;
             text-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 2;
         }
 
         /* Restart Button */
@@ -1038,6 +1120,7 @@
             letter-spacing: 0.5px;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255,255,255,0.1);
+            z-index: 2;
         }
         
         .restart-btn::before {
@@ -1062,12 +1145,13 @@
         }
         
         #game-over .restart-btn {
-            animation: slideIn 1s ease-out 1s backwards;
+            opacity: 0;
+            animation: fadeUp 1s ease-out 3s forwards;
         }
         
         #victory-overlay .restart-btn {
             opacity: 0;
-            animation: fadeUp 1s ease-out 3s forwards;
+            animation: fadeUp 1s ease-out 4.5s forwards;
         }
 
         /* Animations */
@@ -1096,14 +1180,69 @@
             0% { transform: translateY(50px) scale(0.8); opacity: 0; }
             100% { transform: translateY(0) scale(1); opacity: 1; }
         }
+        
+        /* Menu Enhancements */
+        .menu-background {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            animation: backgroundPulse 10s infinite alternate;
+        }
+        
+        @keyframes backgroundPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        .version-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            animation: badgeGlow 2s infinite alternate;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        @keyframes badgeGlow {
+            0% { box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 5px 25px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2); }
+        }
+        
+        .menu-title {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .title-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%; height: 120%;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.3) 0%, transparent 70%);
+            filter: blur(40px);
+            z-index: 1;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="start-screen">
+        <div class="menu-background"></div>
         <div class="particles" id="particles-container"></div>
-        <h1>WEB BATTLE ROYALE</h1>
+        <div class="version-badge">V19.5 • ENHANCED COMBAT</div>
+        <div class="menu-title">
+            <div class="title-glow"></div>
+            <h1>WEB BATTLE ROYALE</h1>
+        </div>
         <p class="subtitle">Experience the ultimate browser-based shooter</p>
         <div class="button-container">
             <button class="game-button mobile" onclick="startGame(true)">📱 Mobile Mode</button>
@@ -1120,7 +1259,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.4</p>
+                <p>V19.5</p>
             </div>
         </div>
         <div id="victory-royales-stat">🏆 Victory Royales: 0</div>
@@ -1257,12 +1396,15 @@
 
     <!-- Victory Screen -->
     <div id="victory-overlay">
+        <div class="victory-particles" id="victory-particles"></div>
         <div id="victory-text">VICTORY ROYALE</div>
+        <div id="victory-stats">Eliminations: 0</div>
         <button class="restart-btn" onclick="location.reload()">🏆 RETURN TO LOBBY</button>
     </div>
     
     <!-- Game Over Screen -->
     <div id="game-over">
+        <div class="eliminated-particles" id="eliminated-particles"></div>
         <h1 id="go-title">ELIMINATED</h1>
         <h3 id="go-stats">Eliminations: 0</h3>
         <button class="restart-btn" onclick="location.reload()">🔄 RETURN TO LOBBY</button>
@@ -1282,7 +1424,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.4) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.5) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -1310,23 +1452,25 @@
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        // Weapons configuration (same as V19.3)
+        // Weapons configuration (V19.5 UPDATED DAMAGE VALUES)
         const WEAPONS_BASE = {
             PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
-            AUTO_SHG: { name: "Auto Shotgun", dmg: 15, head: 25, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
+            AUTO_SHG: { name: "Auto Shotgun", dmg: 30, head: 50, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
             RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
             DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
-            STINGER: { name: "Stinger SMG", dmg: 12, head: 18, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
+            STINGER: { name: "Stinger SMG", dmg: 15, head: 22.5, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
-            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 85 * 1.25, head: 105 * 1.25, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25, head: 157.5 * 1.25, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
             SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 65 * 1.25, head: 90 * 1.25, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, 
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25, head: 135 * 1.25, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, 
             STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            SNIPER:{name: "Sniper", dmg: 100 * 1.25, head: 130 * 1.25, rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            SNIPER:{name: "Sniper", dmg: 150 * 1.25, head: 195 * 1.25, rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 },
-            DUAL_SMG: { name: "Dual Micro SMGS", dmg: 9, head: 14, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' }
+            DUAL_SMG: { name: "Dual Micro SMGS", dmg: 11.25, head: 17.5, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' },
+            // NEW WEAPON: Heavy Assault Rifle (Holo Twister AR)
+            HEAVY_AR: { name: "Heavy AR", dmg: 30, head: 55, rate: 0.12, mag: 30, range: 200, spread: 0.035, pellets: 1, auto: false, icon: '🎖️', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'holo_twister' }
         };
         const MYTHIC_WEAPON_KEY = 'STRANGLED_RIFLE'; 
         const BOT_WEAPON_KEY = 'RFAR'; 
@@ -1385,13 +1529,13 @@
         let gameStarted = false;
         let victoryRoyales = 0;
         
-        // Mobile control variables (Stabilized camera)
+        // Mobile control variables (Stabilized camera) - UPDATED SENSITIVITY
         let mobileTouchActive = false;
         let lastTouchX = 0;
         let lastTouchY = 0;
         let touchDeltaX = 0;
         let touchDeltaY = 0;
-        const MOBILE_SENSITIVITY = 0.002;
+        const MOBILE_SENSITIVITY = 0.003; // INCREASED FROM 0.002
         const MOBILE_SMOOTHING = 0.1;
         const MAX_CAMERA_ANGLE = Math.PI / 2 - 0.1; // 89 degrees max
         
@@ -1416,11 +1560,193 @@
         let stormTimerInterval;
 
         // ===============================================================
-        // === SOUND EFFECT UTILITIES ====================================
+        // === SOUND EFFECT SYSTEM (HIGH QUALITY) ========================
         // ===============================================================
 
+        // Audio context for sound effects
+        let audioContext;
+        let soundCache = {};
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
         function playSound(type) {
-            // console.log(`[SOUND]: Playing ${type} sound.`); 
+            if (!audioContext) initAudio();
+            
+            const now = performance.now();
+            const gainNode = audioContext.createGain();
+            const oscillator = audioContext.createOscillator();
+            
+            switch(type) {
+                case 'shoot':
+                    // High quality gunshot sound
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+                    
+                case 'player_hit':
+                    // Sharp hit sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+                    
+                case 'elimination':
+                    // Satisfying elimination sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                    oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                    gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+                    
+                case 'reload':
+                    // Mechanical reload sound
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    
+                    // Second click
+                    setTimeout(() => {
+                        if (!audioContext) return;
+                        const clickOsc = audioContext.createOscillator();
+                        const clickGain = audioContext.createGain();
+                        clickOsc.type = 'square';
+                        clickOsc.frequency.setValueAtTime(150, audioContext.currentTime);
+                        clickGain.gain.setValueAtTime(0.15, audioContext.currentTime);
+                        clickGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+                        clickOsc.connect(clickGain);
+                        clickGain.connect(audioContext.destination);
+                        clickOsc.start();
+                        clickOsc.stop(audioContext.currentTime + 0.05);
+                    }, 150);
+                    break;
+                    
+                case 'victory':
+                    // Victory fanfare
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, i) => {
+                        setTimeout(() => {
+                            if (!audioContext) return;
+                            const noteOsc = audioContext.createOscillator();
+                            const noteGain = audioContext.createGain();
+                            noteOsc.type = 'sine';
+                            noteOsc.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            noteGain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                            noteGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            noteOsc.connect(noteGain);
+                            noteGain.connect(audioContext.destination);
+                            noteOsc.start();
+                            noteOsc.stop(audioContext.currentTime + 0.3);
+                        }, i * 200);
+                    });
+                    break;
+                    
+                case 'defeat':
+                    // Low defeat sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(130.81, audioContext.currentTime); // C3
+                    oscillator.frequency.exponentialRampToValueAtTime(87.31, audioContext.currentTime + 0.5); // F2
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    break;
+                    
+                case 'jump':
+                    // Quick jump sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+                    
+                case 'build':
+                    // Wood build sound
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+                    
+                case 'storm_damage':
+                    // Electric storm damage sound
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    break;
+                    
+                case 'open_chest':
+                    // Chest opening sound
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(261.63, audioContext.currentTime); // C4
+                    oscillator.frequency.exponentialRampToValueAtTime(523.25, audioContext.currentTime + 0.3); // C5
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+                    
+                case 'pickup_item':
+                    // Item pickup sound
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
+                    oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.1); // A5
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+                    
+                case 'explosion':
+                    // Rocket explosion
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(50, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    break;
+                    
+                case 'impact_hit':
+                    // Environmental impact
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+            }
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
         }
 
         // ===============================================================
@@ -1476,12 +1802,45 @@
                 victoryRoyales = (parseInt(localStorage.getItem('victoryRoyales')) || 0) + 1;
                 localStorage.setItem('victoryRoyales', victoryRoyales);
 
+                // Create victory particles
+                createVictoryParticles();
+                document.getElementById('victory-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('victory-overlay').style.display = 'flex';
                 playSound('victory');
             } else {
+                // Create eliminated particles
+                createEliminatedParticles();
                 document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('game-over').style.display = 'flex';
                 playSound('defeat');
+            }
+        }
+        
+        function createVictoryParticles() {
+            const container = document.getElementById('victory-particles');
+            container.innerHTML = '';
+            for(let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'victory-particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.animationDuration = `${Math.random() * 3 + 5}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.5;
+                container.appendChild(particle);
+            }
+        }
+        
+        function createEliminatedParticles() {
+            const container = document.getElementById('eliminated-particles');
+            container.innerHTML = '';
+            for(let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'eliminated-particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 3}s`;
+                particle.style.animationDuration = `${Math.random() * 2 + 3}s`;
+                particle.style.opacity = Math.random() * 0.4 + 0.3;
+                container.appendChild(particle);
             }
         }
 
@@ -1490,6 +1849,7 @@
             const item = player.inventory[player.slot];
             const isClassicScope = item && item.category === 'weapon' && item.stats.scope === 'classic';
             const isRedDotScope = item && item.category === 'weapon' && item.stats.scope === 'red_dot';
+            const isHoloScope = item && item.category === 'weapon' && item.stats.scope === 'holo_twister';
             
             const scopeOverlay = document.getElementById('scope-overlay');
             const redDotScope = document.getElementById('red-dot-scope');
@@ -1498,19 +1858,19 @@
             scopeOverlay.style.display = 'none';
             redDotScope.style.display = 'none';
             
-            const isScoped = isClassicScope || isRedDotScope;
+            const isScoped = isClassicScope || isRedDotScope || isHoloScope;
             
             if (bool && isScoped) {
                 crosshair.style.display = 'none';
                 if (isClassicScope) {
                     scopeOverlay.style.display = 'block';
                     camera.fov = 10;
-                } else if (isRedDotScope) {
+                } else if (isRedDotScope || isHoloScope) {
                     redDotScope.style.display = 'block';
                     camera.fov = (item.stats.name === WEAPONS_BASE.FALCON_SNIPER.name) ? 20 : 35;
                 }
             } else {
-                const isSniperFamily = item && item.category === 'weapon' && (item.stats.scope === 'classic' || item.stats.scope === 'red_dot');
+                const isSniperFamily = item && item.category === 'weapon' && (item.stats.scope === 'classic' || item.stats.scope === 'red_dot' || item.stats.scope === 'holo_twister');
                 crosshair.style.display = (isSniperFamily && !bool) ? 'none' : 'block';
                 camera.fov = 75;
             }
@@ -1736,7 +2096,7 @@
             createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
-        // NEW: 5 Additional Fortnite POIs
+        // NEW: 5 Additional Fortnite POIs + 4 More = 9 Total New POIs
         function generatePOIs() {
             // Original POIs
             for(let i=0; i<3; i++) {
@@ -1763,7 +2123,7 @@
             createBox(-300, getTerrainHeight(-300, 150)+0.5, 150, 25, 1, 25, 0xF4A460); 
             createWoodHouse(200, 0, 20, 10, 10); 
 
-            // NEW FORTNITE POIs (5 additional)
+            // NEW FORTNITE POIs (9 additional)
             
             // 1. Boney Burbs (Desert Village)
             for(let i=0; i<3; i++) {
@@ -1807,6 +2167,50 @@
             createBuilding(20, -380, 15, 8, 15, 0x333333, Math.PI/4);
             createBuilding(-20, -420, 15, 8, 15, 0x333333, -Math.PI/4);
             createBox(0, getTerrainHeight(0, -400)+5, -400, 10, 10, 10, 0xFFD700);
+
+            // ADDITIONAL 4 NEW POIS (V19.5)
+            
+            // 6. Faulty Splits (Split Town)
+            for(let i=0; i<3; i++) {
+                for(let j=0; j<2; j++) {
+                    const x = 450 + (i*30);
+                    const z = -100 + (j*40);
+                    createBuilding(x, z, 12, 10, 12, 0xFF6B6B, Math.PI/6);
+                    spawnChest(x, getTerrainHeight(x, z)+1, z);
+                }
+            }
+            createBox(480, getTerrainHeight(480, -80)+15, -80, 8, 30, 8, 0x4ECDC4);
+            
+            // 7. Rave Cave (Underground Club)
+            createBox(-450, getTerrainHeight(-450, -150)-15, -150, 40, 30, 40, 0x6A11CB);
+            createBuilding(-440, getTerrainHeight(-440, -140)+1, -140, 15, 8, 15, 0xFF3E96, 0);
+            createBuilding(-460, getTerrainHeight(-460, -160)+1, -160, 15, 8, 15, 0xFF3E96, Math.PI/2);
+            for(let i=0; i<6; i++) {
+                const angle = (i*Math.PI*2)/6;
+                const x = -450 + Math.cos(angle)*15;
+                const z = -150 + Math.sin(angle)*15;
+                createBox(x, getTerrainHeight(x, z)+5, z, 3, 10, 3, 0x00FF9D);
+            }
+            
+            // 8. Cloudy Condos (Sky Resort)
+            createBox(100, getTerrainHeight(100, 450)+20, 450, 40, 5, 40, 0x87CEEB);
+            for(let i=0; i<4; i++) {
+                const x = 80 + (i*20);
+                createBuilding(x, 430, 8, 12, 8, 0xFFFFFF, Math.PI/4);
+            }
+            createBox(140, getTerrainHeight(140, 450)+25, 450, 30, 2, 30, 0xFFD166);
+            createBox(140, getTerrainHeight(140, 450)+32, 450, 5, 15, 5, 0x708090);
+            
+            // 9. Grim Gables (Haunted Mansion)
+            createBuilding(-100, 450, 25, 15, 25, 0x2D3436, 0);
+            createBox(-100, getTerrainHeight(-100, 450)+18, 450, 30, 2, 30, 0x636E72);
+            for(let i=0; i<4; i++) {
+                const angle = (i*Math.PI*2)/4;
+                const x = -100 + Math.cos(angle)*20;
+                const z = 450 + Math.sin(angle)*20;
+                createBox(x, getTerrainHeight(x, z)+10, z, 5, 20, 5, 0x2D3436);
+            }
+            createBox(-100, getTerrainHeight(-100, 450)+30, 450, 10, 20, 10, 0x00B894);
 
             // Original Trees (additional)
             for(let i=0; i<50; i++) {
@@ -1878,7 +2282,10 @@
                 const mesh = createBotMesh(x, h + 1, z);
                 scene.add(mesh);
                 
-                const botWeapon = createWeaponItem(BOT_WEAPON_KEY, 'COMMON');
+                // Bots now have random weapons for variety
+                const randomWeaponKeys = ['RFAR', 'STINGER', 'DRUM_SMG', 'PISTOL'];
+                const botWeaponKey = randomWeaponKeys[Math.floor(Math.random() * randomWeaponKeys.length)];
+                const botWeapon = createWeaponItem(botWeaponKey, 'COMMON');
                 botWeapon.stats.currentMag = botWeapon.stats.mag; 
                 
                 bots.push({ 
@@ -1892,7 +2299,9 @@
                     velocity: new THREE.Vector3(0, 0, 0),
                     lastStormDamage: 0,
                     moveCooldown: 0, 
-                    currentDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize() 
+                    currentDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize(),
+                    attackRange: 200, // UPDATED: Bots will engage at 200m
+                    isAggressive: true // UPDATED: Bots are now aggressive
                 });
             }
         }
@@ -2075,8 +2484,13 @@
                     const randomRarity = getRandomRarity();
                     spawnLoot(chestPos.x + 0.5, chestPos.y, chestPos.z + 0.5, 'weapon', randomRarity, randomWeaponKey);
                     
-                    const randomConsumableKey = getRandomConsumableKey();
-                    spawnLoot(chestPos.x - 0.5, chestPos.y, chestPos.z - 0.5, 'consumable', randomConsumableKey);
+                    // Chance for Heavy AR spawn
+                    if (Math.random() < 0.15) {
+                        spawnLoot(chestPos.x - 0.5, chestPos.y, chestPos.z - 0.5, 'weapon', randomRarity, 'HEAVY_AR');
+                    } else {
+                        const randomConsumableKey = getRandomConsumableKey();
+                        spawnLoot(chestPos.x - 0.5, chestPos.y, chestPos.z - 0.5, 'consumable', randomConsumableKey);
+                    }
                     
                     if (Math.random() < 0.3) {
                         spawnLoot(chestPos.x, chestPos.y, chestPos.z, 'weapon', getRandomRarity(), getRandomWeaponKey());
@@ -2187,14 +2601,21 @@
             const base = WEAPONS_BASE[typeKey];
             const rar = RARITY_MULTIPLIERS[rarityKey];
             
+            // Apply damage multipliers for specific weapons
+            let damageMultiplier = 1;
+            if (typeKey === 'AUTO_SHG') damageMultiplier = 2.0; // 100% more damage
+            if (typeKey === 'STINGER') damageMultiplier = 1.25; // 25% more damage
+            if (typeKey === 'DUAL_SMG') damageMultiplier = 1.25; // 25% more damage
+            if (typeKey === 'BOLT_SNIPER' || typeKey === 'SNIPER' || typeKey === 'FALCON_SNIPER') damageMultiplier = 1.5; // 50% more damage
+            
             return {
                 category: 'weapon',
                 name: base.name,
                 rarity: rar,
                 stats: { 
                     ...base, 
-                    dmg: base.dmg * rar.dmg, 
-                    head: base.head * rar.dmg, 
+                    dmg: base.dmg * rar.dmg * damageMultiplier, 
+                    head: base.head * rar.dmg * damageMultiplier, 
                     reload: base.reload * rar.reload, 
                     currentMag: base.mag 
                 }, 
@@ -2324,7 +2745,7 @@
         }
 
         function handleHitscan(item, fireOrigin, fireDirection, shooter) {
-            const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread; 
+            const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread * 1.5; // Bots have worse accuracy
             
             for(let p = 0; p < item.stats.pellets; p++) {
                 
@@ -2337,9 +2758,9 @@
                 spreadDir.y += randomY;
                 spreadDir.normalize();
 
-                if (shooter !== player && Math.random() < 0.3) { 
-                    spreadDir.x += (Math.random() - 0.5) * 0.5;
-                    spreadDir.y += (Math.random() - 0.5) * 0.5;
+                if (shooter !== player && Math.random() < 0.5) { // Bots have 50% chance to miss
+                    spreadDir.x += (Math.random() - 0.5) * 0.3;
+                    spreadDir.y += (Math.random() - 0.5) * 0.3;
                     spreadDir.normalize();
                 }
 
@@ -2588,20 +3009,23 @@
         }
 
         // ===============================================================
-        // === BOT AI & LIFE CYCLE =======================================
+        // === BOT AI & LIFE CYCLE (UPDATED: AGGRESSIVE BOTS) ============
         // ===============================================================
 
         function findClosestTarget(bot) {
             if (player.health > 0 && !player.dead) {
-                return player;
-            } else {
-                return null; 
+                const dist = bot.mesh.position.distanceTo(camera.position);
+                // UPDATED: Bots will target player if within 200m
+                if (dist <= bot.attackRange) {
+                    return player;
+                }
             }
+            return null;
         }
 
         function updateBots(dt, now) {
             document.getElementById('alive-count').innerText = bots.length + 1;
-            const BOT_MOVE_SPEED = WALK_SPEED * 0.3; 
+            const BOT_MOVE_SPEED = WALK_SPEED * 0.5; // UPDATED: Bots are faster
             const BOT_MOVE_COOLDOWN_RANGE = 2000; 
 
             for(let i = bots.length - 1; i >= 0; i--) {
@@ -2613,51 +3037,51 @@
 
                 const target = findClosestTarget(bot);
                 
-                if(target) {
+                if(target && bot.isAggressive) {
                     const targetPos = camera.position; 
                     const dist = bot.mesh.position.distanceTo(targetPos);
                     
-                    if (dist < 30) {
-                        bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
+                    // UPDATED: Bots are more aggressive and will actively hunt player
+                    bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
+                    
+                    if(dist > 30) {
+                        // Chase player
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2.5); 
+                        bot.moveCooldown = 1000;
+                    } else if (dist < 10) {
+                        // Strafe around player
+                        bot.mesh.rotation.y += Math.PI/3 * (Math.random() > 0.5 ? 1 : -1) * dt;
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.8);
+                        bot.moveCooldown = 500;
+                    } else {
+                        // Advance while shooting
+                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 1.5);
+                        bot.moveCooldown = 800;
+                    }
+                    
+                    // UPDATED: Bots shoot more frequently and accurately
+                    const weaponStats = bot.weapon.stats; 
+                    if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
+                        bot.lastShot = now;
                         
-                        if(dist > 15) {
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2); 
-                        } else if (dist < 8) {
-                            bot.mesh.rotation.y += Math.PI/2 * (Math.random() > 0.5 ? 1 : -1) * dt;
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
-                        } else {
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.5);
-                        }
-                        
-                        bot.moveCooldown = 1000; 
+                        const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
+                        const fireDirection = new THREE.Vector3();
+                        fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
 
-                        const weaponStats = bot.weapon.stats; 
-                        if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
-                            bot.lastShot = now;
-                            
-                            const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                            const fireDirection = new THREE.Vector3();
-                            fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
-
+                        // Add slight aim assistance for bots
+                        if (Math.random() < 0.7) { // 70% accuracy
                             handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
                         }
-                    } else {
-                        bot.moveCooldown -= dt * 1000;
-                        if (bot.moveCooldown <= 0) {
-                            bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
-                            bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
-                            bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
-                        }
-                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
                     }
                 } else {
+                    // Patrol behavior when no target
                     bot.moveCooldown -= dt * 1000;
                     if (bot.moveCooldown <= 0) {
                         bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
                         bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
                         bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
                     }
-                    bot.mesh.translateZ(BOT_MOVE_SPEED * dt);
+                    bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.3);
                 }
             }
         }
@@ -2700,7 +3124,7 @@
         }
 
         // ===============================================================
-        // === REVOLUTIONARY UI FUNCTIONS ================================
+        // === ENHANCED UI FUNCTIONS (SMALLER UI) ========================
         // ===============================================================
         
         function updateUI() {
@@ -2837,7 +3261,7 @@
         }
 
         // ===============================================================
-        // === INPUT & CONTROL MANAGEMENT (UPDATED: Stabilized Mobile) ===
+        // === INPUT & CONTROL MANAGEMENT (UPDATED: Enhanced Mobile) ===
         // ===============================================================
         
         function setMobileMode(enable) {
@@ -2871,7 +3295,7 @@
             document.getElementById('game-container').addEventListener('mousedown', lockPointer);
         }
 
-        // UPDATED: Stabilized mobile camera controls
+        // UPDATED: Enhanced mobile camera controls with higher sensitivity
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
             const touchRight = document.getElementById('touch-right');
@@ -2927,7 +3351,7 @@
                 inputs.w = inputs.s = inputs.a = inputs.d = inputs.sprint = false;
             });
             
-            // UPDATED: Stabilized camera controls
+            // UPDATED: Enhanced camera controls with higher sensitivity
             touchRight.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 mobileTouchActive = true;
@@ -2951,7 +3375,7 @@
                 touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING;
                 touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING;
                 
-                // Apply rotation with sensitivity
+                // Apply rotation with INCREASED sensitivity (0.003)
                 camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
                 camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
                 
@@ -3072,6 +3496,9 @@
             
             // Create particles for start screen
             createParticles();
+            
+            // Initialize audio
+            initAudio();
             
             // Scene Setup
             scene = new THREE.Scene();
