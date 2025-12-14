@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.6 - Ultimate Edition</title>
+    <title>Web Battle Royale: V19.7 - Ultimate Edition</title>
     <style>
         /* ======================================= */
-        /* === V19.6 ULTIMATE UI REDESIGN === */
+        /* === V19.7 ULTIMATE UI REDESIGN === */
         /* ======================================= */
         
         * {
@@ -28,6 +28,134 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             pointer-events: none; 
             color: white;
+        }
+
+        /* FPS Counter */
+        #fps-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff00;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            z-index: 1000;
+            border: 1px solid #00ff00;
+            pointer-events: none;
+        }
+
+        /* Level System UI */
+        #level-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            z-index: 1000;
+            border: 2px solid rgba(0, 210, 255, 0.4);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+        }
+        
+        .level-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .level-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        
+        .progress-container {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0.3rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff, #0072ff);
+            transition: width 0.3s ease;
+        }
+        
+        .points-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* End Game Stats */
+        #endgame-stats {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 20, 40, 0.95));
+            padding: 2rem;
+            border-radius: 20px;
+            color: white;
+            z-index: 1002;
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-width: 400px;
+            border: 3px solid rgba(0, 210, 255, 0.4);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+        
+        .stats-header {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #00d2ff;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .stat-value {
+            color: #ffd700;
+            font-weight: 700;
+        }
+        
+        .total-points {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #00ff00;
+            font-weight: 900;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 10px;
+            border: 2px solid #00ff00;
         }
 
         /* --- PRE-GAME START SCREEN (Ultimate Design) --- */
@@ -76,7 +204,7 @@
         }
         
         #start-screen h1::after {
-            content: 'V19.6';
+            content: 'V19.7';
             display: block;
             font-size: 1.5rem;
             color: #ffd700;
@@ -390,23 +518,23 @@
             pointer-events: none;
         }
 
-        /* Top Bar - Redesigned */
+        /* Top Bar - Redesigned and Smaller */
         #top-bar {
             position: absolute;
-            top: 1.5rem;
+            top: 1rem;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             background: rgba(10, 10, 30, 0.9);
-            backdrop-filter: blur(25px);
-            padding: 1rem 2rem;
-            border-radius: 20px;
-            border: 3px solid rgba(0, 210, 255, 0.4);
+            backdrop-filter: blur(20px);
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 210, 255, 0.4);
             box-shadow: 
-                0 15px 50px rgba(0, 0, 0, 0.7),
+                0 10px 30px rgba(0, 0, 0, 0.7),
                 inset 0 1px 0 rgba(255,255,255,0.15),
-                0 0 30px rgba(0, 210, 255, 0.3);
+                0 0 20px rgba(0, 210, 255, 0.3);
             z-index: 20;
         }
         
@@ -415,51 +543,51 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 140px;
+            min-width: 100px;
         }
         
         .hud-label {
-            font-size: 1rem;
+            font-size: 0.8rem;
             color: rgba(255,255,255,0.8);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
         .hud-value {
-            font-size: 2.2rem;
-            font-weight: 900;
+            font-size: 1.5rem;
+            font-weight: 800;
             color: white;
             text-shadow: 
-                0 2px 10px rgba(0,0,0,0.5),
-                0 0 20px currentColor;
-            letter-spacing: 1px;
+                0 2px 5px rgba(0,0,0,0.5),
+                0 0 15px currentColor;
+            letter-spacing: 0.5px;
         }
         
         #alive-count { 
             color: #4CAF50;
-            text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            text-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
         }
         #storm-timer { 
             color: #a335ee;
-            text-shadow: 0 0 20px rgba(163, 53, 238, 0.5);
+            text-shadow: 0 0 15px rgba(163, 53, 238, 0.5);
         }
         #storm-status {
             color: #00d2ff;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
         }
 
-        /* Player Stats - Left Side (Redesigned) */
+        /* Player Stats - Left Side (Redesigned and Smaller) */
         #player-stats {
             position: absolute;
-            bottom: 2rem;
-            left: 2rem;
+            bottom: 1.5rem;
+            left: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
-            width: 300px;
+            gap: 0.8rem;
+            width: 240px;
             z-index: 20;
         }
         
@@ -467,14 +595,14 @@
             background: linear-gradient(135deg, 
                 rgba(0, 0, 0, 0.85) 0%,
                 rgba(20, 20, 40, 0.85) 100%);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 1rem 1.5rem;
-            border: 3px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 0.7rem 1rem;
+            border: 2px solid rgba(255,255,255,0.15);
             box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.6),
+                0 8px 25px rgba(0, 0, 0, 0.6),
                 inset 0 1px 0 rgba(255,255,255,0.1),
-                0 0 30px rgba(255,255,255,0.1);
+                0 0 20px rgba(255,255,255,0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -493,75 +621,75 @@
         
         .stat-card:hover {
             border-color: rgba(0, 210, 255, 0.4);
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-3px) scale(1.02);
             box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.8),
+                0 15px 35px rgba(0, 0, 0, 0.8),
                 inset 0 1px 0 rgba(255,255,255,0.15),
-                0 0 40px rgba(0, 210, 255, 0.4);
+                0 0 30px rgba(0, 210, 255, 0.4);
         }
         
         .stat-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
             position: relative;
             z-index: 2;
         }
         
         .stat-icon {
-            font-size: 1.3rem;
-            width: 45px;
-            height: 45px;
+            font-size: 1rem;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, 
                 rgba(255,255,255,0.15) 0%,
                 rgba(255,255,255,0.05) 100%);
-            border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 
                 inset 0 1px 0 rgba(255,255,255,0.1),
-                0 4px 15px rgba(0,0,0,0.3);
+                0 3px 10px rgba(0,0,0,0.3);
         }
         
         .stat-title {
             flex: 1;
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: rgba(255,255,255,0.95);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
         .stat-value {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 900;
             color: #ffd700;
-            min-width: 60px;
+            min-width: 45px;
             text-align: right;
             text-shadow: 
-                0 2px 10px rgba(0,0,0,0.5),
-                0 0 20px rgba(255, 215, 0, 0.5);
+                0 2px 5px rgba(0,0,0,0.5),
+                0 0 15px rgba(255, 215, 0, 0.5);
         }
         
         .stat-bar-container {
-            height: 10px;
+            height: 8px;
             background: rgba(255,255,255,0.1);
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
             z-index: 2;
             box-shadow: 
-                inset 0 1px 3px rgba(0,0,0,0.5),
-                0 2px 5px rgba(0,0,0,0.3);
+                inset 0 1px 2px rgba(0,0,0,0.5),
+                0 1px 3px rgba(0,0,0,0.3);
         }
         
         .stat-bar {
             height: 100%;
-            border-radius: 5px;
+            border-radius: 4px;
             transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -602,7 +730,7 @@
                 #ffaaaa 100%);
             box-shadow: 
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 0 20px rgba(255, 77, 77, 0.5);
+                0 0 15px rgba(255, 77, 77, 0.5);
         }
         
         #shield-bar { 
@@ -612,7 +740,7 @@
                 #00d2ff 100%);
             box-shadow: 
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 0 20px rgba(0, 114, 255, 0.5);
+                0 0 15px rgba(0, 114, 255, 0.5);
         }
         
         #overshield-bar { 
@@ -622,73 +750,73 @@
                 #ffff00 100%);
             box-shadow: 
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 0 20px rgba(255, 170, 0, 0.5);
+                0 0 15px rgba(255, 170, 0, 0.5);
         }
 
-        /* Resources Bar - Redesigned */
+        /* Resources Bar - Redesigned and Smaller */
         #resources-bar {
             display: flex;
-            gap: 1.2rem;
-            margin-top: 1rem;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
         }
         
         .resource-item {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            padding: 0.8rem 1.2rem;
+            gap: 0.5rem;
+            padding: 0.5rem 0.8rem;
             background: linear-gradient(135deg, 
                 rgba(255,255,255,0.1) 0%,
                 rgba(255,255,255,0.05) 100%);
-            border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 
-                0 6px 20px rgba(0,0,0,0.4),
+                0 4px 12px rgba(0,0,0,0.4),
                 inset 0 1px 0 rgba(255,255,255,0.1);
             transition: all 0.3s ease;
         }
         
         .resource-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             border-color: rgba(222, 184, 135, 0.4);
             box-shadow: 
-                0 10px 30px rgba(0,0,0,0.6),
+                0 6px 20px rgba(0,0,0,0.6),
                 inset 0 1px 0 rgba(255,255,255,0.15),
-                0 0 20px rgba(222, 184, 135, 0.3);
+                0 0 15px rgba(222, 184, 135, 0.3);
         }
         
         .resource-icon {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             color: #deb887;
-            text-shadow: 0 0 10px rgba(222, 184, 135, 0.5);
+            text-shadow: 0 0 8px rgba(222, 184, 135, 0.5);
         }
         
         .resource-amount {
-            font-size: 1.3rem;
+            font-size: 1rem;
             font-weight: 900;
             color: white;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Inventory - Right Side (Redesigned) */
+        /* Inventory - Right Side (Redesigned and Smaller) */
         #inventory-hud {
             position: absolute;
-            bottom: 2rem;
-            right: 2rem;
+            bottom: 1.5rem;
+            right: 1.5rem;
             display: flex;
-            gap: 0.8rem;
+            gap: 0.6rem;
             z-index: 20;
         }
         
         .inventory-slot {
-            width: 85px;
-            height: 105px;
+            width: 70px;
+            height: 85px;
             background: linear-gradient(135deg, 
                 rgba(10, 10, 30, 0.95) 0%,
                 rgba(20, 20, 40, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            border-radius: 14px;
-            border: 3px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -699,7 +827,7 @@
             pointer-events: auto;
             overflow: hidden;
             box-shadow: 
-                0 10px 30px rgba(0,0,0,0.5),
+                0 8px 20px rgba(0,0,0,0.5),
                 inset 0 1px 0 rgba(255,255,255,0.1);
         }
         
@@ -714,101 +842,101 @@
         }
         
         .inventory-slot:hover {
-            transform: translateY(-8px) scale(1.08);
+            transform: translateY(-6px) scale(1.06);
             border-color: rgba(255,255,255,0.4);
             box-shadow: 
-                0 20px 40px rgba(0,0,0,0.7),
+                0 15px 30px rgba(0,0,0,0.7),
                 inset 0 1px 0 rgba(255,255,255,0.15),
-                0 0 30px rgba(255,255,255,0.2);
+                0 0 25px rgba(255,255,255,0.2);
         }
         
         .inventory-slot.active {
             border-color: #ff4d4d;
-            transform: translateY(-12px) scale(1.15);
+            transform: translateY(-8px) scale(1.1);
             background: linear-gradient(135deg, 
                 rgba(30, 30, 50, 0.98) 0%,
                 rgba(40, 40, 60, 0.98) 100%);
             box-shadow: 
-                0 25px 50px rgba(0,0,0,0.8),
+                0 20px 40px rgba(0,0,0,0.8),
                 inset 0 1px 0 rgba(255,255,255,0.2),
-                0 0 40px rgba(255, 77, 77, 0.5);
+                0 0 30px rgba(255, 77, 77, 0.5);
         }
         
         .slot-key {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            font-size: 0.85rem;
+            top: 6px;
+            left: 6px;
+            font-size: 0.7rem;
             color: rgba(255,255,255,0.8);
             font-weight: 700;
             background: rgba(0,0,0,0.6);
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.2);
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 3px rgba(0,0,0,0.5);
         }
         
         .slot-icon {
-            font-size: 2.4rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 15px currentColor;
-            filter: drop-shadow(0 0 5px currentColor);
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 10px currentColor;
+            filter: drop-shadow(0 0 3px currentColor);
         }
         
         .slot-name {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 700;
             color: rgba(255,255,255,0.95);
             text-transform: uppercase;
             text-align: center;
-            max-width: 75px;
+            max-width: 60px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            padding: 0 0.3rem;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            padding: 0 0.2rem;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.5);
         }
         
         .slot-count {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            font-size: 0.85rem;
+            bottom: 6px;
+            right: 6px;
+            font-size: 0.7rem;
             font-weight: 900;
             color: #ffd700;
             background: rgba(0,0,0,0.6);
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.2);
             text-shadow: 
-                0 2px 5px rgba(0,0,0,0.5),
-                0 0 10px rgba(255, 215, 0, 0.5);
+                0 2px 3px rgba(0,0,0,0.5),
+                0 0 8px rgba(255, 215, 0, 0.5);
         }
         
         /* Rarity Borders */
         .rarity-common { 
-            border-bottom: 6px solid #b0b0b0;
-            box-shadow: 0 0 20px rgba(176, 176, 176, 0.3);
+            border-bottom: 4px solid #b0b0b0;
+            box-shadow: 0 0 15px rgba(176, 176, 176, 0.3);
         }
         .rarity-uncommon { 
-            border-bottom: 6px solid #28a745;
-            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+            border-bottom: 4px solid #28a745;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
         }
         .rarity-rare { 
-            border-bottom: 6px solid #007bff;
-            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+            border-bottom: 4px solid #007bff;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
         }
         .rarity-epic { 
-            border-bottom: 6px solid #a335ee;
-            box-shadow: 0 0 20px rgba(163, 53, 238, 0.3);
+            border-bottom: 4px solid #a335ee;
+            box-shadow: 0 0 15px rgba(163, 53, 238, 0.3);
         }
         .rarity-legendary { 
-            border-bottom: 6px solid #ffd700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            border-bottom: 4px solid #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
         .rarity-mythic { 
-            border-bottom: 6px solid #ff4d4d;
-            box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+            border-bottom: 4px solid #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
         }
 
         /* Center HUD Elements */
@@ -820,7 +948,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.2rem;
+            gap: 1rem;
             z-index: 15;
         }
 
@@ -830,19 +958,19 @@
                 rgba(255, 215, 0, 0.98), 
                 rgba(255, 170, 0, 0.98));
             color: #000;
-            padding: 1.2rem 2.5rem;
-            border-radius: 16px;
-            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 800;
             display: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             box-shadow: 
-                0 15px 40px rgba(255, 215, 0, 0.5),
-                0 8px 25px rgba(0,0,0,0.4),
+                0 10px 30px rgba(255, 215, 0, 0.5),
+                0 6px 20px rgba(0,0,0,0.4),
                 inset 0 1px 0 rgba(255,255,255,0.6);
-            border: 4px solid rgba(255,255,255,0.6);
-            backdrop-filter: blur(15px);
+            border: 3px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
             animation: pulsePrompt 1.5s infinite alternate;
             pointer-events: none;
             position: relative;
@@ -867,8 +995,8 @@
         }
         
         @keyframes pulsePrompt {
-            0% { transform: translateY(-50%) scale(1); box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5); }
-            100% { transform: translateY(-50%) scale(1.08); box-shadow: 0 20px 50px rgba(255, 215, 0, 0.7); }
+            0% { transform: translateY(-50%) scale(1); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5); }
+            100% { transform: translateY(-50%) scale(1.06); box-shadow: 0 15px 40px rgba(255, 215, 0, 0.7); }
         }
 
         /* Reload Indicator - Redesigned */
@@ -877,46 +1005,46 @@
                 rgba(255, 0, 0, 0.98), 
                 rgba(255, 68, 68, 0.98));
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 14px;
-            font-size: 1.1rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 800;
             display: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             box-shadow: 
-                0 15px 40px rgba(255, 0, 0, 0.5),
-                0 8px 25px rgba(0,0,0,0.4),
+                0 10px 30px rgba(255, 0, 0, 0.5),
+                0 6px 20px rgba(0,0,0,0.4),
                 inset 0 1px 0 rgba(255,255,255,0.3);
-            border: 3px solid rgba(255,255,255,0.4);
-            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
             animation: reloadPulse 1s infinite alternate;
         }
         
         @keyframes reloadPulse {
             0% { opacity: 0.9; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1.03); }
         }
 
         /* Healing Progress - Redesigned */
         #healing-progress {
             position: absolute;
-            bottom: 12rem;
+            bottom: 10rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
-            height: 45px;
+            width: 320px;
+            height: 35px;
             background: linear-gradient(135deg, 
                 rgba(0, 0, 0, 0.9) 0%,
                 rgba(20, 20, 40, 0.9) 100%);
-            border-radius: 25px;
+            border-radius: 20px;
             display: none;
             overflow: hidden;
-            border: 3px solid rgba(0, 210, 255, 0.6);
+            border: 2px solid rgba(0, 210, 255, 0.6);
             box-shadow: 
-                0 15px 50px rgba(0, 210, 255, 0.4),
+                0 10px 30px rgba(0, 210, 255, 0.4),
                 inset 0 1px 0 rgba(255,255,255,0.2);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
         }
         
         #healing-bar {
@@ -967,11 +1095,11 @@
             justify-content: center;
             color: white;
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1rem;
             text-shadow: 
-                0 2px 10px rgba(0,0,0,0.8),
-                0 0 20px rgba(0, 210, 255, 0.5);
-            letter-spacing: 2px;
+                0 2px 5px rgba(0,0,0,0.8),
+                0 0 15px rgba(0, 210, 255, 0.5);
+            letter-spacing: 1px;
         }
 
         /* Damage Numbers - Redesigned */
@@ -979,40 +1107,101 @@
             position: absolute;
             color: white;
             font-weight: 900;
-            font-size: 2.5rem;
+            font-size: 2rem;
             text-shadow: 
-                2px 2px 8px rgba(0,0,0,0.9),
-                0 0 20px currentColor,
-                0 0 40px currentColor;
+                2px 2px 6px rgba(0,0,0,0.9),
+                0 0 15px currentColor,
+                0 0 30px currentColor;
             pointer-events: none;
             animation: damageFloat 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             z-index: 999;
             font-family: 'Poppins', sans-serif;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         .dmg-number.headshot {
             color: #ff0000;
-            font-size: 3rem;
+            font-size: 2.4rem;
             text-shadow: 
-                0 0 25px #ff0000,
-                0 0 50px #ff0000,
-                0 0 75px rgba(255, 0, 0, 0.7);
+                0 0 20px #ff0000,
+                0 0 40px #ff0000,
+                0 0 60px rgba(255, 0, 0, 0.7);
         }
         
         .dmg-number.storm {
             color: #a335ee;
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             text-shadow: 
-                0 0 25px #a335ee,
-                0 0 45px rgba(163, 53, 238, 0.7);
+                0 0 20px #a335ee,
+                0 0 35px rgba(163, 53, 238, 0.7);
         }
         
         @keyframes damageFloat { 
             0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); } 
-            30% { opacity: 1; transform: translateY(-20px) scale(1.1) rotate(-5deg); }
-            70% { opacity: 1; transform: translateY(-60px) scale(1.3) rotate(5deg); }
-            100% { opacity: 0; transform: translateY(-90px) scale(1.4) rotate(0deg); } 
+            30% { opacity: 1; transform: translateY(-15px) scale(1.1) rotate(-5deg); }
+            70% { opacity: 1; transform: translateY(-45px) scale(1.2) rotate(5deg); }
+            100% { opacity: 0; transform: translateY(-70px) scale(1.3) rotate(0deg); } 
+        }
+
+        /* Visual Effects */
+        .muzzle-flash {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff9900 0%, #ff3300 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
+            animation: muzzleFlash 0.1s forwards;
+        }
+        
+        @keyframes muzzleFlash {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+        
+        .bullet-trail {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, #ffff00 0%, #ff9900 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 998;
+            transform-origin: top center;
+        }
+        
+        .impact-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff4444 0%, #ff0000 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 997;
+            animation: impactEffect 0.3s forwards;
+        }
+        
+        @keyframes impactEffect {
+            0% { opacity: 1; transform: scale(0.5); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(1.5); }
+        }
+        
+        .blood-effect {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #cc0000 0%, #990000 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 996;
+            animation: bloodEffect 0.5s forwards;
+        }
+        
+        @keyframes bloodEffect {
+            0% { opacity: 1; transform: scale(0.5) rotate(0deg); }
+            50% { opacity: 0.8; transform: scale(1.3) rotate(180deg); }
+            100% { opacity: 0; transform: scale(1.5) rotate(360deg); }
         }
 
         /* Controller Layout Display */
@@ -1022,35 +1211,37 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
-            padding: 1.5rem;
-            border-radius: 15px;
+            padding: 1rem;
+            border-radius: 12px;
             display: none;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+            gap: 0.8rem;
             z-index: 1001;
             border: 2px solid rgba(138, 43, 226, 0.5);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            font-size: 0.8rem;
         }
         
         .controller-button {
             background: rgba(138, 43, 226, 0.2);
-            border: 2px solid rgba(138, 43, 226, 0.5);
-            border-radius: 10px;
-            padding: 0.8rem;
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            border-radius: 6px;
+            padding: 0.5rem;
             text-align: center;
             color: white;
             font-weight: 600;
             transition: all 0.2s ease;
+            font-size: 0.7rem;
         }
         
         .controller-button.active {
             background: rgba(138, 43, 226, 0.5);
             border-color: rgba(255, 255, 255, 0.8);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
         }
 
-        /* --- MOBILE CONTROLS (Buttery Smooth) --- */
+        /* --- MOBILE CONTROLS (UPDATED FOR V19.7) --- */
         #mobile-controls {
             display: none; 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -1058,7 +1249,7 @@
             z-index: 5;
         }
         
-        /* UPDATED: Left side - Movement joystick area */
+        /* UPDATED: Left side - Movement joystick area (50%) */
         #touch-left {
             position: absolute;
             top: 0; left: 0;
@@ -1068,7 +1259,7 @@
             z-index: 6;
         }
         
-        /* UPDATED: Right side - Camera control area (full side) */
+        /* UPDATED: Right side - Camera control area (50%) - invisible joystick */
         #touch-right {
             position: absolute;
             top: 0; right: 0;
@@ -1082,20 +1273,20 @@
         /* Movement Zone - Updated */
         #movement-zone {
             position: absolute;
-            bottom: 120px;
-            left: 100px;
-            width: 200px;
-            height: 200px;
+            bottom: 100px;
+            left: 80px;
+            width: 150px;
+            height: 150px;
             background: radial-gradient(circle, 
                 rgba(255,255,255,0.08) 0%,
                 rgba(255,255,255,0.03) 70%,
                 transparent 71%);
             border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.2);
             pointer-events: none;
             box-shadow: 
-                0 15px 40px rgba(0,0,0,0.5),
-                inset 0 0 30px rgba(255,255,255,0.1);
+                0 10px 30px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(255,255,255,0.1);
             z-index: 7;
             opacity: 0.9;
         }
@@ -1103,22 +1294,22 @@
         .joystick-thumb {
             position: absolute;
             top: 50%; left: 50%;
-            width: 80px; height: 80px;
+            width: 60px; height: 60px;
             background: radial-gradient(circle, 
                 rgba(255,255,255,0.4) 0%,
                 rgba(255,255,255,0.2) 100%);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             box-shadow: 
-                0 8px 25px rgba(0,0,0,0.6),
-                inset 0 0 20px rgba(255,255,255,0.3);
-            border: 3px solid rgba(255,255,255,0.4);
+                0 6px 20px rgba(0,0,0,0.6),
+                inset 0 0 15px rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.4);
             pointer-events: none;
             transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 8;
         }
 
-        /* Camera Zone - New: Visual feedback for camera area */
+        /* Camera Zone Visual Feedback */
         #camera-zone {
             position: absolute;
             top: 0; right: 0;
@@ -1133,27 +1324,27 @@
         /* Mobile Action Buttons - Updated */
         .mobile-button {
             position: absolute;
-            width: 90px; height: 90px;
+            width: 75px; height: 75px;
             border-radius: 50%;
             background: linear-gradient(135deg, 
                 rgba(30, 30, 40, 0.95),
                 rgba(20, 20, 30, 0.95));
-            border: 4px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
             color: white;
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             display: flex;
             justify-content: center;
             align-items: center;
             pointer-events: auto;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(12px);
             text-align: center;
             text-transform: uppercase;
             z-index: 10;
             box-shadow: 
-                0 12px 35px rgba(0,0,0,0.6),
+                0 8px 25px rgba(0,0,0,0.6),
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 0 20px rgba(255,255,255,0.1);
+                0 0 15px rgba(255,255,255,0.1);
             transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
@@ -1163,82 +1354,82 @@
             background: linear-gradient(135deg, 
                 rgba(255,255,255,0.4),
                 rgba(255,255,255,0.3));
-            transform: scale(0.88);
+            transform: scale(0.85);
             box-shadow: 
-                0 6px 20px rgba(0,0,0,0.4),
+                0 4px 15px rgba(0,0,0,0.4),
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 0 30px rgba(255,255,255,0.3);
+                0 0 20px rgba(255,255,255,0.3);
         }
         
         #btn-fire { 
-            bottom: 120px; right: 40px; 
-            width: 110px; height: 110px;
+            bottom: 100px; right: 30px; 
+            width: 90px; height: 90px;
             border-color: #ff4444;
             background: linear-gradient(135deg, 
                 rgba(255,0,0,0.6),
                 rgba(255,68,68,0.5));
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             box-shadow: 
-                0 15px 40px rgba(255,0,0,0.5),
+                0 10px 30px rgba(255,0,0,0.5),
                 inset 0 1px 0 rgba(255,255,255,0.3),
-                0 0 30px rgba(255,0,0,0.3);
+                0 0 20px rgba(255,0,0,0.3);
         }
         
         #btn-fire:active {
             box-shadow: 
-                0 8px 25px rgba(255,0,0,0.4),
+                0 6px 20px rgba(255,0,0,0.4),
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 0 40px rgba(255,0,0,0.5);
+                0 0 30px rgba(255,0,0,0.5);
         }
         
         #btn-jump { 
-            bottom: 250px; right: 50px;
+            bottom: 200px; right: 40px;
             border-color: #00d2ff;
             background: linear-gradient(135deg,
                 rgba(0,210,255,0.6),
                 rgba(0,168,255,0.5));
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
         }
         
         #btn-interact { 
-            bottom: 200px; right: 140px;
+            bottom: 160px; right: 120px;
             border-color: #ffd700;
             color: #ffd700;
             background: linear-gradient(135deg,
                 rgba(255,215,0,0.4),
                 rgba(255,170,0,0.3));
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
         
         #btn-build { 
-            bottom: 280px; right: 140px;
+            bottom: 230px; right: 120px;
             border-color: #8B4513;
             background: linear-gradient(135deg,
                 rgba(139,69,19,0.6),
                 rgba(160,82,45,0.5));
-            box-shadow: 0 0 25px rgba(139, 69, 19, 0.3);
+            box-shadow: 0 0 20px rgba(139, 69, 19, 0.3);
         }
         
         #btn-ads { 
-            bottom: 70px; right: 160px;
-            width: 80px; height: 80px;
-            font-size: 1rem;
+            bottom: 60px; right: 130px;
+            width: 65px; height: 65px;
+            font-size: 0.9rem;
             border-color: #007bff;
             background: linear-gradient(135deg,
                 rgba(0,123,255,0.6),
                 rgba(0,82,204,0.5));
-            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
         }
         
         #btn-reload { 
-            top: 220px; right: 40px;
-            width: 75px; height: 75px;
-            font-size: 0.9rem;
+            top: 180px; right: 30px;
+            width: 60px; height: 60px;
+            font-size: 0.8rem;
             border-color: #00d2ff;
             background: linear-gradient(135deg,
                 rgba(0,210,255,0.6),
                 rgba(0,168,255,0.5));
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
             display: none;
         }
 
@@ -1251,7 +1442,7 @@
             background: linear-gradient(135deg,
                 rgba(255, 215, 0, 0.9),
                 rgba(255, 140, 0, 0.95));
-            backdrop-filter: blur(30px);
+            backdrop-filter: blur(25px);
             z-index: 1000;
             flex-direction: column;
             justify-content: center;
@@ -1268,11 +1459,11 @@
         
         .victory-particle {
             position: absolute;
-            width: 12px; height: 12px;
+            width: 10px; height: 10px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
-            animation: victoryParticleFloat 8s infinite linear;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
+            animation: victoryParticleFloat 6s infinite linear;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
         }
         
         @keyframes victoryParticleFloat {
@@ -1293,50 +1484,50 @@
                        victoryPulse 2s infinite alternate 3.5s;
             position: relative;
             text-shadow: 
-                0 15px 50px rgba(255, 215, 0, 0.6),
-                0 0 80px rgba(255, 170, 0, 0.4),
-                0 0 120px rgba(255, 100, 0, 0.3);
-            letter-spacing: -10px;
+                0 12px 40px rgba(255, 215, 0, 0.6),
+                0 0 60px rgba(255, 170, 0, 0.4),
+                0 0 90px rgba(255, 100, 0, 0.3);
+            letter-spacing: -8px;
             opacity: 0;
             white-space: nowrap;
             z-index: 2;
         }
         
         #victory-text::after {
-            content: 'V19.6';
+            content: 'V19.7';
             display: block;
-            font-size: 2.5rem;
-            margin-top: 1.5rem;
+            font-size: 2rem;
+            margin-top: 1rem;
             color: #ffffff;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9);
             animation: versionPulse 3s infinite alternate;
         }
         
         @keyframes versionPulse {
             0% { opacity: 0.7; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.15); }
+            100% { opacity: 1; transform: scale(1.1); }
         }
         
         @keyframes victoryText {
-            0% { font-size: 0; transform: scale(0) rotate(-20deg); opacity: 0; letter-spacing: 100px; }
-            30% { font-size: 9rem; transform: scale(1.5) rotate(15deg); opacity: 1; letter-spacing: -10px; }
-            50% { font-size: 9rem; transform: scale(1.5) rotate(-5deg); opacity: 1; letter-spacing: -5px; }
-            70% { font-size: 9rem; transform: scale(1.3) rotate(5deg); opacity: 1; letter-spacing: -2px; }
-            100% { font-size: 7rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
+            0% { font-size: 0; transform: scale(0) rotate(-20deg); opacity: 0; letter-spacing: 80px; }
+            30% { font-size: 7rem; transform: scale(1.4) rotate(15deg); opacity: 1; letter-spacing: -8px; }
+            50% { font-size: 7rem; transform: scale(1.4) rotate(-5deg); opacity: 1; letter-spacing: -4px; }
+            70% { font-size: 7rem; transform: scale(1.2) rotate(5deg); opacity: 1; letter-spacing: -2px; }
+            100% { font-size: 5.5rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
         }
         
         @keyframes victoryPulse {
-            0% { transform: scale(1); text-shadow: 0 15px 50px rgba(255, 215, 0, 0.6); }
-            100% { transform: scale(1.1); text-shadow: 0 20px 60px rgba(255, 215, 0, 0.9), 0 0 100px rgba(255, 170, 0, 0.5); }
+            0% { transform: scale(1); text-shadow: 0 12px 40px rgba(255, 215, 0, 0.6); }
+            100% { transform: scale(1.08); text-shadow: 0 15px 50px rgba(255, 215, 0, 0.9), 0 0 80px rgba(255, 170, 0, 0.5); }
         }
         
         #victory-stats {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             color: white;
-            margin-top: 3rem;
+            margin-top: 2rem;
             opacity: 0;
             animation: fadeUp 1s ease-out 4s forwards;
-            text-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            text-shadow: 0 6px 20px rgba(0,0,0,0.7);
             z-index: 2;
         }
         
@@ -1348,7 +1539,7 @@
             background: linear-gradient(135deg,
                 rgba(200, 0, 0, 0.97),
                 rgba(50, 0, 0, 0.99));
-            backdrop-filter: blur(30px);
+            backdrop-filter: blur(25px);
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -1366,10 +1557,10 @@
         
         .eliminated-particle {
             position: absolute;
-            width: 10px; height: 10px;
+            width: 8px; height: 8px;
             background: rgba(255, 50, 50, 0.7);
             border-radius: 50%;
-            animation: eliminatedParticleFall 5s infinite linear;
+            animation: eliminatedParticleFall 4s infinite linear;
         }
         
         @keyframes eliminatedParticleFall {
@@ -1385,53 +1576,53 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: 900;
             animation: eliminatedText 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            text-shadow: 0 15px 50px rgba(255, 0, 0, 0.6);
-            letter-spacing: -10px;
+            text-shadow: 0 12px 40px rgba(255, 0, 0, 0.6);
+            letter-spacing: -8px;
             opacity: 0;
         }
         
         @keyframes eliminatedText {
-            0% { font-size: 0; transform: scale(0) rotate(-10deg); opacity: 0; letter-spacing: 50px; }
-            40% { font-size: 8rem; transform: scale(1.4) rotate(5deg); opacity: 1; letter-spacing: -5px; }
-            60% { font-size: 8rem; transform: scale(1.2) rotate(-2deg); opacity: 1; letter-spacing: -2px; }
-            100% { font-size: 6rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
+            0% { font-size: 0; transform: scale(0) rotate(-10deg); opacity: 0; letter-spacing: 40px; }
+            40% { font-size: 6.5rem; transform: scale(1.3) rotate(5deg); opacity: 1; letter-spacing: -4px; }
+            60% { font-size: 6.5rem; transform: scale(1.1) rotate(-2deg); opacity: 1; letter-spacing: -2px; }
+            100% { font-size: 5rem; transform: scale(1) rotate(0deg); opacity: 1; letter-spacing: 0; }
         }
         
         #go-stats {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             color: rgba(255,255,255,0.95);
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
             animation: slideIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2.5s backwards;
-            text-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            text-shadow: 0 6px 20px rgba(0,0,0,0.7);
             z-index: 2;
         }
 
         /* Restart Button - Redesigned */
         .restart-btn {
-            margin-top: 4rem;
-            padding: 1.5rem 3.5rem;
-            font-size: 1.6rem;
+            margin-top: 3rem;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.4rem;
             background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 15px;
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
             box-shadow: 
-                0 15px 40px rgba(0, 123, 255, 0.7),
+                0 12px 35px rgba(0, 123, 255, 0.7),
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 0 30px rgba(0, 123, 255, 0.5);
+                0 0 25px rgba(0, 123, 255, 0.5);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
             position: relative;
             overflow: hidden;
-            letter-spacing: 1px;
-            backdrop-filter: blur(15px);
-            border: 3px solid rgba(255,255,255,0.2);
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255,255,255,0.2);
             z-index: 2;
         }
         
@@ -1450,11 +1641,11 @@
         
         .restart-btn:hover {
             background: linear-gradient(135deg, #0056b3, #003d82);
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: 
-                0 20px 50px rgba(0, 123, 255, 0.9),
+                0 15px 40px rgba(0, 123, 255, 0.9),
                 inset 0 1px 0 rgba(255,255,255,0.5),
-                0 0 40px rgba(0, 123, 255, 0.7);
+                0 0 30px rgba(0, 123, 255, 0.7);
         }
         
         #game-over .restart-btn {
@@ -1474,7 +1665,7 @@
         }
         
         @keyframes slideDown {
-            0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            0% { opacity: 0; transform: translateY(-40px) scale(0.9); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
@@ -1485,12 +1676,12 @@
         }
         
         @keyframes slideIn {
-            0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            0% { opacity: 0; transform: translateY(-40px) scale(0.9); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         @keyframes fadeUp {
-            0% { transform: translateY(50px) scale(0.8); opacity: 0; }
+            0% { transform: translateY(40px) scale(0.8); opacity: 0; }
             100% { transform: translateY(0) scale(1); opacity: 1; }
         }
         
@@ -1516,27 +1707,27 @@
             right: 20px;
             background: linear-gradient(135deg, #ffd700, #ffaa00);
             color: #000;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.9rem;
             animation: badgeGlow 2s infinite alternate;
             box-shadow: 
-                0 8px 25px rgba(255, 215, 0, 0.4),
+                0 6px 20px rgba(255, 215, 0, 0.4),
                 inset 0 1px 0 rgba(255,255,255,0.3);
             border: 2px solid rgba(255,255,255,0.3);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         @keyframes badgeGlow {
-            0% { box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4); }
-            100% { box-shadow: 0 8px 35px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.3); }
+            0% { box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); }
+            100% { box-shadow: 0 6px 25px rgba(255, 215, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.3); }
         }
         
         .menu-title {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .title-glow {
@@ -1545,7 +1736,7 @@
             transform: translate(-50%, -50%);
             width: 120%; height: 120%;
             background: radial-gradient(circle, rgba(0, 210, 255, 0.4) 0%, transparent 70%);
-            filter: blur(50px);
+            filter: blur(40px);
             z-index: 1;
         }
     </style>
@@ -1556,7 +1747,7 @@
     <div id="start-screen">
         <div class="menu-background"></div>
         <div class="particles" id="particles-container"></div>
-        <div class="version-badge">V19.6 • ULTIMATE EDITION</div>
+        <div class="version-badge">V19.7 • ULTIMATE EDITION</div>
         <div class="menu-title">
             <div class="title-glow"></div>
             <h1>WEB BATTLE ROYALE</h1>
@@ -1578,7 +1769,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.6</p>
+                <p>V19.7</p>
             </div>
         </div>
         <div id="victory-royales-stat">🏆 Victory Royales: 0</div>
@@ -1587,6 +1778,20 @@
     <div id="game-container"></div>
 
     <div id="ui-layer">
+        <!-- FPS Counter -->
+        <div id="fps-counter">FPS: 60</div>
+        
+        <!-- Level Display -->
+        <div id="level-display">
+            <div class="level-info">
+                <div class="level-text">Level 1</div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="points-text">0 / 150 XP</div>
+            </div>
+        </div>
+        
         <!-- Crosshair -->
         <div id="crosshair">
             <div class="crosshair-dot"></div>
@@ -1731,24 +1936,21 @@
         <button class="restart-btn" onclick="location.reload()">🔄 RETURN TO LOBBY</button>
     </div>
 
+    <!-- End Game Stats -->
+    <div id="endgame-stats">
+        <div class="stats-header">MATCH RESULTS</div>
+        <div class="stats-grid" id="match-stats-grid">
+            <!-- Stats will be populated here -->
+        </div>
+        <div class="total-points" id="total-points">Total Points: 0</div>
+        <button class="restart-btn" onclick="location.reload()">🏆 RETURN TO LOBBY</button>
+    </div>
+
     <!-- Controller Notification -->
     <div class="controller-notification" id="controller-notification">🎮 Controller Connected</div>
     
     <!-- Controller Layout Display -->
-    <div id="controller-layout">
-        <div class="controller-button" id="ctrl-l1">L1</div>
-        <div class="controller-button" id="ctrl-r1">R1</div>
-        <div class="controller-button" id="ctrl-l2">L2 (AIM)</div>
-        <div class="controller-button" id="ctrl-r2">R2 (FIRE)</div>
-        <div class="controller-button" id="ctrl-y">Y (RELOAD)</div>
-        <div class="controller-button" id="ctrl-b">B (JUMP)</div>
-        <div class="controller-button" id="ctrl-a">A (SPRINT)</div>
-        <div class="controller-button" id="ctrl-x">X (INTERACT)</div>
-        <div class="controller-button" id="ctrl-dpad">DPAD (SLOTS)</div>
-        <div class="controller-button" id="ctrl-ls">LS (MOVE)</div>
-        <div class="controller-button" id="ctrl-rs">RS (LOOK)</div>
-        <div class="controller-button" id="ctrl-menu">MENU</div>
-    </div>
+    <div id="controller-layout"></div>
 
     <script type="importmap">
         {
@@ -1764,11 +1966,11 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.6) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.7) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        let BOT_COUNT = 20; 
+        let BOT_COUNT = 18; // Reduced for performance
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
@@ -1776,10 +1978,22 @@
         const PLAYER_HEIGHT = 1.8;
         const SHOTGUN_PELLETS = 4;
         
-        // --- UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields ---
+        // UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields
         const OVER_SHIELD_MAX = 50;
         const OVER_SHIELD_REGEN_RATE = 15;
         const OVER_SHIELD_REGEN_DELAY = 7000;
+        
+        // Level System
+        let playerLevel = 1;
+        let playerXP = 0;
+        const XP_PER_LEVEL = 150;
+        let matchStats = {
+            kills: 0,
+            placement: 0,
+            chestsOpened: 0,
+            legendariesHeld: 0,
+            totalPoints: 0
+        };
         
         // --- WEAPONS CONFIG ---
         const RARITY_MULTIPLIERS = {
@@ -1792,7 +2006,7 @@
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        // Weapons configuration
+        // Weapons configuration - UPDATED: Reduced sniper damage by 75%
         const WEAPONS_BASE = {
             PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             AUTO_SHG: { name: "Auto Shotgun", dmg: 30, head: 50, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
@@ -1800,12 +2014,12 @@
             DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             STINGER: { name: "Stinger SMG", dmg: 15, head: 22.5, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
-            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25, head: 157.5 * 1.25, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25 * 0.25, head: 157.5 * 1.25 * 0.25, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // 75% reduced
             SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25, head: 135 * 1.25, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, 
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25 * 0.25, head: 135 * 1.25 * 0.25, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // 75% reduced
             STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            SNIPER:{name: "Sniper", dmg: 150 * 1.25, head: 195 * 1.25, rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
+            SNIPER: { name: "Sniper", dmg: 150 * 1.25 * 0.25, head: 195 * 1.25 * 0.25, rate: 1.5, mag: 1, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // 75% reduced
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 },
             DUAL_SMG: { name: "Dual Micro SMGS", dmg: 11.25, head: 17.5, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' },
@@ -1870,14 +2084,14 @@
         let gameStarted = false;
         let victoryRoyales = 0;
         
-        // Mobile control variables - UPDATED FOR BUTTERY SMOOTH CONTROLS
+        // Mobile control variables - UPDATED FOR V19.7: 50/50 split screen
         let mobileTouchActive = false;
         let lastTouchX = 0;
         let lastTouchY = 0;
         let touchDeltaX = 0;
         let touchDeltaY = 0;
-        const MOBILE_SENSITIVITY = 0.0025;
-        const MOBILE_SMOOTHING = 0.05; // Lower for more responsive
+        const MOBILE_SENSITIVITY = 0.002;
+        const MOBILE_SMOOTHING = 0.1;
         const MAX_CAMERA_ANGLE = Math.PI / 2 - 0.1;
         
         // Controller variables
@@ -1896,7 +2110,7 @@
                 start: false, select: false
             }
         };
-        const CONTROLLER_SENSITIVITY = 0.03; // Smooth controller sensitivity
+        const CONTROLLER_SENSITIVITY = 0.02;
         
         // Dynamic Arrays for Entities
         let bots = [];
@@ -1906,7 +2120,11 @@
         let loot = [];
         let buildings = []; 
         let projectiles = []; 
-        let doors = []; 
+        let doors = [];
+        
+        // Visual effects arrays
+        let visualEffects = [];
+        let particleSystems = [];
 
         // Storm State
         let stormRadius = STORM_PHASES[0].radius;
@@ -1917,6 +2135,667 @@
         let stormPhase = 0;
         let stormActive = false;
         let stormTimerInterval;
+
+        // Performance optimization
+        let frameCount = 0;
+        let lastFpsUpdate = 0;
+        let currentFPS = 60;
+        let renderDistance = 300; // Reduced for performance
+        let botUpdateInterval = 100; // Update bots every 100ms for performance
+        let lastBotUpdate = 0;
+
+        // ===============================================================
+        // === LEVEL SYSTEM ==============================================
+        // ===============================================================
+
+        function loadPlayerLevel() {
+            const savedLevel = localStorage.getItem('playerLevel');
+            const savedXP = localStorage.getItem('playerXP');
+            playerLevel = savedLevel ? parseInt(savedLevel) : 1;
+            playerXP = savedXP ? parseInt(savedXP) : 0;
+            updateLevelDisplay();
+        }
+
+        function savePlayerLevel() {
+            localStorage.setItem('playerLevel', playerLevel);
+            localStorage.setItem('playerXP', playerXP);
+        }
+
+        function calculateMatchPoints() {
+            matchStats.kills = player.eliminations;
+            matchStats.placement = bots.length + 1; // Player position (1st, 2nd, etc)
+            
+            // Calculate points
+            let points = 0;
+            points += matchStats.kills * 5; // 5 points per kill
+            points += matchStats.chestsOpened * 1; // 1 point per chest
+            points += matchStats.legendariesHeld * 5; // 5 points per legendary held
+            
+            // Placement bonuses
+            if (matchStats.placement <= 10) points += 10; // Top 10
+            if (matchStats.placement <= 2) points += 15; // Top 2
+            
+            matchStats.totalPoints = points;
+            
+            // Add to player XP
+            playerXP += points;
+            
+            // Check for level up
+            while (playerXP >= XP_PER_LEVEL) {
+                playerXP -= XP_PER_LEVEL;
+                playerLevel++;
+            }
+            
+            savePlayerLevel();
+            updateLevelDisplay();
+            
+            return points;
+        }
+
+        function updateLevelDisplay() {
+            const levelDisplay = document.getElementById('level-display');
+            const progressBar = levelDisplay.querySelector('.progress-bar');
+            const levelText = levelDisplay.querySelector('.level-text');
+            const pointsText = levelDisplay.querySelector('.points-text');
+            
+            levelText.textContent = `Level ${playerLevel}`;
+            const progressPercent = (playerXP / XP_PER_LEVEL) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            pointsText.textContent = `${playerXP} / ${XP_PER_LEVEL} XP`;
+        }
+
+        function showEndGameStats(win) {
+            const totalPoints = calculateMatchPoints();
+            const statsGrid = document.getElementById('match-stats-grid');
+            
+            statsGrid.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">Kills</span>
+                    <span class="stat-value">${matchStats.kills} × 5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Chests Opened</span>
+                    <span class="stat-value">${matchStats.chestsOpened} × 1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Legendaries Held</span>
+                    <span class="stat-value">${matchStats.legendariesHeld} × 5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Placement</span>
+                    <span class="stat-value">${matchStats.placement}${matchStats.placement === 1 ? 'st' : matchStats.placement === 2 ? 'nd' : matchStats.placement === 3 ? 'rd' : 'th'}</span>
+                </div>
+            `;
+            
+            if (matchStats.placement <= 10) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Top 10 Bonus</span>
+                        <span class="stat-value">10</span>
+                    </div>
+                `;
+            }
+            
+            if (matchStats.placement <= 2) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Top 2 Bonus</span>
+                        <span class="stat-value">15</span>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('total-points').textContent = `Total Points: ${totalPoints}`;
+            document.getElementById('endgame-stats').style.display = 'flex';
+        }
+
+        // ===============================================================
+        // === VISUAL EFFECTS SYSTEM =====================================
+        // ===============================================================
+
+        function createMuzzleFlash(position, direction) {
+            const flash = new THREE.PointLight(0xff9900, 2, 10);
+            flash.position.copy(position);
+            scene.add(flash);
+            
+            // Add particle effect
+            const particles = new THREE.Group();
+            for(let i = 0; i < 5; i++) {
+                const particle = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.05, 4, 4),
+                    new THREE.MeshBasicMaterial({ color: 0xff6600 })
+                );
+                particle.position.copy(position);
+                const velocity = direction.clone()
+                    .add(new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.3,
+                        (Math.random() - 0.5) * 0.3,
+                        (Math.random() - 0.5) * 0.3
+                    ))
+                    .normalize()
+                    .multiplyScalar(Math.random() * 5 + 5);
+                particles.add(particle);
+                visualEffects.push({
+                    mesh: particle,
+                    velocity: velocity,
+                    lifetime: 0.2,
+                    age: 0
+                });
+            }
+            scene.add(particles);
+            
+            // Fade out light
+            setTimeout(() => {
+                scene.remove(flash);
+                scene.remove(particles);
+            }, 100);
+        }
+
+        function createBulletTrail(start, end) {
+            const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+            const material = new THREE.LineBasicMaterial({ 
+                color: 0xffff00,
+                transparent: true,
+                opacity: 0.8
+            });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+            
+            visualEffects.push({
+                mesh: line,
+                lifetime: 0.5,
+                age: 0
+            });
+        }
+
+        function createImpactEffect(position, isHeadshot = false) {
+            // Impact particles
+            const particles = new THREE.Group();
+            const particleCount = isHeadshot ? 10 : 5;
+            
+            for(let i = 0; i < particleCount; i++) {
+                const particle = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.1, 4, 4),
+                    new THREE.MeshBasicMaterial({ 
+                        color: isHeadshot ? 0xff0000 : 0xff6600,
+                        transparent: true,
+                        opacity: 0.8
+                    })
+                );
+                particle.position.copy(position);
+                const velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 2,
+                    (Math.random() - 0.5) * 2,
+                    (Math.random() - 0.5) * 2
+                );
+                particles.add(particle);
+                visualEffects.push({
+                    mesh: particle,
+                    velocity: velocity,
+                    lifetime: 1,
+                    age: 0
+                });
+            }
+            scene.add(particles);
+            
+            // Blood effect for headshots
+            if (isHeadshot) {
+                const blood = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.3, 8, 8),
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0xcc0000,
+                        transparent: true,
+                        opacity: 0.6
+                    })
+                );
+                blood.position.copy(position);
+                scene.add(blood);
+                
+                visualEffects.push({
+                    mesh: blood,
+                    lifetime: 2,
+                    age: 0,
+                    scaleDown: true
+                });
+            }
+        }
+
+        function updateVisualEffects(dt) {
+            for(let i = visualEffects.length - 1; i >= 0; i--) {
+                const effect = visualEffects[i];
+                effect.age += dt;
+                
+                if (effect.age >= effect.lifetime) {
+                    scene.remove(effect.mesh);
+                    visualEffects.splice(i, 1);
+                    continue;
+                }
+                
+                // Update position if has velocity
+                if (effect.velocity) {
+                    effect.mesh.position.add(effect.velocity.clone().multiplyScalar(dt));
+                }
+                
+                // Fade out
+                const progress = effect.age / effect.lifetime;
+                if (effect.mesh.material) {
+                    effect.mesh.material.opacity = 1 - progress;
+                }
+                
+                // Scale down if needed
+                if (effect.scaleDown) {
+                    effect.mesh.scale.setScalar(1 - progress * 0.5);
+                }
+            }
+        }
+
+        // ===============================================================
+        // === PERFORMANCE OPTIMIZATIONS =================================
+        // ===============================================================
+
+        function optimizePerformance() {
+            // Reduce draw calls by merging geometries
+            const mergedGeometries = new Map();
+            
+            // Group similar objects
+            buildings.forEach(building => {
+                if (building.type === 'tree') {
+                    // Merge tree geometries
+                    if (!mergedGeometries.has('trees')) {
+                        mergedGeometries.set('trees', new THREE.BoxGeometry(0.1, 0.1, 0.1));
+                    }
+                }
+            });
+            
+            // Reduce particle count
+            if (particleSystems.length > 20) {
+                particleSystems.splice(0, particleSystems.length - 20);
+            }
+            
+            // Cull distant objects
+            objects.forEach(obj => {
+                if (obj.position.distanceTo(camera.position) > renderDistance) {
+                    obj.visible = false;
+                } else {
+                    obj.visible = true;
+                }
+            });
+            
+            // Update FPS counter
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsUpdate >= 1000) {
+                currentFPS = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+                frameCount = 0;
+                lastFpsUpdate = now;
+                document.getElementById('fps-counter').textContent = `FPS: ${currentFPS}`;
+            }
+        }
+
+        // ===============================================================
+        // === ENHANCED TERRAIN GENERATION ===============================
+        // ===============================================================
+
+        function getEnhancedTerrainHeight(x, z) {
+            // Snowy mountains in the corners
+            const mountainScale = 0.01;
+            const mountainHeight = 30;
+            
+            // River through the middle
+            const riverWidth = 20;
+            const riverDepth = 5;
+            
+            // Hills and valleys
+            const hillScale1 = 0.02;
+            const hillScale2 = 0.05;
+            const hillScale3 = 0.1;
+            
+            let y = 0;
+            
+            // Base terrain with more variation
+            y += Math.sin(x * hillScale1) * 8 + Math.cos(z * hillScale1) * 8;
+            y += Math.sin(x * hillScale2 + z * hillScale2) * 4;
+            y += Math.sin(x * hillScale3 * 0.7) * Math.cos(z * hillScale3 * 0.7) * 3;
+            
+            // Snowy mountains in corners
+            const distFromCenter = Math.sqrt(x*x + z*z);
+            if (distFromCenter > WORLD_SIZE * 0.4) {
+                y += (distFromCenter - WORLD_SIZE * 0.4) * 0.3;
+                
+                // Add snow caps
+                if (distFromCenter > WORLD_SIZE * 0.45) {
+                    y += Math.sin(distFromCenter * mountainScale) * mountainHeight * 0.5;
+                }
+            }
+            
+            // River through middle (low valley)
+            const riverDist = Math.abs(z); // River along x-axis
+            if (riverDist < riverWidth) {
+                y -= riverDepth * (1 - riverDist / riverWidth);
+            }
+            
+            // Additional small hills
+            y += Math.sin(x * 0.03) * Math.cos(z * 0.04) * 2;
+            
+            return y;
+        }
+
+        function createEnhancedTerrainMaterial() {
+            // Create a more realistic terrain material
+            const textureLoader = new THREE.TextureLoader();
+            
+            // Create a canvas for procedural texture
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient for terrain
+            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+            gradient.addColorStop(0, '#87CEEB'); // Sky
+            gradient.addColorStop(0.1, '#2E8B57'); // Grass
+            gradient.addColorStop(0.3, '#8B7355'); // Dirt
+            gradient.addColorStop(0.7, '#A9A9A9'); // Rock
+            gradient.addColorStop(1, '#FFFFFF'); // Snow
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Add some texture
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            for(let i = 0; i < 1000; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const size = Math.random() * 3 + 1;
+                ctx.fillRect(x, y, size, size);
+            }
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(20, 20);
+            
+            return new THREE.MeshStandardMaterial({ 
+                map: texture,
+                color: 0x4CAF50,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+        }
+
+        // ===============================================================
+        // === ENHANCED BOT AI ===========================================
+        // ===============================================================
+
+        const BOT_STATES = {
+            PATROL: 'patrol',
+            CHASE: 'chase',
+            COMBAT: 'combat',
+            FLEE: 'flee',
+            LOOT: 'loot',
+            HIDE: 'hide'
+        };
+
+        function updateEnhancedBots(dt, now) {
+            // Update bots less frequently for performance
+            if (now - lastBotUpdate < botUpdateInterval) return;
+            lastBotUpdate = now;
+            
+            for(let i = bots.length - 1; i >= 0; i--) {
+                const bot = bots[i];
+                if (bot.health <= 0) continue;
+
+                const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
+                bot.mesh.position.y = h + 1;
+
+                const target = findClosestTarget(bot);
+                const distToTarget = target ? bot.mesh.position.distanceTo(camera.position) : Infinity;
+                
+                // Initialize bot state if not set
+                if (!bot.state) {
+                    bot.state = BOT_STATES.PATROL;
+                    bot.lastStateChange = now;
+                    bot.patrolTarget = getRandomPatrolPoint();
+                }
+                
+                // State transitions
+                const timeInState = now - bot.lastStateChange;
+                
+                switch(bot.state) {
+                    case BOT_STATES.PATROL:
+                        handlePatrolState(bot, dt, now);
+                        if (target && distToTarget < 50 && timeInState > 2000) {
+                            bot.state = BOT_STATES.CHASE;
+                            bot.lastStateChange = now;
+                        }
+                        break;
+                        
+                    case BOT_STATES.CHASE:
+                        handleChaseState(bot, dt, now, target);
+                        if (!target || distToTarget > 60 || timeInState > 10000) {
+                            bot.state = BOT_STATES.PATROL;
+                            bot.lastStateChange = now;
+                            bot.patrolTarget = getRandomPatrolPoint();
+                        } else if (distToTarget < 20 && timeInState > 1000) {
+                            bot.state = BOT_STATES.COMBAT;
+                            bot.lastStateChange = now;
+                        }
+                        break;
+                        
+                    case BOT_STATES.COMBAT:
+                        handleCombatState(bot, dt, now, target);
+                        if (!target || distToTarget > 30 || timeInState > 5000) {
+                            bot.state = BOT_STATES.CHASE;
+                            bot.lastStateChange = now;
+                        } else if (bot.health < 40 && timeInState > 2000) {
+                            bot.state = BOT_STATES.FLEE;
+                            bot.lastStateChange = now;
+                            bot.fleeTarget = getFleePoint(bot.mesh.position);
+                        }
+                        break;
+                        
+                    case BOT_STATES.FLEE:
+                        handleFleeState(bot, dt, now);
+                        if (timeInState > 8000 || (!target || distToTarget > 50)) {
+                            bot.state = BOT_STATES.HIDE;
+                            bot.lastStateChange = now;
+                            bot.hideUntil = now + 5000 + Math.random() * 5000;
+                        }
+                        break;
+                        
+                    case BOT_STATES.HIDE:
+                        handleHideState(bot, dt, now);
+                        if (now > bot.hideUntil) {
+                            bot.state = BOT_STATES.PATROL;
+                            bot.lastStateChange = now;
+                            bot.patrolTarget = getRandomPatrolPoint();
+                        } else if (target && distToTarget < 30) {
+                            bot.state = BOT_STATES.COMBAT;
+                            bot.lastStateChange = now;
+                        }
+                        break;
+                }
+                
+                // Update bot weapon ammo
+                if (bot.weapon && bot.weapon.stats.currentMag <= 0) {
+                    bot.isReloading = true;
+                    setTimeout(() => {
+                        if (bot.weapon) {
+                            bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                            bot.isReloading = false;
+                        }
+                    }, bot.weapon.stats.reload);
+                }
+            }
+        }
+
+        function getRandomPatrolPoint() {
+            return new THREE.Vector3(
+                (Math.random() - 0.5) * WORLD_SIZE * 0.8,
+                0,
+                (Math.random() - 0.5) * WORLD_SIZE * 0.8
+            );
+        }
+
+        function getFleePoint(fromPosition) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 50;
+            return new THREE.Vector3(
+                fromPosition.x + Math.cos(angle) * distance,
+                0,
+                fromPosition.z + Math.sin(angle) * distance
+            );
+        }
+
+        function handlePatrolState(bot, dt, now) {
+            if (!bot.patrolTarget) {
+                bot.patrolTarget = getRandomPatrolPoint();
+            }
+            
+            const direction = new THREE.Vector3()
+                .subVectors(bot.patrolTarget, bot.mesh.position)
+                .setY(0)
+                .normalize();
+            
+            bot.mesh.lookAt(
+                bot.mesh.position.x + direction.x,
+                bot.mesh.position.y,
+                bot.mesh.position.z + direction.z
+            );
+            
+            const speed = WALK_SPEED * 0.3;
+            bot.mesh.translateZ(speed * dt);
+            
+            // Check if reached patrol point
+            if (bot.mesh.position.distanceTo(bot.patrolTarget) < 10) {
+                bot.patrolTarget = getRandomPatrolPoint();
+            }
+            
+            // Random direction changes
+            if (Math.random() < 0.01) {
+                bot.mesh.rotation.y += (Math.random() - 0.5) * Math.PI;
+            }
+        }
+
+        function handleChaseState(bot, dt, now, target) {
+            if (!target) return;
+            
+            const direction = new THREE.Vector3()
+                .subVectors(target.position, bot.mesh.position)
+                .setY(0)
+                .normalize();
+            
+            bot.mesh.lookAt(
+                bot.mesh.position.x + direction.x,
+                bot.mesh.position.y,
+                bot.mesh.position.z + direction.z
+            );
+            
+            const speed = WALK_SPEED * 0.6;
+            bot.mesh.translateZ(speed * dt);
+            
+            // Occasionally take cover
+            if (Math.random() < 0.02) {
+                bot.mesh.rotation.y += Math.PI * 0.5;
+                bot.mesh.translateZ(-5);
+            }
+        }
+
+        function handleCombatState(bot, dt, now, target) {
+            if (!target) return;
+            
+            // Look at target
+            bot.mesh.lookAt(
+                target.position.x,
+                bot.mesh.position.y,
+                target.position.z
+            );
+            
+            // Strafe while shooting
+            if (now % 2000 < 1000) {
+                bot.mesh.translateX(2 * dt);
+            } else {
+                bot.mesh.translateX(-2 * dt);
+            }
+            
+            // Shoot at target
+            if (!bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
+                const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
+                const fireDirection = new THREE.Vector3()
+                    .subVectors(target.position.clone().setY(target.position.y - 0.5), fireOrigin)
+                    .normalize();
+                
+                // Add some inaccuracy
+                fireDirection.x += (Math.random() - 0.5) * 0.1;
+                fireDirection.y += (Math.random() - 0.5) * 0.1;
+                fireDirection.z += (Math.random() - 0.5) * 0.1;
+                fireDirection.normalize();
+                
+                // Create visual effect
+                createMuzzleFlash(fireOrigin, fireDirection);
+                
+                // Handle hitscan
+                const ray = new THREE.Raycaster(fireOrigin, fireDirection);
+                const targets = [camera].concat(bots.filter(b => b !== bot).map(b => b.mesh));
+                const hits = ray.intersectObjects(targets, false);
+                
+                if (hits.length > 0) {
+                    const hit = hits[0];
+                    if (hit.object === camera) {
+                        takeDamage(bot.weapon.stats.dmg, hit.point);
+                        createImpactEffect(hit.point, false);
+                    }
+                }
+                
+                bot.lastShot = now;
+                bot.weapon.stats.currentMag--;
+                
+                if (bot.weapon.stats.currentMag <= 0) {
+                    bot.isReloading = true;
+                    setTimeout(() => {
+                        bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                        bot.isReloading = false;
+                    }, bot.weapon.stats.reload);
+                }
+            }
+        }
+
+        function handleFleeState(bot, dt, now) {
+            if (!bot.fleeTarget) {
+                bot.fleeTarget = getFleePoint(bot.mesh.position);
+            }
+            
+            const direction = new THREE.Vector3()
+                .subVectors(bot.fleeTarget, bot.mesh.position)
+                .setY(0)
+                .normalize();
+            
+            bot.mesh.lookAt(
+                bot.mesh.position.x + direction.x,
+                bot.mesh.position.y,
+                bot.mesh.position.z + direction.z
+            );
+            
+            const speed = SPRINT_SPEED * 0.8;
+            bot.mesh.translateZ(speed * dt);
+            
+            // Check if reached flee point
+            if (bot.mesh.position.distanceTo(bot.fleeTarget) < 20) {
+                bot.state = BOT_STATES.HIDE;
+                bot.lastStateChange = now;
+                bot.hideUntil = now + 5000 + Math.random() * 5000;
+            }
+        }
+
+        function handleHideState(bot, dt, now) {
+            // Stay still and crouch (simulated by lowering position)
+            bot.mesh.position.y = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z) + 0.5;
+            
+            // Occasionally peek
+            if (Math.random() < 0.005) {
+                bot.mesh.rotation.y += (Math.random() - 0.5) * Math.PI * 0.5;
+            }
+        }
 
         // ===============================================================
         // === SOUND EFFECT SYSTEM =======================================
@@ -2150,29 +3029,12 @@
             }, 3000);
         }
 
-        function updateControllerButtonDisplay(buttonId, active) {
-            const button = document.getElementById(buttonId);
-            if (button) {
-                if (active) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            }
-        }
-
         // ===============================================================
         // === UTILITY FUNCTIONS =========================================
         // ===============================================================
 
         function getTerrainHeight(x, z) {
-            const scale1 = 0.02;
-            const scale2 = 0.05;
-            let y = (Math.sin(x * scale1) * 10 + Math.cos(z * scale1) * 10) + 
-                    (Math.sin(x * scale2 + z * scale2) * 5);
-            const dist = Math.sqrt(x*x + z*z);
-            if (dist > WORLD_SIZE * 0.45) y += (dist - WORLD_SIZE * 0.45) * 0.2;
-            return y;
+            return getEnhancedTerrainHeight(x, z);
         }
         
         function createBox(x, y, z, w, h, d, col, type='solid') {
@@ -2218,18 +3080,20 @@
                 document.getElementById('victory-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('victory-overlay').style.display = 'flex';
                 playSound('victory');
+                setTimeout(() => showEndGameStats(true), 2000);
             } else {
                 createEliminatedParticles();
                 document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
                 document.getElementById('game-over').style.display = 'flex';
                 playSound('defeat');
+                setTimeout(() => showEndGameStats(false), 2000);
             }
         }
         
         function createVictoryParticles() {
             const container = document.getElementById('victory-particles');
             container.innerHTML = '';
-            for(let i = 0; i < 100; i++) {
+            for(let i = 0; i < 80; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'victory-particle';
                 particle.style.left = `${Math.random() * 100}%`;
@@ -2243,7 +3107,7 @@
         function createEliminatedParticles() {
             const container = document.getElementById('eliminated-particles');
             container.innerHTML = '';
-            for(let i = 0; i < 80; i++) {
+            for(let i = 0; i < 60; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'eliminated-particle';
                 particle.style.left = `${Math.random() * 100}%`;
@@ -2430,7 +3294,7 @@
                 }
             } 
 
-            // Damage Application - Bots (UPDATED: Bots die to storm damage)
+            // Damage Application - Bots
             bots.forEach(bot => {
                 const botPos2D = new THREE.Vector2(bot.mesh.position.x, bot.mesh.position.z);
                 const botDistToStorm = botPos2D.distanceTo(stormCenter);
@@ -2459,7 +3323,7 @@
 
         function generateTerrain() {
             const size = WORLD_SIZE;
-            const segments = 128;
+            const segments = 96; // Reduced for performance
             const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
             geometry.rotateX(-Math.PI / 2);
 
@@ -2467,48 +3331,48 @@
             for (let i = 0; i < position.count; i++) {
                 const x = position.getX(i);
                 const z = position.getZ(i);
-                const y = getTerrainHeight(x, z);
+                const y = getEnhancedTerrainHeight(x, z);
                 position.setY(i, y);
             }
             position.needsUpdate = true;
             geometry.computeVertexNormals();
             
-            const grassMat = new THREE.MeshStandardMaterial({ color: 0x4CAF50 }); 
-            const terrain = new THREE.Mesh(geometry, grassMat);
+            const terrainMat = createEnhancedTerrainMaterial();
+            const terrain = new THREE.Mesh(geometry, terrainMat);
             terrain.receiveShadow = true;
             scene.add(terrain);
             objects.push(terrain); 
         }
 
         function createTower(x, z) {
-            const h = getTerrainHeight(x, z);
+            const h = getEnhancedTerrainHeight(x, z);
             createBox(x, h+10, z, 5, 20, 5, 0x999999);
             createBox(x, h+21, z, 7, 2, 7, 0xAAAAAA);
             spawnChest(x, h+23, z); 
         }
         
         function createBuilding(x, z, size, height, depth, color, rotation) {
-            const h = getTerrainHeight(x, z);
+            const h = getEnhancedTerrainHeight(x, z);
             const mesh = createBox(x, h + height/2, z, size, height, depth, color);
             mesh.rotation.y = rotation;
             spawnChest(x+size/4, h+1, z+depth/4); 
         }
         
         function createWoodHouse(x, z, size, height, depth) {
-            const h = getTerrainHeight(x, z);
+            const h = getEnhancedTerrainHeight(x, z);
             createBox(x, h+height/2, z, size, height, depth, 0x8B4513);
             createBox(x, h+height+1, z, size+2, 2, depth+2, 0x555555); 
             spawnChest(x, h+1, z); 
         }
         
         function createTree(x, z) {
-            const h = getTerrainHeight(x, z);
+            const h = getEnhancedTerrainHeight(x, z);
             createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); 
             createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
         function generatePOIs() {
-            // Original POIs
+            // Original POIs with enhanced terrain
             for(let i=0; i<3; i++) {
                 const x = (Math.random()-0.5)*80;
                 const z = (Math.random()-0.5)*80;
@@ -2518,19 +3382,19 @@
             createBuilding(-200, -200, 20, 10, 30, 0x444444, Math.PI/2);
             createWoodHouse(-200, 200, 10, 12, 15); 
             createBuilding(250, 250, 15, 8, 15, 0xFF7F50, 0); 
-            createBox(-250, getTerrainHeight(-250, 250)+0.1, 250, 50, 0.2, 50, 0x00BFFF); 
-            createBox(-250, getTerrainHeight(-250, -250)-5, -250, 30, 10, 30, 0x696969); 
+            createBox(-250, getEnhancedTerrainHeight(-250, 250)+0.1, 250, 50, 0.2, 50, 0x00BFFF); 
+            createBox(-250, getEnhancedTerrainHeight(-250, -250)-5, -250, 30, 10, 30, 0x696969); 
             createWoodHouse(-280, 0, 10, 8, 10); 
-            createBox(280, getTerrainHeight(280, 0)+5, 0, 10, 10, 10, 0xFF6347); 
+            createBox(280, getEnhancedTerrainHeight(280, 0)+5, 0, 10, 10, 10, 0xFF6347); 
             createBuilding(50, 200, 12, 6, 12, 0x808080, Math.PI/4); 
             createWoodHouse(150, -100, 20, 5, 20); 
-            createBox(-150, getTerrainHeight(-150, 100)+10, 100, 2, 20, 10, 0x000000); 
-            createBox(100, getTerrainHeight(100, -250)-10, -250, 40, 20, 40, 0x222222); 
-            createBox(-100, getTerrainHeight(-100, -300)+0.1, -300, 30, 0.2, 30, 0x00FF7F); 
+            createBox(-150, getEnhancedTerrainHeight(-150, 100)+10, 100, 2, 20, 10, 0x000000); 
+            createBox(100, getEnhancedTerrainHeight(100, -250)-10, -250, 40, 20, 40, 0x222222); 
+            createBox(-100, getEnhancedTerrainHeight(-100, -300)+0.1, -300, 30, 0.2, 30, 0x00FF7F); 
             createBuilding(300, 150, 18, 10, 18, 0x9370DB, -Math.PI/4); 
-            createBox(0, getTerrainHeight(0, 300), 300, 40, 0.5, 40, 0xADD8E6); 
-            createBox(300, getTerrainHeight(300, -300)+15, -300, 8, 30, 8, 0xEEEEEE); 
-            createBox(-300, getTerrainHeight(-300, 150)+0.5, 150, 25, 1, 25, 0xF4A460); 
+            createBox(0, getEnhancedTerrainHeight(0, 300), 300, 40, 0.5, 40, 0xADD8E6); 
+            createBox(300, getEnhancedTerrainHeight(300, -300)+15, -300, 8, 30, 8, 0xEEEEEE); 
+            createBox(-300, getEnhancedTerrainHeight(-300, 150)+0.5, 150, 25, 1, 25, 0xF4A460); 
             createWoodHouse(200, 0, 20, 10, 10); 
 
             // Additional POIs
@@ -2538,19 +3402,19 @@
                 for(let j=0; j<3; j++) {
                     const x = -350 + (i*25);
                     const z = -250 + (j*25);
-                    createBox(x, getTerrainHeight(x, z)+0.5, z, 8, 6, 8, 0xD2B48C);
+                    createBox(x, getEnhancedTerrainHeight(x, z)+0.5, z, 8, 6, 8, 0xD2B48C);
                 }
             }
-            createBox(-325, getTerrainHeight(-325, -225)+10, -225, 5, 20, 5, 0x8B7355);
+            createBox(-325, getEnhancedTerrainHeight(-325, -225)+10, -225, 5, 20, 5, 0x8B7355);
             
-            createBox(350, getTerrainHeight(350, -350)+0.1, -350, 60, 0.5, 60, 0xFF6B6B);
+            createBox(350, getEnhancedTerrainHeight(350, -350)+0.1, -350, 60, 0.5, 60, 0xFF6B6B);
             for(let i=0; i<4; i++) {
                 const angle = (i*Math.PI*2)/4;
                 const x = 350 + Math.cos(angle)*30;
                 const z = -350 + Math.sin(angle)*30;
                 createBuilding(x, z, 10, 8, 10, 0xFFD166, angle);
             }
-            createBox(350, getTerrainHeight(350, -350)+15, -350, 5, 30, 5, 0x06D6A0);
+            createBox(350, getEnhancedTerrainHeight(350, -350)+15, -350, 5, 30, 5, 0x06D6A0);
             
             for(let i=0; i<8; i++) {
                 const x = 400 + (Math.random()-0.5)*40;
@@ -2558,22 +3422,22 @@
                 createTree(x, z);
             }
             createBuilding(400, 150, 25, 12, 25, 0x8B4513, 0);
-            createBox(380, getTerrainHeight(380, 170)+6, 170, 20, 2, 20, 0xA0522D);
+            createBox(380, getEnhancedTerrainHeight(380, 170)+6, 170, 20, 2, 20, 0xA0522D);
             
-            createBox(-400, getTerrainHeight(-400, 400)+0.1, 400, 80, 0.5, 60, 0x1E90FF);
+            createBox(-400, getEnhancedTerrainHeight(-400, 400)+0.1, 400, 80, 0.5, 60, 0x1E90FF);
             for(let i=0; i<5; i++) {
                 const x = -430 + (i*20);
                 createWoodHouse(x, 380, 8, 7, 8);
             }
-            createBox(-420, getTerrainHeight(-420, 420)+12, 420, 4, 24, 4, 0x708090);
+            createBox(-420, getEnhancedTerrainHeight(-420, 420)+12, 420, 4, 24, 4, 0x708090);
             
-            createBox(0, getTerrainHeight(0, -400)-10, -400, 50, 20, 50, 0x696969);
+            createBox(0, getEnhancedTerrainHeight(0, -400)-10, -400, 50, 20, 50, 0x696969);
             createBuilding(20, -380, 15, 8, 15, 0x333333, Math.PI/4);
             createBuilding(-20, -420, 15, 8, 15, 0x333333, -Math.PI/4);
-            createBox(0, getTerrainHeight(0, -400)+5, -400, 10, 10, 10, 0xFFD700);
+            createBox(0, getEnhancedTerrainHeight(0, -400)+5, -400, 10, 10, 10, 0xFFD700);
 
             // Original Trees (additional)
-            for(let i=0; i<50; i++) {
+            for(let i=0; i<40; i++) { // Reduced tree count for performance
                 const x = (Math.random()-0.5)*400;
                 const z = (Math.random()-0.5)*400;
                 createTree(x, z);
@@ -2581,10 +3445,10 @@
         }
 
         function spawnCars() {
-            for(let i=0; i<4; i++) {
+            for(let i=0; i<3; i++) { // Reduced car count for performance
                 const x = (Math.random()-0.5)*200;
                 const z = (Math.random()-0.5)*200;
-                const h = getTerrainHeight(x, z);
+                const h = getEnhancedTerrainHeight(x, z);
                 
                 const carGroup = new THREE.Group();
                 const body = new THREE.Mesh(new THREE.BoxGeometry(3, 1.5, 5), new THREE.MeshStandardMaterial({color: Math.random() * 0xffffff}));
@@ -2637,7 +3501,7 @@
                     z = (Math.random()-0.5)*WORLD_SIZE*0.8;
                 } while (Math.abs(x) < 100 && Math.abs(z) < 100); 
 
-                const h = getTerrainHeight(x, z);
+                const h = getEnhancedTerrainHeight(x, z);
                 
                 const mesh = createBotMesh(x, h + 1, z);
                 scene.add(mesh);
@@ -2659,8 +3523,12 @@
                     lastStormDamage: 0,
                     moveCooldown: 0, 
                     currentDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize(),
-                    attackRange: 50, // UPDATED: Only engage within 50m
-                    isAggressive: true
+                    attackRange: 50,
+                    isAggressive: true,
+                    state: BOT_STATES.PATROL,
+                    lastStateChange: performance.now(),
+                    patrolTarget: null,
+                    isReloading: false
                 });
             }
         }
@@ -2854,6 +3722,7 @@
                         spawnLoot(chestPos.x, chestPos.y, chestPos.z, 'weapon', getRandomRarity(), getRandomWeaponKey());
                     }
                     
+                    matchStats.chestsOpened++;
                     playSound('open_chest');
                     return;
                 }
@@ -2891,6 +3760,12 @@
                             loot.splice(i, 1);
                             updateUI();
                             playSound('pickup_item');
+                            
+                            // Check for legendary items
+                            if (currentLoot.data.rarity === RARITY_MULTIPLIERS.LEGENDARY || 
+                                currentLoot.data.rarity === RARITY_MULTIPLIERS.MYTHIC) {
+                                matchStats.legendariesHeld++;
+                            }
                             return;
                         }
                     } else {
@@ -2900,6 +3775,12 @@
                             loot.splice(i, 1);
                             updateUI();
                             playSound('pickup_item');
+                            
+                            // Check for legendary items
+                            if (currentLoot.data.rarity === RARITY_MULTIPLIERS.LEGENDARY || 
+                                currentLoot.data.rarity === RARITY_MULTIPLIERS.MYTHIC) {
+                                matchStats.legendariesHeld++;
+                            }
                             return;
                         }
                     }
@@ -3077,6 +3958,9 @@
             playSound('shoot');
             if (controllerConnected) vibrateController('shoot');
             
+            // Create muzzle flash
+            createMuzzleFlash(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(1)), fireDirection);
+            
             if (item.stats.bulletType === 'hitscan') {
                 handleHitscan(item, fireOrigin, fireDirection, player);
             } else if (item.stats.bulletType === 'projectile') {
@@ -3132,6 +4016,9 @@
                         if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
                     }
 
+                    // Create bullet trail
+                    createBulletTrail(fireOrigin, hit.point);
+                    
                     if(hitBot && hitBot !== shooter) {
                         let dmg = item.stats.dmg;
                         if (hit.point.y > hitBot.mesh.position.y + 2.2) { 
@@ -3139,12 +4026,14 @@
                             isHeadshot = true;
                         }
                         applyDamage(hitBot, dmg, hit.point, shooter, isHeadshot);
+                        createImpactEffect(hit.point, isHeadshot);
                     } else if (hitPlayer) {
                         let dmg = item.stats.dmg;
                         if (hit.point.y > camera.position.y + 0.5) { 
                             dmg = item.stats.head; 
                         }
                         takeDamage(dmg, hit.point); 
+                        createImpactEffect(hit.point, hit.point.y > camera.position.y + 0.5);
                         playSound('player_hit');
                         if (controllerConnected) vibrateController('hit');
                     } else {
@@ -3159,8 +4048,13 @@
                                 }
                             }
                         }
+                        createImpactEffect(hit.point, false);
                         playSound('impact_hit');
                     }
+                } else {
+                    // Create bullet trail into distance
+                    const endPoint = fireOrigin.clone().add(spreadDir.clone().multiplyScalar(item.stats.range));
+                    createBulletTrail(fireOrigin, endPoint);
                 }
             }
         }
@@ -3211,6 +4105,39 @@
 
         function explode(projectile, hitPoint) {
             playSound('explosion');
+            
+            // Create explosion effect
+            const explosionLight = new THREE.PointLight(0xff6600, 5, 20);
+            explosionLight.position.copy(hitPoint);
+            scene.add(explosionLight);
+            
+            const explosionParticles = new THREE.Group();
+            for(let i = 0; i < 20; i++) {
+                const particle = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.2, 4, 4),
+                    new THREE.MeshBasicMaterial({ color: 0xff6600 })
+                );
+                particle.position.copy(hitPoint);
+                const velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 10,
+                    Math.random() * 10,
+                    (Math.random() - 0.5) * 10
+                );
+                explosionParticles.add(particle);
+                visualEffects.push({
+                    mesh: particle,
+                    velocity: velocity,
+                    lifetime: 1,
+                    age: 0
+                });
+            }
+            scene.add(explosionParticles);
+            
+            // Remove light after short time
+            setTimeout(() => {
+                scene.remove(explosionLight);
+                scene.remove(explosionParticles);
+            }, 500);
             
             if (hitPoint.distanceTo(camera.position) < projectile.radius) {
                 const dist = hitPoint.distanceTo(camera.position);
@@ -3331,6 +4258,16 @@
             }
         }
 
+        function findClosestTarget(bot) {
+            if (player.health > 0 && !player.dead) {
+                const dist = bot.mesh.position.distanceTo(camera.position);
+                if (dist <= bot.attackRange) {
+                    return player;
+                }
+            }
+            return null;
+        }
+
         function overshieldRegen(dt) {
              if (player.dead || player.overshield === OVER_SHIELD_MAX) return;
 
@@ -3341,90 +4278,6 @@
                  player.overshield = Math.min(OVER_SHIELD_MAX, player.overshield + (OVER_SHIELD_REGEN_RATE * dt));
                  updateUI();
              }
-        }
-
-        // ===============================================================
-        // === BOT AI (UPDATED: 50m engagement range) ====================
-        // ===============================================================
-
-        function findClosestTarget(bot) {
-            if (player.health > 0 && !player.dead) {
-                const dist = bot.mesh.position.distanceTo(camera.position);
-                // UPDATED: Only engage within 50m
-                if (dist <= bot.attackRange) {
-                    return player;
-                }
-            }
-            return null;
-        }
-
-        function updateBots(dt, now) {
-            document.getElementById('alive-count').innerText = bots.length + 1;
-            const BOT_MOVE_SPEED = WALK_SPEED * 0.4;
-            const BOT_MOVE_COOLDOWN_RANGE = 2000; 
-
-            for(let i = bots.length - 1; i >= 0; i--) {
-                const bot = bots[i];
-                if (bot.health <= 0) continue;
-
-                const h = getTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
-                bot.mesh.position.y = h + 1; 
-
-                const target = findClosestTarget(bot);
-                
-                if(target && bot.isAggressive) {
-                    const targetPos = camera.position; 
-                    const dist = bot.mesh.position.distanceTo(targetPos);
-                    
-                    // UPDATED: Only shoot if within 50m
-                    if (dist <= bot.attackRange) {
-                        bot.mesh.lookAt(targetPos.x, bot.mesh.position.y + 2.4, targetPos.z);
-                        
-                        if(dist > 25) {
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 2); 
-                            bot.moveCooldown = 1000;
-                        } else if (dist < 8) {
-                            bot.mesh.rotation.y += Math.PI/3 * (Math.random() > 0.5 ? 1 : -1) * dt;
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.8);
-                            bot.moveCooldown = 500;
-                        } else {
-                            bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 1.5);
-                            bot.moveCooldown = 800;
-                        }
-                        
-                        // Only shoot if within 50m
-                        const weaponStats = bot.weapon.stats; 
-                        if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
-                            bot.lastShot = now;
-                            
-                            const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                            const fireDirection = new THREE.Vector3();
-                            fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
-
-                            if (Math.random() < 0.6) {
-                                handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
-                            }
-                        }
-                    } else {
-                        // Too far away, patrol instead
-                        bot.moveCooldown -= dt * 1000;
-                        if (bot.moveCooldown <= 0) {
-                            bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
-                            bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
-                            bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
-                        }
-                        bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.3);
-                    }
-                } else {
-                    bot.moveCooldown -= dt * 1000;
-                    if (bot.moveCooldown <= 0) {
-                        bot.currentDirection = new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize();
-                        bot.mesh.lookAt(bot.mesh.position.clone().add(bot.currentDirection));
-                        bot.moveCooldown = Math.random() * BOT_MOVE_COOLDOWN_RANGE + 1000;
-                    }
-                    bot.mesh.translateZ(BOT_MOVE_SPEED * dt * 0.3);
-                }
-            }
         }
 
         // ===============================================================
@@ -3454,7 +4307,7 @@
                         });
                     }
 
-                    const h = getTerrainHeight(car.mesh.position.x, car.mesh.position.z);
+                    const h = getEnhancedTerrainHeight(car.mesh.position.x, car.mesh.position.z);
                     car.mesh.position.y = h;
 
                     if(player.vehicle === car) {
@@ -3594,7 +4447,7 @@
         }
 
         // ===============================================================
-        // === INPUT & CONTROL MANAGEMENT (UPDATED) ======================
+        // === INPUT & CONTROL MANAGEMENT (UPDATED FOR V19.7) ============
         // ===============================================================
         
         function setGameMode(mode) {
@@ -3613,7 +4466,7 @@
             } else if (mode === 'controller') {
                 if (controls) controls.enabled = false;
                 mobileControls.style.display = 'none';
-                controllerLayout.style.display = 'grid';
+                controllerLayout.style.display = 'none'; // Removed layout display
                 gameContainer.removeEventListener('mousedown', lockPointer);
             } else {
                 if (controls) controls.enabled = true;
@@ -3635,14 +4488,14 @@
             document.getElementById('game-container').addEventListener('mousedown', lockPointer);
         }
 
-        // UPDATED: Buttery smooth mobile camera controls
+        // UPDATED FOR V19.7: 50/50 split screen mobile controls
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
             const touchRight = document.getElementById('touch-right');
             const joystickThumb = document.getElementById('joystick-thumb');
             const movementZone = document.getElementById('movement-zone');
             
-            // Movement joystick
+            // Movement joystick (left 50% of screen)
             let touchStartX = 0;
             let touchStartY = 0;
             let isTouchingLeft = false;
@@ -3693,7 +4546,7 @@
                 inputs.w = inputs.s = inputs.a = inputs.d = inputs.sprint = false;
             });
             
-            // UPDATED: Buttery smooth camera controls - entire right side
+            // Camera control (right 50% of screen - invisible joystick)
             let lastCameraTouchX = 0;
             let lastCameraTouchY = 0;
             let isTouchingCamera = false;
@@ -3716,11 +4569,11 @@
                 const deltaX = touch.clientX - lastCameraTouchX;
                 const deltaY = touch.clientY - lastCameraTouchY;
                 
-                // Ultra-smooth filtering
+                // Smooth filtering
                 touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING;
                 touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING;
                 
-                // Apply rotation with smooth easing
+                // Apply rotation
                 camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
                 camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
                 
@@ -3780,7 +4633,7 @@
             });
         }
 
-        // Controller input handling
+        // Controller input handling - UPDATED: Removed layout display
         function setupControllerInputs() {
             window.addEventListener("gamepadconnected", (e) => {
                 console.log("Gamepad connected:", e.gamepad);
@@ -3826,20 +4679,6 @@
                 controllerMapping.buttons.dpadDown = gp.buttons[13].pressed;
                 controllerMapping.buttons.dpadLeft = gp.buttons[14].pressed;
                 controllerMapping.buttons.dpadRight = gp.buttons[15].pressed;
-                
-                // Update button display
-                updateControllerButtonDisplay('ctrl-l1', controllerMapping.buttons.l1);
-                updateControllerButtonDisplay('ctrl-r1', controllerMapping.buttons.r1);
-                updateControllerButtonDisplay('ctrl-l2', controllerMapping.buttons.l2 > 0.5);
-                updateControllerButtonDisplay('ctrl-r2', controllerMapping.buttons.r2 > 0.5);
-                updateControllerButtonDisplay('ctrl-y', controllerMapping.buttons.y);
-                updateControllerButtonDisplay('ctrl-b', controllerMapping.buttons.b);
-                updateControllerButtonDisplay('ctrl-a', controllerMapping.buttons.a);
-                updateControllerButtonDisplay('ctrl-x', controllerMapping.buttons.x);
-                updateControllerButtonDisplay('ctrl-dpad', controllerMapping.buttons.dpadLeft || controllerMapping.buttons.dpadRight || 
-                    controllerMapping.buttons.dpadUp || controllerMapping.buttons.dpadDown);
-                updateControllerButtonDisplay('ctrl-ls', Math.abs(controllerMapping.leftStick.x) > 0.3 || Math.abs(controllerMapping.leftStick.y) > 0.3);
-                updateControllerButtonDisplay('ctrl-rs', Math.abs(controllerMapping.rightStick.x) > 0.3 || Math.abs(controllerMapping.rightStick.y) > 0.3);
                 
                 // Apply controller inputs
                 if (gameMode === 'controller') {
@@ -3968,6 +4807,7 @@
             victoryRoyales = parseInt(localStorage.getItem('victoryRoyales')) || 0;
             document.getElementById('victory-royales-stat').innerText = `🏆 Victory Royales: ${victoryRoyales}`;
             
+            loadPlayerLevel();
             createParticles();
             initAudio();
             setupControllerInputs();
@@ -4018,10 +4858,10 @@
         
         function createParticles() {
             const container = document.getElementById('particles-container');
-            for(let i = 0; i < 50; i++) {
+            for(let i = 0; i < 40; i++) { // Reduced particle count for performance
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                particle.style.width = `${Math.random() * 20 + 5}px`;
+                particle.style.width = `${Math.random() * 15 + 5}px`;
                 particle.style.height = particle.style.width;
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.animationDelay = `${Math.random() * 20}s`;
@@ -4040,6 +4880,15 @@
                 setupPCLock(); 
             }
             
+            // Reset match stats
+            matchStats = {
+                kills: 0,
+                placement: 0,
+                chestsOpened: 0,
+                legendariesHeld: 0,
+                totalPoints: 0
+            };
+            
             // UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields
             player.health = 100;
             player.shield = 100;
@@ -4047,13 +4896,15 @@
             player.wood = 0;
             player.inventory = [null, null, null, null, null];
             player.slot = 0;
+            player.eliminations = 0;
+            player.dead = false;
             
             generateTerrain(); 
             generatePOIs(); 
             spawnBots();
             spawnCars();
 
-            camera.position.set(0, getTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
+            camera.position.set(0, getEnhancedTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
             
             startStormTimer(); 
             switchSlot(0);
@@ -4116,7 +4967,7 @@
                     camera.position.z += velocity.z * dt;
                     velocity.y -= GRAVITY * dt; 
                     
-                    const groundY = getTerrainHeight(camera.position.x, camera.position.z);
+                    const groundY = getEnhancedTerrainHeight(camera.position.x, camera.position.z);
                     let floorY = groundY;
                     
                     downRay.ray.origin.copy(camera.position);
@@ -4169,8 +5020,10 @@
             }
             
             updateProjectiles(dt);
-            updateBots(dt, now);
-            updateStorm(now); 
+            updateEnhancedBots(dt, now);
+            updateStorm(now);
+            updateVisualEffects(dt);
+            optimizePerformance();
 
             renderer.clear();
             renderer.render(scene, camera);
