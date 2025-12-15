@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.7 - Ultimate Edition</title>
+    <title>Web Battle Royale: V19.8 - Ultimate Edition</title>
     <style>
         /* ======================================= */
         /* === V19.7 ULTIMATE UI REDESIGN === */
@@ -273,7 +273,7 @@
         }
         
         #start-screen h1::after {
-            content: 'V19.7';
+            content: 'V19.8';
             display: block;
             font-size: 1.5rem;
             color: #ffd700;
@@ -549,33 +549,54 @@
         .red-line.h { width: 100%; height: 1px; top: 50%; }
         .red-line.v { height: 100%; width: 1px; left: 50%; }
 
-        /* Storm Visuals */
+        /* Storm Visuals - IMPROVED */
         #storm-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, 
                 rgba(138, 43, 226, 0.0) 0%,
-                rgba(138, 43, 226, 0.15) 40%,
-                rgba(75, 0, 130, 0.25) 60%,
-                rgba(75, 0, 130, 0.35) 80%,
-                rgba(75, 0, 130, 0.45) 100%);
+                rgba(138, 43, 226, 0.25) 40%,
+                rgba(75, 0, 130, 0.45) 60%,
+                rgba(75, 0, 130, 0.65) 80%,
+                rgba(75, 0, 130, 0.85) 100%);
             mix-blend-mode: multiply; 
             pointer-events: none; 
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 50; 
+            opacity: 0;
         }
         
         #storm-overlay.in-storm {
-            background: radial-gradient(circle at 50% 50%,
-                rgba(138, 43, 226, 0.0) 0%,
-                rgba(138, 43, 226, 0.25) 30%,
-                rgba(75, 0, 130, 0.45) 50%,
-                rgba(75, 0, 130, 0.65) 70%,
-                rgba(75, 0, 130, 0.85) 100%);
-            animation: stormPulse 2s infinite alternate;
+            opacity: 0.9;
+            animation: stormPulse 1.5s infinite alternate;
+        }
+        
+        .storm-warning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff0000;
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px #ff0000;
+            z-index: 51;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .storm-warning.show {
+            animation: stormWarningPulse 2s ease-out;
+        }
+        
+        @keyframes stormWarningPulse {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
         }
         
         @keyframes stormPulse {
-            0% { opacity: 0.9; }
+            0% { opacity: 0.8; }
             100% { opacity: 1; }
         }
 
@@ -1310,7 +1331,7 @@
             box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
         }
 
-        /* --- MOBILE CONTROLS (UPDATED FOR V19.7) --- */
+        /* --- MOBILE CONTROLS (UPDATED FOR V19.8) --- */
         #mobile-controls {
             display: none; 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -1318,21 +1339,21 @@
             z-index: 5;
         }
         
-        /* UPDATED: Left side - Movement joystick area (50%) */
+        /* UPDATED: Left side - Movement joystick area */
         #touch-left {
             position: absolute;
             top: 0; left: 0;
-            width: 50%; height: 100%;
+            width: 40%; height: 100%;
             pointer-events: auto;
             touch-action: none;
             z-index: 6;
         }
         
-        /* UPDATED: Right side - Camera control area (50%) - invisible joystick */
+        /* UPDATED: Right side - Camera control area */
         #touch-right {
             position: absolute;
             top: 0; right: 0;
-            width: 50%; height: 100%;
+            width: 60%; height: 100%;
             background: transparent;
             pointer-events: auto;
             touch-action: none;
@@ -1342,10 +1363,10 @@
         /* Movement Zone - Updated */
         #movement-zone {
             position: absolute;
-            bottom: 100px;
-            left: 80px;
-            width: 150px;
-            height: 150px;
+            bottom: 120px;
+            left: 60px;
+            width: 140px;
+            height: 140px;
             background: radial-gradient(circle, 
                 rgba(255,255,255,0.08) 0%,
                 rgba(255,255,255,0.03) 70%,
@@ -1561,7 +1582,7 @@
         }
         
         #victory-text::after {
-            content: 'V19.7';
+            content: 'V19.8';
             display: block;
             font-size: 2rem;
             margin-top: 1rem;
@@ -1836,7 +1857,7 @@
     <div id="start-screen">
         <div class="menu-background"></div>
         <div class="particles" id="particles-container"></div>
-        <div class="version-badge">V19.7 • ULTIMATE EDITION</div>
+        <div class="version-badge">V19.8 • ULTIMATE EDITION</div>
         <div class="menu-title">
             <div class="title-glow"></div>
             <h1>WEB BATTLE ROYALE</h1>
@@ -1858,7 +1879,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.7</p>
+                <p>V19.8</p>
             </div>
         </div>
         <div id="victory-royales-stat">🏆 Victory Royales: 0</div>
@@ -1914,6 +1935,7 @@
 
         <!-- Storm Overlay -->
         <div id="storm-overlay"></div>
+        <div class="storm-warning" id="storm-warning">STORM!</div>
 
         <!-- HUD Container -->
         <div id="hud-container">
@@ -2068,7 +2090,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.7) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.8) ===================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -2117,7 +2139,7 @@
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        // Weapons configuration - UPDATED: INCREASED sniper damage by 50%
+        // Weapons configuration - UPDATED: SNIPER DAMAGE REDUCED BY 33%
         const WEAPONS_BASE = {
             PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             AUTO_SHG: { name: "Auto Shotgun", dmg: 30, head: 50, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
@@ -2125,12 +2147,12 @@
             DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             STINGER: { name: "Stinger SMG", dmg: 15, head: 22.5, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
-            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25 * 1.5, head: 157.5 * 1.25 * 1.5, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // INCREASED by 50%
+            BOLT_SNIPER: { name: "Bolt Sniper", dmg: Math.round(127.5 * 1.25 * 1.5 * 0.67), head: Math.round(157.5 * 1.25 * 1.5 * 0.67), rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // REDUCED by 33%
             SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25 * 1.5, head: 135 * 1.25 * 1.5, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // INCREASED by 50%
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: Math.round(97.5 * 1.25 * 1.5 * 0.67), head: Math.round(135 * 1.25 * 1.5 * 0.67), rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // REDUCED by 33%
             STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            SNIPER: { name: "Sniper", dmg: 150 * 1.25 * 1.5, head: 195 * 1.25 * 1.5, rate: 1.5, mag: 1, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // INCREASED by 50%
+            SNIPER: { name: "Sniper", dmg: Math.round(150 * 1.25 * 1.5 * 0.67), head: Math.round(195 * 1.25 * 1.5 * 0.67), rate: 1.5, mag: 1, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // REDUCED by 33%
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 },
             // FIXED: Dual Micro SMG damage decreased
@@ -2150,13 +2172,14 @@
         };
         const CONSUMABLE_KEYS = Object.keys(CONSUMABLES);
 
-        // --- STORM PHASES ---
+        // --- STORM PHASES - IMPROVED ---
         const STORM_PHASES = [
-            { time: 60, radius: WORLD_SIZE * 0.5, damage: 3, status: "Wait" }, 
-            { time: 60, radius: WORLD_SIZE * 0.4, damage: 3, status: "Shrink" }, 
-            { time: 120, radius: WORLD_SIZE * 0.4, damage: 3, status: "Hold" }, 
-            { time: 60, radius: WORLD_SIZE * 0.3, damage: 5, status: "Shrink" }, 
-            { time: 60, radius: 0, damage: 10, status: "Deathmatch" } 
+            { time: 180, radius: WORLD_SIZE * 0.8, damage: 1, status: "Wait", warning: false }, 
+            { time: 90, radius: WORLD_SIZE * 0.5, damage: 2, status: "Closing", warning: true }, 
+            { time: 120, radius: WORLD_SIZE * 0.5, damage: 3, status: "Hold", warning: false }, 
+            { time: 90, radius: WORLD_SIZE * 0.3, damage: 4, status: "Closing", warning: true }, 
+            { time: 60, radius: WORLD_SIZE * 0.2, damage: 5, status: "Hold", warning: false }, 
+            { time: 60, radius: 0, damage: 10, status: "Deathmatch", warning: true } 
         ];
         const BOT_STORM_DAMAGE = 5;
 
@@ -2200,14 +2223,14 @@
         let gameStarted = false;
         let victoryRoyales = 0;
         
-        // Mobile control variables - FIXED: Improved responsiveness
+        // Mobile control variables - IMPROVED FOR V19.8
         let mobileTouchActive = false;
         let lastTouchX = 0;
         let lastTouchY = 0;
         let touchDeltaX = 0;
         let touchDeltaY = 0;
-        const MOBILE_SENSITIVITY = 0.0015; // Reduced for better control
-        const MOBILE_SMOOTHING = 0.2; // Increased smoothing
+        const MOBILE_SENSITIVITY = 0.0025; // INCREASED sensitivity for better camera control
+        const MOBILE_SMOOTHING = 0.15; // Reduced smoothing for more responsiveness
         const MAX_CAMERA_ANGLE = Math.PI / 2 - 0.1;
         
         // Controller variables
@@ -2251,15 +2274,19 @@
         let stormPhase = 0;
         let stormActive = false;
         let stormTimerInterval;
+        let lastStormWarning = 0;
 
-        // Day/Night Cycle
+        // Day/Night Cycle - IMPROVED FOR V19.8
         let dayNightCycle = {
             isDay: true,
             cycleTime: 0,
-            cycleDuration: 300, // 5 minutes per cycle
+            cycleDuration: 300, // 5 minutes per cycle (300 seconds)
             sunLight: null,
             moonLight: null,
-            ambientIntensity: 0.6
+            sun: null,
+            moon: null,
+            ambientIntensity: 0.6,
+            stars: []
         };
 
         // Performance optimization
@@ -2512,7 +2539,7 @@
         }
 
         // ===============================================================
-        // === DAY/NIGHT CYCLE SYSTEM ===================================
+        // === IMPROVED DAY/NIGHT CYCLE SYSTEM ===========================
         // ===============================================================
 
         function initDayNightCycle() {
@@ -2522,11 +2549,53 @@
             dayNightCycle.sunLight.castShadow = true;
             scene.add(dayNightCycle.sunLight);
             
+            // Create sun mesh
+            const sunGeometry = new THREE.SphereGeometry(15, 32, 32);
+            const sunMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffff00,
+                transparent: true,
+                opacity: 0.8
+            });
+            dayNightCycle.sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            dayNightCycle.sun.position.set(300, 400, 300);
+            scene.add(dayNightCycle.sun);
+            
             // Create moon light (weaker blue light)
             dayNightCycle.moonLight = new THREE.DirectionalLight(0x88ccff, 0.3);
             dayNightCycle.moonLight.position.set(-100, 200, -100);
             dayNightCycle.moonLight.visible = false;
+            dayNightCycle.moonLight.castShadow = false; // No shadows at night
             scene.add(dayNightCycle.moonLight);
+            
+            // Create moon mesh
+            const moonGeometry = new THREE.SphereGeometry(10, 32, 32);
+            const moonMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.6
+            });
+            dayNightCycle.moon = new THREE.Mesh(moonGeometry, moonMaterial);
+            dayNightCycle.moon.position.set(-300, 400, -300);
+            dayNightCycle.moon.visible = false;
+            scene.add(dayNightCycle.moon);
+            
+            // Create stars for night
+            dayNightCycle.stars = [];
+            const starGeometry = new THREE.SphereGeometry(1, 8, 8);
+            const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            
+            for(let i = 0; i < 200; i++) {
+                const star = new THREE.Mesh(starGeometry, starMaterial);
+                star.position.set(
+                    (Math.random() - 0.5) * 2000,
+                    500 + Math.random() * 300,
+                    (Math.random() - 0.5) * 2000
+                );
+                star.scale.setScalar(Math.random() * 0.5 + 0.5);
+                star.visible = false;
+                scene.add(star);
+                dayNightCycle.stars.push(star);
+            }
             
             // Update indicator
             updateDayNightIndicator();
@@ -2549,9 +2618,15 @@
                             dayNightCycle.sunLight.intensity + (dayNightCycle.ambientIntensity / (transitionDuration * 60)));
                         dayNightCycle.moonLight.intensity = Math.max(0, 
                             dayNightCycle.moonLight.intensity - (0.3 / (transitionDuration * 60)));
+                        dayNightCycle.sun.visible = true;
+                        dayNightCycle.moon.visible = false;
+                        
+                        // Update stars visibility
+                        dayNightCycle.stars.forEach(star => star.visible = false);
                         
                         if (dayNightCycle.sunLight.intensity >= dayNightCycle.ambientIntensity) {
                             dayNightCycle.moonLight.visible = false;
+                            dayNightCycle.sunLight.castShadow = true;
                             clearInterval(transitionInterval);
                         }
                     } else {
@@ -2561,8 +2636,14 @@
                         dayNightCycle.moonLight.visible = true;
                         dayNightCycle.moonLight.intensity = Math.min(0.3, 
                             dayNightCycle.moonLight.intensity + (0.3 / (transitionDuration * 60)));
+                        dayNightCycle.sun.visible = false;
+                        dayNightCycle.moon.visible = true;
+                        
+                        // Update stars visibility
+                        dayNightCycle.stars.forEach(star => star.visible = true);
                         
                         if (dayNightCycle.moonLight.intensity >= 0.3) {
+                            dayNightCycle.sunLight.castShadow = false;
                             clearInterval(transitionInterval);
                         }
                     }
@@ -2570,6 +2651,9 @@
                     // Update scene fog color
                     const fogColor = dayNightCycle.isDay ? 0x87CEEB : 0x0a0a2a;
                     scene.fog.color.setHex(fogColor);
+                    
+                    // Update background color
+                    scene.background = new THREE.Color(fogColor);
                     
                 }, 16); // ~60fps
                 
@@ -2581,6 +2665,12 @@
                 const timeRatio = dayNightCycle.cycleTime / dayNightCycle.cycleDuration;
                 const sunHeight = 200 + Math.sin(timeRatio * Math.PI) * 50;
                 dayNightCycle.sunLight.position.y = sunHeight;
+                dayNightCycle.sun.position.y = 400 + Math.sin(timeRatio * Math.PI) * 100;
+            } else {
+                const timeRatio = dayNightCycle.cycleTime / dayNightCycle.cycleDuration;
+                const moonHeight = 200 + Math.sin(timeRatio * Math.PI) * 50;
+                dayNightCycle.moonLight.position.y = moonHeight;
+                dayNightCycle.moon.position.y = 400 + Math.sin(timeRatio * Math.PI) * 100;
             }
         }
 
@@ -2852,12 +2942,17 @@
         }
 
         // ===============================================================
-        // === FIXED BOT AI (Simple but working) =========================
+        // === IMPROVED BOT AI (FIXED DAMAGE AND MOVEMENT) ===============
         // ===============================================================
 
         function updateEnhancedBots(dt, now) {
             if (now - lastBotUpdate < botUpdateInterval) return;
             lastBotUpdate = now;
+            
+            // Update alive count
+            const aliveCount = bots.length + (player.dead ? 0 : 1);
+            document.getElementById('alive-count').textContent = aliveCount;
+            document.getElementById('total-players').textContent = aliveCount;
             
             for(let i = bots.length - 1; i >= 0; i--) {
                 const bot = bots[i];
@@ -2916,28 +3011,30 @@
                         bot.mesh.translateZ(-WALK_SPEED * 0.3 * dt);
                     }
                     
-                    // Shoot at target
+                    // Shoot at target - FIXED: Now actually damages player
                     if (dist < 40 && !bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
                         const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
                         const fireDirection = new THREE.Vector3()
-                            .subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin)
+                            .subVectors(targetPos.clone().setY(targetPos.y + 1), fireOrigin)
                             .normalize();
                         
-                        fireDirection.x += (Math.random() - 0.5) * 0.2;
-                        fireDirection.y += (Math.random() - 0.5) * 0.2;
-                        fireDirection.z += (Math.random() - 0.5) * 0.2;
+                        // Add some inaccuracy
+                        fireDirection.x += (Math.random() - 0.5) * 0.15;
+                        fireDirection.y += (Math.random() - 0.5) * 0.15;
+                        fireDirection.z += (Math.random() - 0.5) * 0.15;
                         fireDirection.normalize();
                         
                         createMuzzleFlash(fireOrigin, fireDirection);
                         
+                        // Create a raycaster for the bot's shot
                         const ray = new THREE.Raycaster(fireOrigin, fireDirection);
-                        const targets = [camera];
-                        const hits = ray.intersectObjects(targets, false);
                         
-                        if (hits.length > 0) {
-                            const hit = hits[0];
-                            takeDamage(bot.weapon.stats.dmg * 0.7, hit.point); // Bots do 70% damage
-                            createImpactEffect(hit.point, false);
+                        // Check if the ray hits the player
+                        const playerHit = checkRayPlayerHit(ray, fireOrigin, bot.weapon.stats.range);
+                        
+                        if (playerHit) {
+                            takeDamage(bot.weapon.stats.dmg * 0.7, fireOrigin); // Bots do 70% damage
+                            createImpactEffect(playerHit.point, false);
                         }
                         
                         bot.lastShot = now;
@@ -2966,6 +3063,18 @@
                     }, bot.weapon.stats.reload * 1.5);
                 }
             }
+        }
+
+        function checkRayPlayerHit(ray, origin, range) {
+            // Check if ray hits the player by approximating player as a sphere
+            const playerSphere = new THREE.Sphere(camera.position, 0.5);
+            const closestPoint = ray.ray.closestPointToPoint(camera.position, new THREE.Vector3());
+            const distanceToPlayer = camera.position.distanceTo(closestPoint);
+            
+            if (distanceToPlayer < 1.0 && origin.distanceTo(camera.position) <= range) {
+                return { point: closestPoint, distance: distanceToPlayer };
+            }
+            return null;
         }
 
         // ===============================================================
@@ -3394,13 +3503,24 @@
         }
 
         // ===============================================================
-        // === STORM LOGIC ===============================================
+        // === IMPROVED STORM LOGIC ======================================
         // ===============================================================
 
         function formatTime(seconds) {
             const min = Math.floor(seconds / 60);
             const sec = Math.floor(seconds % 60);
             return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function showStormWarning() {
+            const warning = document.getElementById('storm-warning');
+            warning.classList.add('show');
+            setTimeout(() => {
+                warning.classList.remove('show');
+            }, 2000);
+            
+            playSound('storm_damage');
+            lastStormWarning = performance.now();
         }
 
         function startStormTimer() {
@@ -3421,6 +3541,11 @@
             const endRadius = nextPhase.radius;
             const startTime = performance.now();
 
+            // Show warning if phase has warning
+            if (nextPhase.warning && performance.now() - lastStormWarning > 5000) {
+                showStormWarning();
+            }
+            
             stormTimerInterval = setInterval(() => {
                 if (player.dead) {
                     clearInterval(stormTimerInterval);
@@ -3430,7 +3555,7 @@
                 stormPhaseTimer -= 1;
                 document.getElementById('storm-timer').innerText = formatTime(stormPhaseTimer);
                 
-                if (nextPhase.status === "Shrink" || nextPhase.status === "Deathmatch") {
+                if (nextPhase.status === "Closing" || nextPhase.status === "Deathmatch") {
                     const elapsed = performance.now() - startTime;
                     const duration = nextPhase.time * 1000;
                     const t = Math.min(1, elapsed / duration);
@@ -3447,6 +3572,12 @@
                     stormPhase++;
                     startStormTimer();
                 }
+                
+                // Update storm visual intensity based on phase
+                const stormOverlay = document.getElementById('storm-overlay');
+                const intensity = nextPhase.damage / 10;
+                stormOverlay.style.opacity = intensity * 0.7;
+                
             }, 1000);
         }
         
@@ -3463,6 +3594,13 @@
                     takeDamage(stormDamageRate, camera.position, 'storm'); 
                     player.lastStormDamage = now;
                     playSound('storm_damage');
+                    
+                    // Visual feedback for storm damage
+                    const stormOverlay = document.getElementById('storm-overlay');
+                    stormOverlay.style.animationDuration = '0.3s';
+                    setTimeout(() => {
+                        stormOverlay.style.animationDuration = '1.5s';
+                    }, 300);
                 }
             } 
 
@@ -3490,117 +3628,125 @@
         }
 
         // ===============================================================
-        // === WORLD GENERATION & GEOMETRY ===============================
+        // === NEW FORTNITE POIS FOR V19.8 ===============================
         // ===============================================================
 
-        function generateTerrain() {
-            const size = WORLD_SIZE;
-            const segments = 96;
-            const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
-            geometry.rotateX(-Math.PI / 2);
-
-            const position = geometry.attributes.position;
-            for (let i = 0; i < position.count; i++) {
-                const x = position.getX(i);
-                const z = position.getZ(i);
-                const y = getEnhancedTerrainHeight(x, z);
-                position.setY(i, y);
-            }
-            position.needsUpdate = true;
-            geometry.computeVertexNormals();
-            
-            const terrainMat = createEnhancedTerrainMaterial();
-            const terrain = new THREE.Mesh(geometry, terrainMat);
-            terrain.receiveShadow = true;
-            scene.add(terrain);
-            objects.push(terrain); 
-        }
-
-        function createTower(x, z) {
-            const h = getEnhancedTerrainHeight(x, z);
-            createBox(x, h+10, z, 5, 20, 5, 0x999999);
-            createBox(x, h+21, z, 7, 2, 7, 0xAAAAAA);
-            spawnChest(x, h+23, z); 
-        }
-        
-        function createBuilding(x, z, size, height, depth, color, rotation) {
-            const h = getEnhancedTerrainHeight(x, z);
-            const mesh = createBox(x, h + height/2, z, size, height, depth, color);
-            mesh.rotation.y = rotation;
-            spawnChest(x+size/4, h+1, z+depth/4); 
-        }
-        
-        function createWoodHouse(x, z, size, height, depth) {
-            const h = getEnhancedTerrainHeight(x, z);
-            createBox(x, h+height/2, z, size, height, depth, 0x8B4513);
-            createBox(x, h+height+1, z, size+2, 2, depth+2, 0x555555); 
-            spawnChest(x, h+1, z); 
-        }
-        
-        function createTree(x, z) {
-            const h = getEnhancedTerrainHeight(x, z);
-            createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); 
-            createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
-        }
-
-        // NEW: Fortnite POI 1 - Tilted Towers inspired
-        function createTiltedTowers() {
-            const x = -150, z = -150;
+        // NEW POI 1: Lucky Landing (Asian-inspired)
+        function createLuckyLanding() {
+            const x = -350, z = 350;
             const h = getEnhancedTerrainHeight(x, z);
             
-            // Main towers
+            // Central pagoda
+            createBox(x, h+20, z, 15, 40, 15, 0xff0000);
+            createBox(x, h+45, z, 12, 10, 12, 0xff4444);
+            
+            // Surrounding buildings
             for(let i = 0; i < 4; i++) {
-                for(let j = 0; j < 4; j++) {
-                    const towerX = x + (i * 25);
-                    const towerZ = z + (j * 25);
-                    createBox(towerX, h+15, towerZ, 8, 30, 8, 0x708090);
-                    
-                    // Add some destroyed towers
-                    if (Math.random() < 0.3) {
-                        createBox(towerX + 2, h+40, towerZ + 2, 6, 10, 6, 0x505050);
-                    }
+                const angle = (i * Math.PI / 2);
+                const buildingX = x + Math.cos(angle) * 30;
+                const buildingZ = z + Math.sin(angle) * 30;
+                createBuilding(buildingX, buildingZ, 8, 15, 8, 0x00a8ff, angle);
+                
+                // Add chests
+                if (Math.random() < 0.8) {
+                    spawnChest(buildingX, h+1, buildingZ);
                 }
             }
             
-            // Central plaza
-            createBox(x + 50, h+0.1, z + 50, 40, 0.2, 40, 0x444444);
+            // Cherry blossom trees
+            for(let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                const treeX = x + Math.cos(angle) * 45;
+                const treeZ = z + Math.sin(angle) * 45;
+                createBox(treeX, h+2, treeZ, 0.8, 6, 0.8, 0x8B4513); // Trunk
+                createBox(treeX, h+7, treeZ, 5, 5, 5, 0xff69b4); // Pink leaves
+            }
             
-            // Chest spawns
-            for(let i = 0; i < 6; i++) {
-                const chestX = x + 20 + (Math.random() * 60);
-                const chestZ = z + 20 + (Math.random() * 60);
-                spawnChest(chestX, h+1, chestZ);
+            // Central chest
+            spawnChest(x, h+1, z);
+        }
+
+        // NEW POI 2: Frosty Flights (Snowy airport)
+        function createFrostyFlights() {
+            const x = 350, z = -350;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            // Create snowy terrain
+            createBox(x, h+0.1, z, 100, 0.2, 80, 0xffffff);
+            
+            // Hangars
+            for(let i = 0; i < 3; i++) {
+                const hangarX = x - 30 + (i * 30);
+                createBuilding(hangarX, h+10, z - 20, 20, 15, 30, 0x708090, 0);
+                spawnChest(hangarX, h+1, z - 20);
+            }
+            
+            // Airplanes
+            for(let i = 0; i < 2; i++) {
+                const planeX = x + 20 + (i * 40);
+                createBox(planeX, h+5, z + 20, 25, 4, 6, 0x333333); // Fuselage
+                createBox(planeX - 12, h+7, z + 20, 3, 8, 10, 0x666666); // Wing
+                createBox(planeX + 12, h+7, z + 20, 3, 8, 10, 0x666666); // Wing
+                
+                // Add chest in cockpit
+                spawnChest(planeX - 10, h+3, z + 20);
+            }
+            
+            // Control tower
+            createBox(x + 40, h+25, z - 40, 6, 25, 6, 0x00a8ff);
+            createBox(x + 40, h+38, z - 40, 10, 3, 10, 0x87ceeb);
+            
+            // Snow piles
+            for(let i = 0; i < 10; i++) {
+                const snowX = x + (Math.random() - 0.5) * 80;
+                const snowZ = z + (Math.random() - 0.5) * 60;
+                createBox(snowX, h+2, snowZ, 8, 4, 8, 0xf0f8ff);
             }
         }
 
-        // NEW: Fortnite POI 2 - Pleasant Park inspired
-        function createPleasantPark() {
-            const x = 200, z = 200;
+        // NEW POI 3: Paradise Palms (Desert oasis)
+        function createParadisePalms() {
+            const x = 0, z = -400;
             const h = getEnhancedTerrainHeight(x, z);
             
-            // Create houses in a circle
-            const houseCount = 8;
-            const radius = 60;
+            // Create desert terrain
+            createBox(x, h+0.1, z, 120, 0.2, 100, 0xf4a460);
             
-            for(let i = 0; i < houseCount; i++) {
-                const angle = (i / houseCount) * Math.PI * 2;
-                const houseX = x + Math.cos(angle) * radius;
-                const houseZ = z + Math.sin(angle) * radius;
-                
-                createWoodHouse(houseX, houseZ, 12, 10, 12);
-                
-                // Add garage
-                createBox(houseX + 8, h+4, houseZ, 6, 5, 8, 0x666666);
-                
-                // Spawn chests
-                if (Math.random() < 0.7) {
-                    spawnChest(houseX, h+1, houseZ);
-                }
+            // Central oasis
+            createBox(x, h-3, z, 30, 6, 30, 0x1e90ff);
+            
+            // Palm trees around oasis
+            for(let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const treeX = x + Math.cos(angle) * 25;
+                const treeZ = z + Math.sin(angle) * 25;
+                createBox(treeX, h+2, treeZ, 1, 8, 1, 0x8B4513); // Trunk
+                createBox(treeX, h+9, treeZ, 6, 2, 6, 0x228b22); // Leaves
             }
             
-            // Central park
-            createBox(x, h+0.1, z, 40, 0.2, 40, 0x2E8B57);
-            createBox(x, h+3, z, 3, 6, 3, 0x8B4513); // Central tree
+            // Resort buildings
+            for(let i = 0; i < 4; i++) {
+                const angle = (i * Math.PI / 2) + Math.PI/4;
+                const buildingX = x + Math.cos(angle) * 60;
+                const buildingZ = z + Math.sin(angle) * 60;
+                createBuilding(buildingX, buildingZ, 12, 12, 12, 0xffd700, angle);
+                
+                // Add chests
+                spawnChest(buildingX, h+1, buildingZ);
+                
+                // Add pool
+                createBox(buildingX + 5, h-2, buildingZ + 5, 8, 4, 8, 0x00bfff);
+            }
+            
+            // Central luxury villa
+            createBuilding(x, h+15, z, 20, 20, 20, 0xff6347, Math.PI/4);
+            spawnChest(x, h+1, z);
+            
+            // Sun loungers
+            for(let i = 0; i < 6; i++) {
+                const loungerX = x - 40 + (i * 15);
+                createBox(loungerX, h+0.5, z + 40, 3, 1, 6, 0x8b4513);
+            }
         }
 
         function generatePOIs() {
@@ -3675,9 +3821,79 @@
                 createTree(x, z);
             }
             
-            // NEW: Add Fortnite POIs
+            // Fortnite POIs
             createTiltedTowers();
             createPleasantPark();
+            
+            // NEW V19.8 POIS
+            createLuckyLanding();
+            createFrostyFlights();
+            createParadisePalms();
+        }
+
+        // Helper functions for POIs
+        function createTiltedTowers() {
+            const x = -150, z = -150;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            // Main towers
+            for(let i = 0; i < 4; i++) {
+                for(let j = 0; j < 4; j++) {
+                    const towerX = x + (i * 25);
+                    const towerZ = z + (j * 25);
+                    createBox(towerX, h+15, towerZ, 8, 30, 8, 0x708090);
+                    
+                    // Add some destroyed towers
+                    if (Math.random() < 0.3) {
+                        createBox(towerX + 2, h+40, towerZ + 2, 6, 10, 6, 0x505050);
+                    }
+                }
+            }
+            
+            // Central plaza
+            createBox(x + 50, h+0.1, z + 50, 40, 0.2, 40, 0x444444);
+            
+            // Chest spawns
+            for(let i = 0; i < 6; i++) {
+                const chestX = x + 20 + (Math.random() * 60);
+                const chestZ = z + 20 + (Math.random() * 60);
+                spawnChest(chestX, h+1, chestZ);
+            }
+        }
+
+        function createPleasantPark() {
+            const x = 200, z = 200;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            // Create houses in a circle
+            const houseCount = 8;
+            const radius = 60;
+            
+            for(let i = 0; i < houseCount; i++) {
+                const angle = (i / houseCount) * Math.PI * 2;
+                const houseX = x + Math.cos(angle) * radius;
+                const houseZ = z + Math.sin(angle) * radius;
+                
+                createWoodHouse(houseX, houseZ, 12, 10, 12);
+                
+                // Add garage
+                createBox(houseX + 8, h+4, houseZ, 6, 5, 8, 0x666666);
+                
+                // Spawn chests
+                if (Math.random() < 0.7) {
+                    spawnChest(houseX, h+1, houseZ);
+                }
+            }
+            
+            // Central park
+            createBox(x, h+0.1, z, 40, 0.2, 40, 0x2E8B57);
+            createBox(x, h+3, z, 3, 6, 3, 0x8B4513); // Central tree
+        }
+
+        function createTree(x, z) {
+            const h = getEnhancedTerrainHeight(x, z);
+            createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); 
+            createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
         function spawnCars() {
@@ -4072,7 +4288,7 @@
             if (typeKey === 'AUTO_SHG') damageMultiplier = 2.0;
             if (typeKey === 'STINGER') damageMultiplier = 1.25;
             if (typeKey === 'DUAL_SMG') damageMultiplier = 1.25;
-            if (typeKey === 'BOLT_SNIPER' || typeKey === 'SNIPER' || typeKey === 'FALCON_SNIPER') damageMultiplier = 1.5;
+            if (typeKey === 'BOLT_SNIPER' || typeKey === 'SNIPER' || typeKey === 'FALCON_SNIPER') damageMultiplier = 0.67; // REDUCED by 33%
             
             // Apply level damage bonus
             damageMultiplier *= player.levelDamageMultiplier;
@@ -4428,6 +4644,11 @@
                     scene.remove(target.mesh);
                     bots = bots.filter(b => b !== target);
                     
+                    // Update alive count immediately
+                    const aliveCount = bots.length + (player.dead ? 0 : 1);
+                    document.getElementById('alive-count').textContent = aliveCount;
+                    document.getElementById('total-players').textContent = aliveCount;
+                    
                     const randomWeaponKey = getRandomWeaponKey();
                     const randomRarity = getRandomRarity(); 
                     const botWeapon = createWeaponItem(randomWeaponKey, randomRarity);
@@ -4680,7 +4901,7 @@
         }
 
         // ===============================================================
-        // === INPUT & CONTROL MANAGEMENT (FIXED FOR V19.7) ==============
+        // === IMPROVED INPUT & CONTROL MANAGEMENT (V19.8) ===============
         // ===============================================================
         
         function setGameMode(mode) {
@@ -4721,14 +4942,14 @@
             document.getElementById('game-container').addEventListener('mousedown', lockPointer);
         }
 
-        // FIXED: Improved mobile controls with better camera responsiveness
+        // IMPROVED: Mobile controls with simultaneous movement and camera control
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
             const touchRight = document.getElementById('touch-right');
             const joystickThumb = document.getElementById('joystick-thumb');
             const movementZone = document.getElementById('movement-zone');
             
-            // Movement joystick (left 50% of screen)
+            // Movement joystick (left side)
             let touchStartX = 0;
             let touchStartY = 0;
             let isTouchingLeft = false;
@@ -4745,6 +4966,9 @@
                 joystickOrigin.y = rect.top + rect.height / 2;
                 touchStartX = touch.clientX;
                 touchStartY = touch.clientY;
+                
+                // Reset camera touch when starting movement
+                isTouchingCamera = false;
             });
             
             touchLeft.addEventListener('touchmove', (e) => {
@@ -4755,7 +4979,7 @@
                 let dx = touch.clientX - joystickOrigin.x;
                 let dy = touch.clientY - joystickOrigin.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
-                const maxDist = 75; // Fixed radius
+                const maxDist = 70; // Fixed radius
                 
                 if(dist > maxDist) {
                     const ratio = maxDist / dist;
@@ -4766,7 +4990,7 @@
                 joystickThumb.style.transform = `translate(${dx}px, ${dy}px)`;
                 
                 // Dead zone
-                const deadZone = 20;
+                const deadZone = 15;
                 inputs.w = dy < -deadZone;
                 inputs.s = dy > deadZone;
                 inputs.a = dx < -deadZone;
@@ -4781,7 +5005,7 @@
                 inputs.w = inputs.s = inputs.a = inputs.d = inputs.sprint = false;
             });
             
-            // Camera control (right 50% of screen) - FIXED: No accidental movement
+            // Camera control (right side) - IMPROVED FOR SIMULTANEOUS CONTROL
             let lastCameraTouchX = 0;
             let lastCameraTouchY = 0;
             let isTouchingCamera = false;
@@ -4803,24 +5027,17 @@
                 e.preventDefault();
                 const touch = e.touches[0];
                 
-                // Ignore very short movements to prevent accidental camera movement
-                if (performance.now() - touchStartTime < 100) {
-                    lastCameraTouchX = touch.clientX;
-                    lastCameraTouchY = touch.clientY;
-                    return;
-                }
-                
+                // Allow immediate camera movement
                 const deltaX = touch.clientX - lastCameraTouchX;
                 const deltaY = touch.clientY - lastCameraTouchY;
                 
-                // Filter for smoothness
-                touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING;
-                touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING;
+                // INCREASED sensitivity for better camera control
+                const sensitivity = 0.003;
                 
                 // Apply rotation with minimum threshold
-                if (Math.abs(touchDeltaX) > 1 || Math.abs(touchDeltaY) > 1) {
-                    camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
-                    camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
+                if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
+                    camera.rotation.y -= deltaX * sensitivity;
+                    camera.rotation.x -= deltaY * sensitivity;
                     
                     camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
                 }
@@ -5049,7 +5266,7 @@
             const gameContainer = document.getElementById('game-container');
             gameContainer.appendChild(renderer.domElement);
             
-            // Lighting & Day/Night Cycle
+            // Lighting & IMPROVED Day/Night Cycle
             initDayNightCycle();
             
             const ambient = new THREE.AmbientLight(0xffffff, 0.6);
@@ -5153,7 +5370,7 @@
             // FIXED: Overshield regeneration
             overshieldRegen(dt);
             
-            // Update day/night cycle
+            // Update IMPROVED day/night cycle
             updateDayNightCycle(dt);
 
             if(player.vehicle) {
@@ -5237,7 +5454,7 @@
             }
             
             updateProjectiles(dt);
-            updateEnhancedBots(dt, now);
+            updateEnhancedBots(dt, now); // FIXED: Bots now deal damage and move properly
             updateStorm(now);
             updateVisualEffects(dt);
             optimizePerformance();
