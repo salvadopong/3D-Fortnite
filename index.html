@@ -47,19 +47,20 @@
             pointer-events: none;
         }
 
-        /* Level System UI */
+        /* Level System UI - ENHANCED */
         #level-display {
             position: absolute;
             top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(30, 30, 60, 0.9));
             color: white;
             padding: 0.8rem 1.2rem;
-            border-radius: 12px;
+            border-radius: 15px;
             z-index: 1000;
-            border: 2px solid rgba(0, 210, 255, 0.4);
-            backdrop-filter: blur(10px);
-            min-width: 200px;
+            border: 2px solid rgba(0, 210, 255, 0.6);
+            backdrop-filter: blur(15px);
+            min-width: 250px;
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.3);
         }
         
         .level-info {
@@ -69,29 +70,97 @@
         }
         
         .level-text {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .level-text::before {
+            content: '⚡';
+            font-size: 1.1rem;
+        }
+        
+        .xp-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         
         .progress-container {
-            height: 6px;
+            flex: 1;
+            height: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
             margin: 0.3rem 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
         }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #00d2ff, #0072ff);
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #00d2ff, #0072ff, #a335ee);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.6), 
+                transparent);
+            animation: progressShine 2s infinite linear;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .points-text {
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            min-width: 80px;
+            text-align: right;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .level-perks {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .level-perk {
+            background: rgba(0, 210, 255, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .level-perk.unlocked {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.4);
         }
 
         /* End Game Stats */
@@ -435,7 +504,7 @@
             margin-left: -1.5px; 
         }
 
-        /* Enhanced Scopes */
+        /* Enhanced Scopes - IMPROVED ADS */
         #scope-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: radial-gradient(circle, transparent 18%, rgba(0, 0, 0, 0.98) 19%, black 100%);
@@ -1264,7 +1333,7 @@
             position: absolute;
             top: 0; right: 0;
             width: 50%; height: 100%;
-            background: none;
+            background: transparent;
             pointer-events: auto;
             touch-action: none;
             z-index: 6;
@@ -1314,9 +1383,7 @@
             position: absolute;
             top: 0; right: 0;
             width: 100%; height: 100%;
-            background: radial-gradient(circle at 80% 50%, 
-                rgba(0, 210, 255, 0.05) 0%,
-                transparent 70%);
+            background: transparent;
             pointer-events: none;
             z-index: 6;
         }
@@ -1739,6 +1806,28 @@
             filter: blur(40px);
             z-index: 1;
         }
+        
+        /* Day/Night Cycle Indicator */
+        #day-night-indicator {
+            position: absolute;
+            top: 20px;
+            right: 120px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        #day-night-icon {
+            font-size: 1.2rem;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -1781,14 +1870,27 @@
         <!-- FPS Counter -->
         <div id="fps-counter">FPS: 60</div>
         
+        <!-- Day/Night Indicator -->
+        <div id="day-night-indicator">
+            <span id="day-night-icon">🌞</span>
+            <span id="day-night-text">Day</span>
+        </div>
+        
         <!-- Level Display -->
         <div id="level-display">
             <div class="level-info">
                 <div class="level-text">Level 1</div>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 0%"></div>
+                <div class="xp-progress">
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="points-text">0 / 150 XP</div>
                 </div>
-                <div class="points-text">0 / 150 XP</div>
+                <div class="level-perks">
+                    <div class="level-perk">+5% Damage</div>
+                    <div class="level-perk">+10 Shield</div>
+                    <div class="level-perk unlocked">Unlocked</div>
+                </div>
             </div>
         </div>
         
@@ -1981,9 +2083,9 @@
         // UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields
         const OVER_SHIELD_MAX = 50;
         const OVER_SHIELD_REGEN_RATE = 15;
-        const OVER_SHIELD_REGEN_DELAY = 7000;
+        const OVER_SHIELD_REGEN_DELAY = 3000; // Fixed: Reduced from 7000 to 3000
         
-        // Level System
+        // ENHANCED Level System
         let playerLevel = 1;
         let playerXP = 0;
         const XP_PER_LEVEL = 150;
@@ -1994,6 +2096,15 @@
             legendariesHeld: 0,
             totalPoints: 0
         };
+        
+        // Level perks system
+        const LEVEL_PERKS = [
+            { level: 1, name: "Starter", perks: ["+5% Damage", "+10 Shield"] },
+            { level: 5, name: "Soldier", perks: ["+10% Damage", "+25 Shield", "+5% Movement Speed"] },
+            { level: 10, name: "Veteran", perks: ["+15% Damage", "+50 Shield", "+10% Movement Speed", "Faster Reload"] },
+            { level: 15, name: "Elite", perks: ["+20% Damage", "+75 Shield", "+15% Movement Speed", "Faster Healing"] },
+            { level: 20, name: "Legend", perks: ["+25% Damage", "+100 Shield", "+20% Movement Speed", "Double XP Gain"] }
+        ];
         
         // --- WEAPONS CONFIG ---
         const RARITY_MULTIPLIERS = {
@@ -2006,7 +2117,7 @@
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        // Weapons configuration - UPDATED: Reduced sniper damage by 75%
+        // Weapons configuration - UPDATED: INCREASED sniper damage by 50%
         const WEAPONS_BASE = {
             PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
             AUTO_SHG: { name: "Auto Shotgun", dmg: 30, head: 50, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
@@ -2014,16 +2125,18 @@
             DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             STINGER: { name: "Stinger SMG", dmg: 15, head: 22.5, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
-            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25 * 0.25, head: 157.5 * 1.25 * 0.25, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // 75% reduced
+            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 127.5 * 1.25 * 1.5, head: 157.5 * 1.25 * 1.5, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // INCREASED by 50%
             SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
             DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25 * 0.25, head: 135 * 1.25 * 0.25, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // 75% reduced
+            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 97.5 * 1.25 * 1.5, head: 135 * 1.25 * 1.5, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, // INCREASED by 50%
             STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            SNIPER: { name: "Sniper", dmg: 150 * 1.25 * 0.25, head: 195 * 1.25 * 0.25, rate: 1.5, mag: 1, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // 75% reduced
+            SNIPER: { name: "Sniper", dmg: 150 * 1.25 * 1.5, head: 195 * 1.25 * 1.5, rate: 1.5, mag: 1, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' }, // INCREASED by 50%
             PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
             ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 },
-            DUAL_SMG: { name: "Dual Micro SMGS", dmg: 11.25, head: 17.5, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' },
-            HEAVY_AR: { name: "Heavy AR", dmg: 30, head: 55, rate: 0.12, mag: 30, range: 200, spread: 0.035, pellets: 1, auto: false, icon: '🎖️', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'holo_twister' }
+            // FIXED: Dual Micro SMG damage decreased
+            DUAL_SMG: { name: "Dual Micro SMGS", dmg: 9, head: 12, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' },
+            // FIXED: Heavy AR not automatic and decreased BPS
+            HEAVY_AR: { name: "Heavy AR", dmg: 30, head: 55, rate: 0.25, mag: 30, range: 200, spread: 0.035, pellets: 1, auto: false, icon: '🎖️', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'holo_twister' } // Rate increased from 0.12 to 0.25
         };
         const MYTHIC_WEAPON_KEY = 'STRANGLED_RIFLE'; 
         const BOT_WEAPON_KEY = 'RFAR'; 
@@ -2070,7 +2183,10 @@
             burstTimer: null,
             lastOvershieldDamage: 0, 
             overshieldRegenTimer: null,
-            lastOvershieldBreak: 0
+            lastOvershieldBreak: 0,
+            levelDamageMultiplier: 1.0,
+            levelShieldBonus: 0,
+            levelSpeedMultiplier: 1.0
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false };
@@ -2084,14 +2200,14 @@
         let gameStarted = false;
         let victoryRoyales = 0;
         
-        // Mobile control variables - UPDATED FOR V19.7: 50/50 split screen
+        // Mobile control variables - FIXED: Improved responsiveness
         let mobileTouchActive = false;
         let lastTouchX = 0;
         let lastTouchY = 0;
         let touchDeltaX = 0;
         let touchDeltaY = 0;
-        const MOBILE_SENSITIVITY = 0.002;
-        const MOBILE_SMOOTHING = 0.1;
+        const MOBILE_SENSITIVITY = 0.0015; // Reduced for better control
+        const MOBILE_SMOOTHING = 0.2; // Increased smoothing
         const MAX_CAMERA_ANGLE = Math.PI / 2 - 0.1;
         
         // Controller variables
@@ -2136,44 +2252,105 @@
         let stormActive = false;
         let stormTimerInterval;
 
+        // Day/Night Cycle
+        let dayNightCycle = {
+            isDay: true,
+            cycleTime: 0,
+            cycleDuration: 300, // 5 minutes per cycle
+            sunLight: null,
+            moonLight: null,
+            ambientIntensity: 0.6
+        };
+
         // Performance optimization
         let frameCount = 0;
         let lastFpsUpdate = 0;
         let currentFPS = 60;
-        let renderDistance = 300; // Reduced for performance
-        let botUpdateInterval = 100; // Update bots every 100ms for performance
+        let renderDistance = 300;
+        let botUpdateInterval = 100;
         let lastBotUpdate = 0;
+        let targetFPS = 120; // NEW: Target 120 FPS for high-end devices
+        let frameTime = 0;
+        let lastFrameTime = performance.now();
 
         // ===============================================================
-        // === LEVEL SYSTEM ==============================================
+        // === ENHANCED LEVEL SYSTEM =====================================
         // ===============================================================
 
         function loadPlayerLevel() {
             const savedLevel = localStorage.getItem('playerLevel');
             const savedXP = localStorage.getItem('playerXP');
+            const savedRoyales = localStorage.getItem('victoryRoyales');
+            
             playerLevel = savedLevel ? parseInt(savedLevel) : 1;
             playerXP = savedXP ? parseInt(savedXP) : 0;
+            victoryRoyales = savedRoyales ? parseInt(savedRoyales) : 0;
+            
+            applyLevelBonuses();
             updateLevelDisplay();
         }
 
         function savePlayerLevel() {
             localStorage.setItem('playerLevel', playerLevel);
             localStorage.setItem('playerXP', playerXP);
+            localStorage.setItem('victoryRoyales', victoryRoyales);
+        }
+
+        function applyLevelBonuses() {
+            // Reset bonuses
+            player.levelDamageMultiplier = 1.0;
+            player.levelShieldBonus = 0;
+            player.levelSpeedMultiplier = 1.0;
+            
+            // Apply bonuses based on level
+            if (playerLevel >= 5) {
+                player.levelDamageMultiplier = 1.1;
+                player.levelShieldBonus = 25;
+            }
+            if (playerLevel >= 10) {
+                player.levelDamageMultiplier = 1.15;
+                player.levelShieldBonus = 50;
+                player.levelSpeedMultiplier = 1.1;
+            }
+            if (playerLevel >= 15) {
+                player.levelDamageMultiplier = 1.2;
+                player.levelShieldBonus = 75;
+                player.levelSpeedMultiplier = 1.15;
+            }
+            if (playerLevel >= 20) {
+                player.levelDamageMultiplier = 1.25;
+                player.levelShieldBonus = 100;
+                player.levelSpeedMultiplier = 1.2;
+            }
+            
+            // Apply shield bonus
+            player.shield = Math.min(100 + player.levelShieldBonus, player.shield);
         }
 
         function calculateMatchPoints() {
             matchStats.kills = player.eliminations;
-            matchStats.placement = bots.length + 1; // Player position (1st, 2nd, etc)
+            matchStats.placement = bots.length + 1;
             
-            // Calculate points
+            // Calculate points with level multiplier
             let points = 0;
-            points += matchStats.kills * 5; // 5 points per kill
-            points += matchStats.chestsOpened * 1; // 1 point per chest
-            points += matchStats.legendariesHeld * 5; // 5 points per legendary held
+            points += matchStats.kills * 5;
+            points += matchStats.chestsOpened * 1;
+            points += matchStats.legendariesHeld * 5;
             
             // Placement bonuses
-            if (matchStats.placement <= 10) points += 10; // Top 10
-            if (matchStats.placement <= 2) points += 15; // Top 2
+            if (matchStats.placement <= 10) points += 10;
+            if (matchStats.placement <= 2) points += 15;
+            
+            // Victory Royale bonus
+            if (matchStats.placement === 1) {
+                points += 50;
+                victoryRoyales++;
+                localStorage.setItem('victoryRoyales', victoryRoyales);
+            }
+            
+            // Level multiplier for XP
+            const levelMultiplier = 1 + (playerLevel * 0.05);
+            points = Math.floor(points * levelMultiplier);
             
             matchStats.totalPoints = points;
             
@@ -2181,9 +2358,16 @@
             playerXP += points;
             
             // Check for level up
+            let leveledUp = false;
             while (playerXP >= XP_PER_LEVEL) {
                 playerXP -= XP_PER_LEVEL;
                 playerLevel++;
+                leveledUp = true;
+            }
+            
+            if (leveledUp) {
+                applyLevelBonuses();
+                showLevelUpNotification();
             }
             
             savePlayerLevel();
@@ -2197,11 +2381,76 @@
             const progressBar = levelDisplay.querySelector('.progress-bar');
             const levelText = levelDisplay.querySelector('.level-text');
             const pointsText = levelDisplay.querySelector('.points-text');
+            const perksContainer = levelDisplay.querySelector('.level-perks');
             
             levelText.textContent = `Level ${playerLevel}`;
             const progressPercent = (playerXP / XP_PER_LEVEL) * 100;
             progressBar.style.width = `${progressPercent}%`;
             pointsText.textContent = `${playerXP} / ${XP_PER_LEVEL} XP`;
+            
+            // Update perks display
+            perksContainer.innerHTML = '';
+            const currentPerkSet = LEVEL_PERKS.find(perk => playerLevel >= perk.level) || LEVEL_PERKS[0];
+            
+            currentPerkSet.perks.forEach((perk, index) => {
+                const perkEl = document.createElement('div');
+                perkEl.className = `level-perk ${index === 0 ? 'unlocked' : ''}`;
+                perkEl.textContent = perk;
+                perksContainer.appendChild(perkEl);
+            });
+        }
+
+        function showLevelUpNotification() {
+            // Create notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #ffd700, #ffaa00);
+                color: #000;
+                padding: 2rem 3rem;
+                border-radius: 15px;
+                font-size: 2rem;
+                font-weight: 900;
+                z-index: 10000;
+                animation: levelUpAnim 2s ease-out forwards;
+                text-align: center;
+                box-shadow: 0 20px 50px rgba(255, 215, 0, 0.7);
+                border: 4px solid rgba(255,255,255,0.5);
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎉</div>
+                <div>LEVEL UP!</div>
+                <div style="font-size: 1.5rem; margin-top: 1rem;">Level ${playerLevel}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes levelUpAnim {
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-20deg); }
+                    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+                    40% { transform: translate(-50%, -50%) scale(1) rotate(-5deg); }
+                    60% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+                    80% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Play sound
+            playSound('victory');
+            
+            // Remove notification
+            setTimeout(() => {
+                notification.remove();
+                style.remove();
+            }, 2000);
         }
 
         function showEndGameStats(win) {
@@ -2225,6 +2474,10 @@
                     <span class="stat-label">Placement</span>
                     <span class="stat-value">${matchStats.placement}${matchStats.placement === 1 ? 'st' : matchStats.placement === 2 ? 'nd' : matchStats.placement === 3 ? 'rd' : 'th'}</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level Bonus</span>
+                    <span class="stat-value">+${Math.round((playerLevel * 0.05) * 100)}%</span>
+                </div>
             `;
             
             if (matchStats.placement <= 10) {
@@ -2245,8 +2498,103 @@
                 `;
             }
             
-            document.getElementById('total-points').textContent = `Total Points: ${totalPoints}`;
+            if (matchStats.placement === 1) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Victory Royale!</span>
+                        <span class="stat-value">50</span>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('total-points').textContent = `Total Points: ${totalPoints} XP`;
             document.getElementById('endgame-stats').style.display = 'flex';
+        }
+
+        // ===============================================================
+        // === DAY/NIGHT CYCLE SYSTEM ===================================
+        // ===============================================================
+
+        function initDayNightCycle() {
+            // Create sun light (directional)
+            dayNightCycle.sunLight = new THREE.DirectionalLight(0xffffff, dayNightCycle.ambientIntensity);
+            dayNightCycle.sunLight.position.set(100, 200, 100);
+            dayNightCycle.sunLight.castShadow = true;
+            scene.add(dayNightCycle.sunLight);
+            
+            // Create moon light (weaker blue light)
+            dayNightCycle.moonLight = new THREE.DirectionalLight(0x88ccff, 0.3);
+            dayNightCycle.moonLight.position.set(-100, 200, -100);
+            dayNightCycle.moonLight.visible = false;
+            scene.add(dayNightCycle.moonLight);
+            
+            // Update indicator
+            updateDayNightIndicator();
+        }
+
+        function updateDayNightCycle(dt) {
+            dayNightCycle.cycleTime += dt;
+            
+            // Check if cycle should change
+            if (dayNightCycle.cycleTime >= dayNightCycle.cycleDuration) {
+                dayNightCycle.cycleTime = 0;
+                dayNightCycle.isDay = !dayNightCycle.isDay;
+                
+                // Smooth transition between day and night
+                const transitionDuration = 10; // 10 seconds transition
+                const transitionInterval = setInterval(() => {
+                    if (dayNightCycle.isDay) {
+                        // Transition to day
+                        dayNightCycle.sunLight.intensity = Math.min(dayNightCycle.ambientIntensity, 
+                            dayNightCycle.sunLight.intensity + (dayNightCycle.ambientIntensity / (transitionDuration * 60)));
+                        dayNightCycle.moonLight.intensity = Math.max(0, 
+                            dayNightCycle.moonLight.intensity - (0.3 / (transitionDuration * 60)));
+                        
+                        if (dayNightCycle.sunLight.intensity >= dayNightCycle.ambientIntensity) {
+                            dayNightCycle.moonLight.visible = false;
+                            clearInterval(transitionInterval);
+                        }
+                    } else {
+                        // Transition to night
+                        dayNightCycle.sunLight.intensity = Math.max(0.1, 
+                            dayNightCycle.sunLight.intensity - (dayNightCycle.ambientIntensity / (transitionDuration * 60)));
+                        dayNightCycle.moonLight.visible = true;
+                        dayNightCycle.moonLight.intensity = Math.min(0.3, 
+                            dayNightCycle.moonLight.intensity + (0.3 / (transitionDuration * 60)));
+                        
+                        if (dayNightCycle.moonLight.intensity >= 0.3) {
+                            clearInterval(transitionInterval);
+                        }
+                    }
+                    
+                    // Update scene fog color
+                    const fogColor = dayNightCycle.isDay ? 0x87CEEB : 0x0a0a2a;
+                    scene.fog.color.setHex(fogColor);
+                    
+                }, 16); // ~60fps
+                
+                updateDayNightIndicator();
+            }
+            
+            // Update sun/moon position for day/night
+            if (dayNightCycle.isDay) {
+                const timeRatio = dayNightCycle.cycleTime / dayNightCycle.cycleDuration;
+                const sunHeight = 200 + Math.sin(timeRatio * Math.PI) * 50;
+                dayNightCycle.sunLight.position.y = sunHeight;
+            }
+        }
+
+        function updateDayNightIndicator() {
+            const icon = document.getElementById('day-night-icon');
+            const text = document.getElementById('day-night-text');
+            
+            if (dayNightCycle.isDay) {
+                icon.textContent = '🌞';
+                text.textContent = 'Day';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Night';
+            }
         }
 
         // ===============================================================
@@ -2258,7 +2606,6 @@
             flash.position.copy(position);
             scene.add(flash);
             
-            // Add particle effect
             const particles = new THREE.Group();
             for(let i = 0; i < 5; i++) {
                 const particle = new THREE.Mesh(
@@ -2284,7 +2631,6 @@
             }
             scene.add(particles);
             
-            // Fade out light
             setTimeout(() => {
                 scene.remove(flash);
                 scene.remove(particles);
@@ -2309,7 +2655,6 @@
         }
 
         function createImpactEffect(position, isHeadshot = false) {
-            // Impact particles
             const particles = new THREE.Group();
             const particleCount = isHeadshot ? 10 : 5;
             
@@ -2338,7 +2683,6 @@
             }
             scene.add(particles);
             
-            // Blood effect for headshots
             if (isHeadshot) {
                 const blood = new THREE.Mesh(
                     new THREE.SphereGeometry(0.3, 8, 8),
@@ -2371,18 +2715,15 @@
                     continue;
                 }
                 
-                // Update position if has velocity
                 if (effect.velocity) {
                     effect.mesh.position.add(effect.velocity.clone().multiplyScalar(dt));
                 }
                 
-                // Fade out
                 const progress = effect.age / effect.lifetime;
                 if (effect.mesh.material) {
                     effect.mesh.material.opacity = 1 - progress;
                 }
                 
-                // Scale down if needed
                 if (effect.scaleDown) {
                     effect.mesh.scale.setScalar(1 - progress * 0.5);
                 }
@@ -2394,42 +2735,41 @@
         // ===============================================================
 
         function optimizePerformance() {
-            // Reduce draw calls by merging geometries
-            const mergedGeometries = new Map();
+            // FPS Limiter for high-end devices
+            const now = performance.now();
+            frameTime = now - lastFrameTime;
+            const targetFrameTime = 1000 / targetFPS;
             
-            // Group similar objects
-            buildings.forEach(building => {
-                if (building.type === 'tree') {
-                    // Merge tree geometries
-                    if (!mergedGeometries.has('trees')) {
-                        mergedGeometries.set('trees', new THREE.BoxGeometry(0.1, 0.1, 0.1));
-                    }
-                }
-            });
-            
-            // Reduce particle count
-            if (particleSystems.length > 20) {
-                particleSystems.splice(0, particleSystems.length - 20);
+            if (frameTime < targetFrameTime) {
+                return; // Wait for next frame
             }
-            
-            // Cull distant objects
-            objects.forEach(obj => {
-                if (obj.position.distanceTo(camera.position) > renderDistance) {
-                    obj.visible = false;
-                } else {
-                    obj.visible = true;
-                }
-            });
+            lastFrameTime = now;
             
             // Update FPS counter
             frameCount++;
-            const now = performance.now();
             if (now - lastFpsUpdate >= 1000) {
                 currentFPS = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
                 frameCount = 0;
                 lastFpsUpdate = now;
                 document.getElementById('fps-counter').textContent = `FPS: ${currentFPS}`;
+                
+                // Auto-adjust settings based on FPS
+                if (currentFPS < 30) {
+                    renderDistance = 200;
+                    botUpdateInterval = 200;
+                } else if (currentFPS > 90) {
+                    renderDistance = 400;
+                    botUpdateInterval = 50;
+                } else {
+                    renderDistance = 300;
+                    botUpdateInterval = 100;
+                }
             }
+            
+            // Cull distant objects
+            objects.forEach(obj => {
+                obj.visible = obj.position.distanceTo(camera.position) <= renderDistance;
+            });
         }
 
         // ===============================================================
@@ -2437,15 +2777,10 @@
         // ===============================================================
 
         function getEnhancedTerrainHeight(x, z) {
-            // Snowy mountains in the corners
             const mountainScale = 0.01;
             const mountainHeight = 30;
-            
-            // River through the middle
             const riverWidth = 20;
             const riverDepth = 5;
-            
-            // Hills and valleys
             const hillScale1 = 0.02;
             const hillScale2 = 0.05;
             const hillScale3 = 0.1;
@@ -2462,14 +2797,13 @@
             if (distFromCenter > WORLD_SIZE * 0.4) {
                 y += (distFromCenter - WORLD_SIZE * 0.4) * 0.3;
                 
-                // Add snow caps
                 if (distFromCenter > WORLD_SIZE * 0.45) {
                     y += Math.sin(distFromCenter * mountainScale) * mountainHeight * 0.5;
                 }
             }
             
-            // River through middle (low valley)
-            const riverDist = Math.abs(z); // River along x-axis
+            // River through middle
+            const riverDist = Math.abs(z);
             if (riverDist < riverWidth) {
                 y -= riverDepth * (1 - riverDist / riverWidth);
             }
@@ -2481,27 +2815,21 @@
         }
 
         function createEnhancedTerrainMaterial() {
-            // Create a more realistic terrain material
-            const textureLoader = new THREE.TextureLoader();
-            
-            // Create a canvas for procedural texture
             const canvas = document.createElement('canvas');
             canvas.width = 512;
             canvas.height = 512;
             const ctx = canvas.getContext('2d');
             
-            // Create gradient for terrain
             const gradient = ctx.createLinearGradient(0, 0, 0, 512);
-            gradient.addColorStop(0, '#87CEEB'); // Sky
-            gradient.addColorStop(0.1, '#2E8B57'); // Grass
-            gradient.addColorStop(0.3, '#8B7355'); // Dirt
-            gradient.addColorStop(0.7, '#A9A9A9'); // Rock
-            gradient.addColorStop(1, '#FFFFFF'); // Snow
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(0.1, '#2E8B57');
+            gradient.addColorStop(0.3, '#8B7355');
+            gradient.addColorStop(0.7, '#A9A9A9');
+            gradient.addColorStop(1, '#FFFFFF');
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 512, 512);
             
-            // Add some texture
             ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
             for(let i = 0; i < 1000; i++) {
                 const x = Math.random() * 512;
@@ -2524,20 +2852,10 @@
         }
 
         // ===============================================================
-        // === ENHANCED BOT AI ===========================================
+        // === FIXED BOT AI (Simple but working) =========================
         // ===============================================================
 
-        const BOT_STATES = {
-            PATROL: 'patrol',
-            CHASE: 'chase',
-            COMBAT: 'combat',
-            FLEE: 'flee',
-            LOOT: 'loot',
-            HIDE: 'hide'
-        };
-
         function updateEnhancedBots(dt, now) {
-            // Update bots less frequently for performance
             if (now - lastBotUpdate < botUpdateInterval) return;
             lastBotUpdate = now;
             
@@ -2548,252 +2866,105 @@
                 const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
                 bot.mesh.position.y = h + 1;
 
-                const target = findClosestTarget(bot);
-                const distToTarget = target ? bot.mesh.position.distanceTo(camera.position) : Infinity;
-                
-                // Initialize bot state if not set
-                if (!bot.state) {
-                    bot.state = BOT_STATES.PATROL;
-                    bot.lastStateChange = now;
-                    bot.patrolTarget = getRandomPatrolPoint();
+                // Simple wandering behavior when no target
+                if (!bot.target || bot.target.dead) {
+                    const playerDist = bot.mesh.position.distanceTo(camera.position);
+                    
+                    if (playerDist < 50 && !player.dead) {
+                        bot.target = player;
+                    } else {
+                        // Wander randomly
+                        if (now - bot.lastWander > 3000) {
+                            bot.wanderDirection = new THREE.Vector3(
+                                Math.random() - 0.5,
+                                0,
+                                Math.random() - 0.5
+                            ).normalize();
+                            bot.lastWander = now;
+                        }
+                        
+                        bot.mesh.lookAt(
+                            bot.mesh.position.x + bot.wanderDirection.x,
+                            bot.mesh.position.y,
+                            bot.mesh.position.z + bot.wanderDirection.z
+                        );
+                        
+                        bot.mesh.translateZ(WALK_SPEED * 0.3 * dt);
+                    }
                 }
                 
-                // State transitions
-                const timeInState = now - bot.lastStateChange;
-                
-                switch(bot.state) {
-                    case BOT_STATES.PATROL:
-                        handlePatrolState(bot, dt, now);
-                        if (target && distToTarget < 50 && timeInState > 2000) {
-                            bot.state = BOT_STATES.CHASE;
-                            bot.lastStateChange = now;
-                        }
-                        break;
+                // Chase player if target exists
+                if (bot.target && !bot.target.dead) {
+                    const targetPos = bot.target === player ? camera.position : bot.target.mesh.position;
+                    const direction = new THREE.Vector3()
+                        .subVectors(targetPos, bot.mesh.position)
+                        .normalize();
+                    
+                    bot.mesh.lookAt(
+                        bot.mesh.position.x + direction.x,
+                        bot.mesh.position.y,
+                        bot.mesh.position.z + direction.z
+                    );
+                    
+                    const dist = bot.mesh.position.distanceTo(targetPos);
+                    
+                    if (dist > 20) {
+                        // Move towards target
+                        bot.mesh.translateZ(WALK_SPEED * 0.5 * dt);
+                    } else if (dist < 10) {
+                        // Move away if too close
+                        bot.mesh.translateZ(-WALK_SPEED * 0.3 * dt);
+                    }
+                    
+                    // Shoot at target
+                    if (dist < 40 && !bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
+                        const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
+                        const fireDirection = new THREE.Vector3()
+                            .subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin)
+                            .normalize();
                         
-                    case BOT_STATES.CHASE:
-                        handleChaseState(bot, dt, now, target);
-                        if (!target || distToTarget > 60 || timeInState > 10000) {
-                            bot.state = BOT_STATES.PATROL;
-                            bot.lastStateChange = now;
-                            bot.patrolTarget = getRandomPatrolPoint();
-                        } else if (distToTarget < 20 && timeInState > 1000) {
-                            bot.state = BOT_STATES.COMBAT;
-                            bot.lastStateChange = now;
-                        }
-                        break;
+                        fireDirection.x += (Math.random() - 0.5) * 0.2;
+                        fireDirection.y += (Math.random() - 0.5) * 0.2;
+                        fireDirection.z += (Math.random() - 0.5) * 0.2;
+                        fireDirection.normalize();
                         
-                    case BOT_STATES.COMBAT:
-                        handleCombatState(bot, dt, now, target);
-                        if (!target || distToTarget > 30 || timeInState > 5000) {
-                            bot.state = BOT_STATES.CHASE;
-                            bot.lastStateChange = now;
-                        } else if (bot.health < 40 && timeInState > 2000) {
-                            bot.state = BOT_STATES.FLEE;
-                            bot.lastStateChange = now;
-                            bot.fleeTarget = getFleePoint(bot.mesh.position);
-                        }
-                        break;
+                        createMuzzleFlash(fireOrigin, fireDirection);
                         
-                    case BOT_STATES.FLEE:
-                        handleFleeState(bot, dt, now);
-                        if (timeInState > 8000 || (!target || distToTarget > 50)) {
-                            bot.state = BOT_STATES.HIDE;
-                            bot.lastStateChange = now;
-                            bot.hideUntil = now + 5000 + Math.random() * 5000;
-                        }
-                        break;
+                        const ray = new THREE.Raycaster(fireOrigin, fireDirection);
+                        const targets = [camera];
+                        const hits = ray.intersectObjects(targets, false);
                         
-                    case BOT_STATES.HIDE:
-                        handleHideState(bot, dt, now);
-                        if (now > bot.hideUntil) {
-                            bot.state = BOT_STATES.PATROL;
-                            bot.lastStateChange = now;
-                            bot.patrolTarget = getRandomPatrolPoint();
-                        } else if (target && distToTarget < 30) {
-                            bot.state = BOT_STATES.COMBAT;
-                            bot.lastStateChange = now;
+                        if (hits.length > 0) {
+                            const hit = hits[0];
+                            takeDamage(bot.weapon.stats.dmg * 0.7, hit.point); // Bots do 70% damage
+                            createImpactEffect(hit.point, false);
                         }
-                        break;
+                        
+                        bot.lastShot = now;
+                        bot.weapon.stats.currentMag--;
+                        
+                        if (bot.weapon.stats.currentMag <= 0) {
+                            bot.isReloading = true;
+                            setTimeout(() => {
+                                if (bot.weapon) {
+                                    bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                                    bot.isReloading = false;
+                                }
+                            }, bot.weapon.stats.reload * 1.5); // Bots reload slower
+                        }
+                    }
                 }
                 
                 // Update bot weapon ammo
-                if (bot.weapon && bot.weapon.stats.currentMag <= 0) {
+                if (bot.weapon && bot.weapon.stats.currentMag <= 0 && !bot.isReloading) {
                     bot.isReloading = true;
                     setTimeout(() => {
                         if (bot.weapon) {
                             bot.weapon.stats.currentMag = bot.weapon.stats.mag;
                             bot.isReloading = false;
                         }
-                    }, bot.weapon.stats.reload);
+                    }, bot.weapon.stats.reload * 1.5);
                 }
-            }
-        }
-
-        function getRandomPatrolPoint() {
-            return new THREE.Vector3(
-                (Math.random() - 0.5) * WORLD_SIZE * 0.8,
-                0,
-                (Math.random() - 0.5) * WORLD_SIZE * 0.8
-            );
-        }
-
-        function getFleePoint(fromPosition) {
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 50 + Math.random() * 50;
-            return new THREE.Vector3(
-                fromPosition.x + Math.cos(angle) * distance,
-                0,
-                fromPosition.z + Math.sin(angle) * distance
-            );
-        }
-
-        function handlePatrolState(bot, dt, now) {
-            if (!bot.patrolTarget) {
-                bot.patrolTarget = getRandomPatrolPoint();
-            }
-            
-            const direction = new THREE.Vector3()
-                .subVectors(bot.patrolTarget, bot.mesh.position)
-                .setY(0)
-                .normalize();
-            
-            bot.mesh.lookAt(
-                bot.mesh.position.x + direction.x,
-                bot.mesh.position.y,
-                bot.mesh.position.z + direction.z
-            );
-            
-            const speed = WALK_SPEED * 0.3;
-            bot.mesh.translateZ(speed * dt);
-            
-            // Check if reached patrol point
-            if (bot.mesh.position.distanceTo(bot.patrolTarget) < 10) {
-                bot.patrolTarget = getRandomPatrolPoint();
-            }
-            
-            // Random direction changes
-            if (Math.random() < 0.01) {
-                bot.mesh.rotation.y += (Math.random() - 0.5) * Math.PI;
-            }
-        }
-
-        function handleChaseState(bot, dt, now, target) {
-            if (!target) return;
-            
-            const direction = new THREE.Vector3()
-                .subVectors(target.position, bot.mesh.position)
-                .setY(0)
-                .normalize();
-            
-            bot.mesh.lookAt(
-                bot.mesh.position.x + direction.x,
-                bot.mesh.position.y,
-                bot.mesh.position.z + direction.z
-            );
-            
-            const speed = WALK_SPEED * 0.6;
-            bot.mesh.translateZ(speed * dt);
-            
-            // Occasionally take cover
-            if (Math.random() < 0.02) {
-                bot.mesh.rotation.y += Math.PI * 0.5;
-                bot.mesh.translateZ(-5);
-            }
-        }
-
-        function handleCombatState(bot, dt, now, target) {
-            if (!target) return;
-            
-            // Look at target
-            bot.mesh.lookAt(
-                target.position.x,
-                bot.mesh.position.y,
-                target.position.z
-            );
-            
-            // Strafe while shooting
-            if (now % 2000 < 1000) {
-                bot.mesh.translateX(2 * dt);
-            } else {
-                bot.mesh.translateX(-2 * dt);
-            }
-            
-            // Shoot at target
-            if (!bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
-                const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                const fireDirection = new THREE.Vector3()
-                    .subVectors(target.position.clone().setY(target.position.y - 0.5), fireOrigin)
-                    .normalize();
-                
-                // Add some inaccuracy
-                fireDirection.x += (Math.random() - 0.5) * 0.1;
-                fireDirection.y += (Math.random() - 0.5) * 0.1;
-                fireDirection.z += (Math.random() - 0.5) * 0.1;
-                fireDirection.normalize();
-                
-                // Create visual effect
-                createMuzzleFlash(fireOrigin, fireDirection);
-                
-                // Handle hitscan
-                const ray = new THREE.Raycaster(fireOrigin, fireDirection);
-                const targets = [camera].concat(bots.filter(b => b !== bot).map(b => b.mesh));
-                const hits = ray.intersectObjects(targets, false);
-                
-                if (hits.length > 0) {
-                    const hit = hits[0];
-                    if (hit.object === camera) {
-                        takeDamage(bot.weapon.stats.dmg, hit.point);
-                        createImpactEffect(hit.point, false);
-                    }
-                }
-                
-                bot.lastShot = now;
-                bot.weapon.stats.currentMag--;
-                
-                if (bot.weapon.stats.currentMag <= 0) {
-                    bot.isReloading = true;
-                    setTimeout(() => {
-                        bot.weapon.stats.currentMag = bot.weapon.stats.mag;
-                        bot.isReloading = false;
-                    }, bot.weapon.stats.reload);
-                }
-            }
-        }
-
-        function handleFleeState(bot, dt, now) {
-            if (!bot.fleeTarget) {
-                bot.fleeTarget = getFleePoint(bot.mesh.position);
-            }
-            
-            const direction = new THREE.Vector3()
-                .subVectors(bot.fleeTarget, bot.mesh.position)
-                .setY(0)
-                .normalize();
-            
-            bot.mesh.lookAt(
-                bot.mesh.position.x + direction.x,
-                bot.mesh.position.y,
-                bot.mesh.position.z + direction.z
-            );
-            
-            const speed = SPRINT_SPEED * 0.8;
-            bot.mesh.translateZ(speed * dt);
-            
-            // Check if reached flee point
-            if (bot.mesh.position.distanceTo(bot.fleeTarget) < 20) {
-                bot.state = BOT_STATES.HIDE;
-                bot.lastStateChange = now;
-                bot.hideUntil = now + 5000 + Math.random() * 5000;
-            }
-        }
-
-        function handleHideState(bot, dt, now) {
-            // Stay still and crouch (simulated by lowering position)
-            bot.mesh.position.y = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z) + 0.5;
-            
-            // Occasionally peek
-            if (Math.random() < 0.005) {
-                bot.mesh.rotation.y += (Math.random() - 0.5) * Math.PI * 0.5;
             }
         }
 
@@ -2830,9 +3001,9 @@
                     
                 case 'player_hit':
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.15);
@@ -3007,7 +3178,6 @@
                     vibrationPattern = { duration: 100, weakMagnitude: 0.3, strongMagnitude: 0.1 };
             }
             
-            // Try to vibrate the gamepad
             try {
                 if (gamepad.vibrationActuator) {
                     gamepad.vibrationActuator.playEffect("dual-rumble", {
@@ -3118,6 +3288,7 @@
             }
         }
 
+        // FIXED: IMPROVED ADS SYSTEM - Better sniper zoom
         function toggleADS(bool) {
             player.ads = bool;
             const item = player.inventory[player.slot];
@@ -3138,10 +3309,11 @@
                 crosshair.style.display = 'none';
                 if (isClassicScope) {
                     scopeOverlay.style.display = 'block';
-                    camera.fov = 10;
+                    camera.fov = 5; // Much better zoom for snipers
+                    scopeOverlay.style.background = 'radial-gradient(circle, transparent 15%, rgba(0, 0, 0, 0.98) 16%, black 100%)';
                 } else if (isRedDotScope || isHoloScope) {
                     redDotScope.style.display = 'block';
-                    camera.fov = (item.stats.name === WEAPONS_BASE.FALCON_SNIPER.name) ? 20 : 35;
+                    camera.fov = 15; // Better zoom for red dot/holo
                 }
             } else {
                 const isSniperFamily = item && item.category === 'weapon' && (item.stats.scope === 'classic' || item.stats.scope === 'red_dot' || item.stats.scope === 'holo_twister');
@@ -3323,7 +3495,7 @@
 
         function generateTerrain() {
             const size = WORLD_SIZE;
-            const segments = 96; // Reduced for performance
+            const segments = 96;
             const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
             geometry.rotateX(-Math.PI / 2);
 
@@ -3371,8 +3543,68 @@
             createBox(x, h+5, z, 3, 3, 3, 0x228B22, 'tree'); 
         }
 
+        // NEW: Fortnite POI 1 - Tilted Towers inspired
+        function createTiltedTowers() {
+            const x = -150, z = -150;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            // Main towers
+            for(let i = 0; i < 4; i++) {
+                for(let j = 0; j < 4; j++) {
+                    const towerX = x + (i * 25);
+                    const towerZ = z + (j * 25);
+                    createBox(towerX, h+15, towerZ, 8, 30, 8, 0x708090);
+                    
+                    // Add some destroyed towers
+                    if (Math.random() < 0.3) {
+                        createBox(towerX + 2, h+40, towerZ + 2, 6, 10, 6, 0x505050);
+                    }
+                }
+            }
+            
+            // Central plaza
+            createBox(x + 50, h+0.1, z + 50, 40, 0.2, 40, 0x444444);
+            
+            // Chest spawns
+            for(let i = 0; i < 6; i++) {
+                const chestX = x + 20 + (Math.random() * 60);
+                const chestZ = z + 20 + (Math.random() * 60);
+                spawnChest(chestX, h+1, chestZ);
+            }
+        }
+
+        // NEW: Fortnite POI 2 - Pleasant Park inspired
+        function createPleasantPark() {
+            const x = 200, z = 200;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            // Create houses in a circle
+            const houseCount = 8;
+            const radius = 60;
+            
+            for(let i = 0; i < houseCount; i++) {
+                const angle = (i / houseCount) * Math.PI * 2;
+                const houseX = x + Math.cos(angle) * radius;
+                const houseZ = z + Math.sin(angle) * radius;
+                
+                createWoodHouse(houseX, houseZ, 12, 10, 12);
+                
+                // Add garage
+                createBox(houseX + 8, h+4, houseZ, 6, 5, 8, 0x666666);
+                
+                // Spawn chests
+                if (Math.random() < 0.7) {
+                    spawnChest(houseX, h+1, houseZ);
+                }
+            }
+            
+            // Central park
+            createBox(x, h+0.1, z, 40, 0.2, 40, 0x2E8B57);
+            createBox(x, h+3, z, 3, 6, 3, 0x8B4513); // Central tree
+        }
+
         function generatePOIs() {
-            // Original POIs with enhanced terrain
+            // Original POIs
             for(let i=0; i<3; i++) {
                 const x = (Math.random()-0.5)*80;
                 const z = (Math.random()-0.5)*80;
@@ -3436,16 +3668,20 @@
             createBuilding(-20, -420, 15, 8, 15, 0x333333, -Math.PI/4);
             createBox(0, getEnhancedTerrainHeight(0, -400)+5, -400, 10, 10, 10, 0xFFD700);
 
-            // Original Trees (additional)
-            for(let i=0; i<40; i++) { // Reduced tree count for performance
+            // Original Trees
+            for(let i=0; i<40; i++) {
                 const x = (Math.random()-0.5)*400;
                 const z = (Math.random()-0.5)*400;
                 createTree(x, z);
             }
+            
+            // NEW: Add Fortnite POIs
+            createTiltedTowers();
+            createPleasantPark();
         }
 
         function spawnCars() {
-            for(let i=0; i<3; i++) { // Reduced car count for performance
+            for(let i=0; i<3; i++) {
                 const x = (Math.random()-0.5)*200;
                 const z = (Math.random()-0.5)*200;
                 const h = getEnhancedTerrainHeight(x, z);
@@ -3522,12 +3758,8 @@
                     velocity: new THREE.Vector3(0, 0, 0),
                     lastStormDamage: 0,
                     moveCooldown: 0, 
-                    currentDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize(),
-                    attackRange: 50,
-                    isAggressive: true,
-                    state: BOT_STATES.PATROL,
-                    lastStateChange: performance.now(),
-                    patrolTarget: null,
+                    wanderDirection: new THREE.Vector3(Math.random()-0.5, 0, Math.random()-0.5).normalize(),
+                    lastWander: performance.now(),
                     isReloading: false
                 });
             }
@@ -3537,6 +3769,7 @@
         // === ITEM & HEALING LOGIC ======================================
         // ===============================================================
 
+        // FIXED: Can switch healing item with healing item
         function useHealingItem() {
             const item = player.inventory[player.slot];
             
@@ -3559,7 +3792,7 @@
                     item.count -= 1; 
                     if (item.count <= 0) player.inventory[player.slot] = null;
                     updateUI();
-                    playSound('use_mini');
+                    playSound('pickup_item');
                     if (player.overshield < OVER_SHIELD_MAX) {
                         player.lastOvershieldDamage = performance.now();
                         player.lastOvershieldBreak = performance.now();
@@ -3582,16 +3815,16 @@
                 updateUI();
                 
                 if (!item.continuous && !item.instant) {
-                    playSound('use_timed_start');
+                    playSound('open_chest');
                     setTimeout(() => {
                         if(player.isHealing && player.healingItem === item) {
                             applyHealing(item);
                             finishHealing();
-                            playSound('use_timed_finish');
+                            playSound('pickup_item');
                         }
                     }, item.time);
                 } else if (item.continuous) {
-                    playSound('use_chug_start');
+                    playSound('open_chest');
                 }
             }
         }
@@ -3632,7 +3865,7 @@
 
             if (timeElapsed >= item.time || (player.health === 100 && player.shield === 100 && player.overshield === OVER_SHIELD_MAX)) {
                 finishHealing();
-                playSound('use_chug_finish');
+                playSound('pickup_item');
             }
         }
 
@@ -3657,7 +3890,7 @@
             updateUI();
         }
 
-        // UPDATED: Auto-swap items without prompts
+        // FIXED: Improved interaction system
         function tryInteract() {
             const pos = camera.position;
             
@@ -3671,7 +3904,7 @@
                     const shiftDir = new THREE.Vector3();
                     shiftDir.setFromEuler(new THREE.Euler(0, door.initialRotation + Math.PI / 4, 0));
                     door.mesh.position.sub(shiftDir.multiplyScalar(0.75)); 
-                    playSound('open_door');
+                    playSound('open_chest');
                     if (player.isHealing) finishHealing();
                     return;
                 }
@@ -3686,12 +3919,12 @@
                         camera.position.y += 2; 
                         camera.position.x = c.mesh.position.x + 5; 
                         camera.position.z = c.mesh.position.z + 5; 
-                        playSound('exit_vehicle');
+                        playSound('pickup_item');
                     } else {
                         if (player.isHealing) finishHealing();
                         player.vehicle = c;
                         c.driving = true;
-                        playSound('enter_vehicle');
+                        playSound('pickup_item');
                     }
                     updateUI();
                     return;
@@ -3728,7 +3961,7 @@
                 }
             }
 
-            // UPDATED: Auto-swap without prompts
+            // FIXED: Better item swapping logic
             for(let i=loot.length-1; i>=0; i--) {
                 const currentLoot = loot[i];
                 if(pos.distanceTo(currentLoot.mesh.position) < 4) {
@@ -3736,7 +3969,7 @@
                     
                     if (player.isHealing) finishHealing();
 
-                    // Always try to stack consumables first
+                    // Try to stack consumables first
                     if (currentLoot.data.category === 'consumable') {
                         const stackSlot = player.inventory.find(item => item && item.name === currentLoot.data.name && item.count < item.maxStack);
                         if (stackSlot) {
@@ -3744,39 +3977,47 @@
                             scene.remove(currentLoot.mesh);
                             loot.splice(i, 1);
                             updateUI();
+                            playSound('pickup_item');
                             return;
                         }
                     }
 
-                    // Auto-swap logic
+                    // Check if we can switch healing with healing
+                    if (currentItem && currentItem.category === 'consumable' && 
+                        currentLoot.data.category === 'consumable') {
+                        // Direct swap
+                        const temp = currentItem;
+                        player.inventory[player.slot] = currentLoot.data;
+                        spawnLoot(currentLoot.mesh.position.x, currentLoot.mesh.position.y, 
+                                 currentLoot.mesh.position.z, temp);
+                        scene.remove(currentLoot.mesh);
+                        loot.splice(i, 1);
+                        updateUI();
+                        playSound('pickup_item');
+                        return;
+                    }
+
+                    // Normal swap logic
                     if (currentItem) {
-                        // Different categories or same category - auto swap
-                        if (currentItem.category !== currentLoot.data.category || 
-                            (currentLoot.data.category === 'weapon')) {
-                            
-                            dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
-                            giveItem(currentLoot.data, player.slot);
-                            scene.remove(currentLoot.mesh);
-                            loot.splice(i, 1);
-                            updateUI();
-                            playSound('pickup_item');
-                            
-                            // Check for legendary items
-                            if (currentLoot.data.rarity === RARITY_MULTIPLIERS.LEGENDARY || 
-                                currentLoot.data.rarity === RARITY_MULTIPLIERS.MYTHIC) {
-                                matchStats.legendariesHeld++;
-                            }
-                            return;
+                        dropItem(player.slot, currentLoot.mesh.position.clone().add(new THREE.Vector3((Math.random()-0.5)*2, 0, (Math.random()-0.5)*2)));
+                        giveItem(currentLoot.data, player.slot);
+                        scene.remove(currentLoot.mesh);
+                        loot.splice(i, 1);
+                        updateUI();
+                        playSound('pickup_item');
+                        
+                        if (currentLoot.data.rarity === RARITY_MULTIPLIERS.LEGENDARY || 
+                            currentLoot.data.rarity === RARITY_MULTIPLIERS.MYTHIC) {
+                            matchStats.legendariesHeld++;
                         }
+                        return;
                     } else {
-                        // Empty slot - just pick up
                         if(giveItem(currentLoot.data, player.slot)) {
                             scene.remove(currentLoot.mesh);
                             loot.splice(i, 1);
                             updateUI();
                             playSound('pickup_item');
                             
-                            // Check for legendary items
                             if (currentLoot.data.rarity === RARITY_MULTIPLIERS.LEGENDARY || 
                                 currentLoot.data.rarity === RARITY_MULTIPLIERS.MYTHIC) {
                                 matchStats.legendariesHeld++;
@@ -3798,9 +4039,9 @@
                         scene.remove(b.mesh);
                         objects = objects.filter(obj => obj !== b.mesh);
                         buildings = buildings.filter(bldg => bldg !== b);
-                        playSound('harvest_break');
+                        playSound('explosion');
                     } else {
-                        playSound('harvest_hit');
+                        playSound('impact_hit');
                     }
                     return;
                 }
@@ -3820,7 +4061,7 @@
 
             spawnLoot(position.x, position.y + 1, position.z, itemToDrop);
             player.inventory[slotIndex] = null;
-            playSound('drop_item');
+            playSound('pickup_item');
         }
 
         function createWeaponItem(typeKey, rarityKey) {
@@ -3832,6 +4073,9 @@
             if (typeKey === 'STINGER') damageMultiplier = 1.25;
             if (typeKey === 'DUAL_SMG') damageMultiplier = 1.25;
             if (typeKey === 'BOLT_SNIPER' || typeKey === 'SNIPER' || typeKey === 'FALCON_SNIPER') damageMultiplier = 1.5;
+            
+            // Apply level damage bonus
+            damageMultiplier *= player.levelDamageMultiplier;
             
             return {
                 category: 'weapon',
@@ -3958,7 +4202,6 @@
             playSound('shoot');
             if (controllerConnected) vibrateController('shoot');
             
-            // Create muzzle flash
             createMuzzleFlash(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(1)), fireDirection);
             
             if (item.stats.bulletType === 'hitscan') {
@@ -4016,7 +4259,6 @@
                         if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
                     }
 
-                    // Create bullet trail
                     createBulletTrail(fireOrigin, hit.point);
                     
                     if(hitBot && hitBot !== shooter) {
@@ -4052,7 +4294,6 @@
                         playSound('impact_hit');
                     }
                 } else {
-                    // Create bullet trail into distance
                     const endPoint = fireOrigin.clone().add(spreadDir.clone().multiplyScalar(item.stats.range));
                     createBulletTrail(fireOrigin, endPoint);
                 }
@@ -4106,7 +4347,6 @@
         function explode(projectile, hitPoint) {
             playSound('explosion');
             
-            // Create explosion effect
             const explosionLight = new THREE.PointLight(0xff6600, 5, 20);
             explosionLight.position.copy(hitPoint);
             scene.add(explosionLight);
@@ -4133,7 +4373,6 @@
             }
             scene.add(explosionParticles);
             
-            // Remove light after short time
             setTimeout(() => {
                 scene.remove(explosionLight);
                 scene.remove(explosionParticles);
@@ -4216,6 +4455,9 @@
             amount = Math.floor(amount);
             if (amount <= 0 || player.dead) return;
             
+            // Play hit sound
+            playSound('player_hit');
+            
             let remainingDmg = amount;
             
             const overshieldBefore = player.overshield;
@@ -4258,16 +4500,7 @@
             }
         }
 
-        function findClosestTarget(bot) {
-            if (player.health > 0 && !player.dead) {
-                const dist = bot.mesh.position.distanceTo(camera.position);
-                if (dist <= bot.attackRange) {
-                    return player;
-                }
-            }
-            return null;
-        }
-
+        // FIXED: Overshield regeneration system
         function overshieldRegen(dt) {
              if (player.dead || player.overshield === OVER_SHIELD_MAX) return;
 
@@ -4323,7 +4556,7 @@
         
         function updateUI() {
             player.health = Math.max(0, Math.min(100, player.health));
-            player.shield = Math.max(0, Math.min(100, player.shield));
+            player.shield = Math.max(0, Math.min(100 + player.levelShieldBonus, player.shield));
             player.overshield = Math.max(0, Math.min(OVER_SHIELD_MAX, player.overshield));
             
             document.getElementById('health-value').innerText = Math.ceil(player.health);
@@ -4332,7 +4565,7 @@
             document.getElementById('wood-value').innerText = player.wood;
             
             document.getElementById('health-bar').style.width = player.health + '%';
-            document.getElementById('shield-bar').style.width = player.shield + '%';
+            document.getElementById('shield-bar').style.width = (player.shield / (100 + player.levelShieldBonus)) * 100 + '%';
             document.getElementById('overshield-bar').style.width = (player.overshield / OVER_SHIELD_MAX) * 100 + '%';
             
             player.inventory.forEach((item, i) => {
@@ -4447,7 +4680,7 @@
         }
 
         // ===============================================================
-        // === INPUT & CONTROL MANAGEMENT (UPDATED FOR V19.7) ============
+        // === INPUT & CONTROL MANAGEMENT (FIXED FOR V19.7) ==============
         // ===============================================================
         
         function setGameMode(mode) {
@@ -4466,7 +4699,7 @@
             } else if (mode === 'controller') {
                 if (controls) controls.enabled = false;
                 mobileControls.style.display = 'none';
-                controllerLayout.style.display = 'none'; // Removed layout display
+                controllerLayout.style.display = 'none';
                 gameContainer.removeEventListener('mousedown', lockPointer);
             } else {
                 if (controls) controls.enabled = true;
@@ -4488,7 +4721,7 @@
             document.getElementById('game-container').addEventListener('mousedown', lockPointer);
         }
 
-        // UPDATED FOR V19.7: 50/50 split screen mobile controls
+        // FIXED: Improved mobile controls with better camera responsiveness
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
             const touchRight = document.getElementById('touch-right');
@@ -4500,6 +4733,7 @@
             let touchStartY = 0;
             let isTouchingLeft = false;
             let joystickActive = false;
+            let joystickOrigin = { x: 0, y: 0 };
             
             touchLeft.addEventListener('touchstart', (e) => {
                 e.preventDefault();
@@ -4507,6 +4741,8 @@
                 joystickActive = true;
                 const touch = e.touches[0];
                 const rect = movementZone.getBoundingClientRect();
+                joystickOrigin.x = rect.left + rect.width / 2;
+                joystickOrigin.y = rect.top + rect.height / 2;
                 touchStartX = touch.clientX;
                 touchStartY = touch.clientY;
             });
@@ -4515,14 +4751,11 @@
                 if (!isTouchingLeft) return;
                 e.preventDefault();
                 const touch = e.touches[0];
-                const rect = movementZone.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
                 
-                let dx = touch.clientX - centerX;
-                let dy = touch.clientY - centerY;
+                let dx = touch.clientX - joystickOrigin.x;
+                let dy = touch.clientY - joystickOrigin.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
-                const maxDist = rect.width / 2;
+                const maxDist = 75; // Fixed radius
                 
                 if(dist > maxDist) {
                     const ratio = maxDist / dist;
@@ -4532,10 +4765,12 @@
                 
                 joystickThumb.style.transform = `translate(${dx}px, ${dy}px)`;
                 
-                inputs.w = dy < -20;
-                inputs.s = dy > 20;
-                inputs.a = dx < -20;
-                inputs.d = dx > 20;
+                // Dead zone
+                const deadZone = 20;
+                inputs.w = dy < -deadZone;
+                inputs.s = dy > deadZone;
+                inputs.a = dx < -deadZone;
+                inputs.d = dx > deadZone;
                 inputs.sprint = dist > 50;
             });
             
@@ -4546,10 +4781,11 @@
                 inputs.w = inputs.s = inputs.a = inputs.d = inputs.sprint = false;
             });
             
-            // Camera control (right 50% of screen - invisible joystick)
+            // Camera control (right 50% of screen) - FIXED: No accidental movement
             let lastCameraTouchX = 0;
             let lastCameraTouchY = 0;
             let isTouchingCamera = false;
+            let touchStartTime = 0;
             
             touchRight.addEventListener('touchstart', (e) => {
                 e.preventDefault();
@@ -4559,6 +4795,7 @@
                 lastCameraTouchY = touch.clientY;
                 touchDeltaX = 0;
                 touchDeltaY = 0;
+                touchStartTime = performance.now();
             });
             
             touchRight.addEventListener('touchmove', (e) => {
@@ -4566,18 +4803,27 @@
                 e.preventDefault();
                 const touch = e.touches[0];
                 
+                // Ignore very short movements to prevent accidental camera movement
+                if (performance.now() - touchStartTime < 100) {
+                    lastCameraTouchX = touch.clientX;
+                    lastCameraTouchY = touch.clientY;
+                    return;
+                }
+                
                 const deltaX = touch.clientX - lastCameraTouchX;
                 const deltaY = touch.clientY - lastCameraTouchY;
                 
-                // Smooth filtering
+                // Filter for smoothness
                 touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING;
                 touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING;
                 
-                // Apply rotation
-                camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
-                camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
-                
-                camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                // Apply rotation with minimum threshold
+                if (Math.abs(touchDeltaX) > 1 || Math.abs(touchDeltaY) > 1) {
+                    camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
+                    camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
+                    
+                    camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                }
                 
                 lastCameraTouchX = touch.clientX;
                 lastCameraTouchY = touch.clientY;
@@ -4590,23 +4836,21 @@
             });
             
             // Mobile button handlers
-            document.getElementById('btn-fire').addEventListener('touchstart', (e) => { 
-                e.preventDefault(); 
-                inputs.fire = true; 
-            });
-            document.getElementById('btn-fire').addEventListener('touchend', (e) => { 
-                e.preventDefault(); 
-                inputs.fire = false; 
-            });
+            const setupButton = (id, action) => {
+                const btn = document.getElementById(id);
+                btn.addEventListener('touchstart', (e) => { 
+                    e.preventDefault(); 
+                    action(true);
+                });
+                btn.addEventListener('touchend', (e) => { 
+                    e.preventDefault(); 
+                    action(false);
+                });
+            };
             
-            document.getElementById('btn-jump').addEventListener('touchstart', (e) => { 
-                e.preventDefault(); 
-                inputs.jump = true; 
-            });
-            document.getElementById('btn-jump').addEventListener('touchend', (e) => { 
-                e.preventDefault(); 
-                inputs.jump = false; 
-            });
+            setupButton('btn-fire', (state) => { inputs.fire = state; });
+            setupButton('btn-jump', (state) => { inputs.jump = state; });
+            setupButton('btn-ads', (state) => { toggleADS(state); });
             
             document.getElementById('btn-interact').addEventListener('touchstart', (e) => { 
                 e.preventDefault(); 
@@ -4618,22 +4862,13 @@
                 buildWall(); 
             });
             
-            document.getElementById('btn-ads').addEventListener('touchstart', (e) => { 
-                e.preventDefault(); 
-                toggleADS(true); 
-            });
-            document.getElementById('btn-ads').addEventListener('touchend', (e) => { 
-                e.preventDefault(); 
-                toggleADS(false); 
-            });
-            
             document.getElementById('btn-reload').addEventListener('touchstart', (e) => { 
                 e.preventDefault(); 
                 reload(); 
             });
         }
 
-        // Controller input handling - UPDATED: Removed layout display
+        // Controller input handling
         function setupControllerInputs() {
             window.addEventListener("gamepadconnected", (e) => {
                 console.log("Gamepad connected:", e.gamepad);
@@ -4656,15 +4891,11 @@
                 const gp = navigator.getGamepads()[gamepad.index];
                 if (!gp) return;
                 
-                // Left stick - movement
                 controllerMapping.leftStick.x = gp.axes[0];
                 controllerMapping.leftStick.y = gp.axes[1];
-                
-                // Right stick - camera
                 controllerMapping.rightStick.x = gp.axes[2];
                 controllerMapping.rightStick.y = gp.axes[3];
                 
-                // Buttons
                 controllerMapping.buttons.l1 = gp.buttons[4].pressed;
                 controllerMapping.buttons.r1 = gp.buttons[5].pressed;
                 controllerMapping.buttons.l2 = gp.buttons[6].value;
@@ -4674,65 +4905,54 @@
                 controllerMapping.buttons.a = gp.buttons[0].pressed;
                 controllerMapping.buttons.x = gp.buttons[2].pressed;
                 
-                // D-pad
                 controllerMapping.buttons.dpadUp = gp.buttons[12].pressed;
                 controllerMapping.buttons.dpadDown = gp.buttons[13].pressed;
                 controllerMapping.buttons.dpadLeft = gp.buttons[14].pressed;
                 controllerMapping.buttons.dpadRight = gp.buttons[15].pressed;
                 
-                // Apply controller inputs
                 if (gameMode === 'controller') {
-                    // Movement from left stick
                     inputs.w = controllerMapping.leftStick.y < -0.3;
                     inputs.s = controllerMapping.leftStick.y > 0.3;
                     inputs.a = controllerMapping.leftStick.x < -0.3;
                     inputs.d = controllerMapping.leftStick.x > 0.3;
                     
-                    // Sprint from A button
                     inputs.sprint = controllerMapping.buttons.a;
                     
-                    // Camera control from right stick (smooth)
                     if (Math.abs(controllerMapping.rightStick.x) > 0.1 || Math.abs(controllerMapping.rightStick.y) > 0.1) {
                         camera.rotation.y -= controllerMapping.rightStick.x * CONTROLLER_SENSITIVITY;
                         camera.rotation.x -= controllerMapping.rightStick.y * CONTROLLER_SENSITIVITY;
                         camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
                     }
                     
-                    // Jump from B button
                     if (controllerMapping.buttons.b && !inputs.jump) {
                         inputs.jump = true;
                         setTimeout(() => inputs.jump = false, 100);
                         vibrateController('jump');
                     }
                     
-                    // Reload from Y button
                     if (controllerMapping.buttons.y && !inputs.reload) {
                         inputs.reload = true;
                         setTimeout(() => inputs.reload = false, 100);
                     }
                     
-                    // Interact from X button
                     if (controllerMapping.buttons.x && !inputs.use) {
                         inputs.use = true;
                         setTimeout(() => inputs.use = false, 100);
                         tryInteract();
                     }
                     
-                    // Aim from L2
                     if (controllerMapping.buttons.l2 > 0.5) {
                         toggleADS(true);
                     } else if (player.ads) {
                         toggleADS(false);
                     }
                     
-                    // Fire from R2
                     if (controllerMapping.buttons.r2 > 0.5) {
                         inputs.fire = true;
                     } else {
                         inputs.fire = false;
                     }
                     
-                    // Slot selection from D-pad or L1/R1
                     if (controllerMapping.buttons.dpadLeft || controllerMapping.buttons.l1) {
                         const newSlot = (player.slot - 1 + 5) % 5;
                         switchSlot(newSlot);
@@ -4746,7 +4966,6 @@
                 }
             }
             
-            // Poll controller state every frame
             setInterval(updateControllerState, 16);
         }
 
@@ -4830,20 +5049,13 @@
             const gameContainer = document.getElementById('game-container');
             gameContainer.appendChild(renderer.domElement);
             
-            // Lighting
+            // Lighting & Day/Night Cycle
+            initDayNightCycle();
+            
             const ambient = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambient);
             
-            const sun = new THREE.DirectionalLight(0xffffff, 0.8);
-            sun.position.set(100, 200, 100);
-            sun.castShadow = true;
-            sun.shadow.camera.right = 200; sun.shadow.camera.left = -200;
-            sun.shadow.camera.top = 200; sun.shadow.camera.bottom = -200;
-            sun.shadow.mapSize.width = 2048; sun.shadow.mapSize.height = 2048;
-            scene.add(sun);
-            
             weaponScene.add(ambient.clone());
-            weaponScene.add(sun.clone());
             
             // Controls
             controls = new PointerLockControls(camera, document.body);
@@ -4858,7 +5070,7 @@
         
         function createParticles() {
             const container = document.getElementById('particles-container');
-            for(let i = 0; i < 40; i++) { // Reduced particle count for performance
+            for(let i = 0; i < 40; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.width = `${Math.random() * 15 + 5}px`;
@@ -4889,9 +5101,9 @@
                 totalPoints: 0
             };
             
-            // UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields
+            // Player stats with level bonuses
             player.health = 100;
-            player.shield = 100;
+            player.shield = 100 + player.levelShieldBonus;
             player.overshield = 50;
             player.wood = 0;
             player.inventory = [null, null, null, null, null];
@@ -4937,7 +5149,12 @@
                     inputs.w = inputs.a = inputs.s = inputs.d = false;
                 }
             }
+            
+            // FIXED: Overshield regeneration
             overshieldRegen(dt);
+            
+            // Update day/night cycle
+            updateDayNightCycle(dt);
 
             if(player.vehicle) {
                 updateCars(dt);
@@ -4945,7 +5162,7 @@
                 const canMove = gameMode === 'mobile' || gameMode === 'controller' || (controls && controls.isLocked); 
                 if (canMove) {
                     const speedMultiplier = player.ads ? 0.5 : 1.0; 
-                    const currentSpeed = (inputs.sprint ? SPRINT_SPEED : WALK_SPEED) * speedMultiplier;
+                    const currentSpeed = (inputs.sprint ? SPRINT_SPEED : WALK_SPEED) * speedMultiplier * player.levelSpeedMultiplier;
                     
                     const direction = new THREE.Vector3();
                     direction.setFromMatrixColumn(camera.matrix, 0); 
