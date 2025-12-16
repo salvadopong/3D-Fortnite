@@ -2904,6 +2904,30 @@
             return y;
         }
 
+        function generateTerrain() {
+    const size = WORLD_SIZE;
+    const segments = 96;
+    const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
+    geometry.rotateX(-Math.PI / 2);
+
+    const position = geometry.attributes.position;
+    for (let i = 0; i < position.count; i++) {
+        const x = position.getX(i);
+        const z = position.getZ(i);
+        const y = getEnhancedTerrainHeight(x, z);
+        position.setY(i, y);
+    }
+    position.needsUpdate = true;
+    geometry.computeVertexNormals();
+    
+    const terrainMat = createEnhancedTerrainMaterial();
+    const terrain = new THREE.Mesh(geometry, terrainMat);
+    terrain.receiveShadow = true;
+    scene.add(terrain);
+    objects.push(terrain); 
+}
+
+
         function createEnhancedTerrainMaterial() {
             const canvas = document.createElement('canvas');
             canvas.width = 512;
@@ -5482,3 +5506,4 @@
     </script>
 </body>
 </html>
+
