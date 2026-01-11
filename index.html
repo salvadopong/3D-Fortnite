@@ -3676,6 +3676,22 @@
             }
         }
 
+        function lockPointer() {
+    if (controls && gameMode === 'desktop') {
+        controls.lock();
+        inputs.fire = false; 
+    }
+}
+
+// ===============================================================
+// === SETUP PC LOCK =============================================
+// ===============================================================
+
+function setupPCLock() {
+    if (controls) controls.enabled = true;
+    document.getElementById('game-container').addEventListener('mousedown', lockPointer);
+}
+
         // IMPROVED: Mobile controls with crouch and weapon switch
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
@@ -4056,6 +4072,27 @@
             
             console.log("Created Coral Castle POI with water effects");
         }
+
+        // ===============================================================
+// === CREATE PARTICLES FUNCTION ================================
+// ===============================================================
+
+function createParticles() {
+    const container = document.getElementById('particles-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    for(let i = 0; i < 40; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = `${Math.random() * 15 + 5}px`;
+        particle.style.height = particle.style.width;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        container.appendChild(particle);
+    }
+}
 
         // ===============================================================
         // === INITIALIZATION & START GAME ===============================
@@ -4470,3 +4507,4 @@
     </script>
 </body>
 </html>
+
