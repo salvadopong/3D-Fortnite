@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.9 - Ultimate Edition</title>
+    <title>Web Battle Royale: V19.9.2 - Ultimate Edition</title>
     <style>
         /* ======================================= */
         /* === V19.9 ULTIMATE UI REDESIGN === */
@@ -1903,7 +1903,7 @@
     <div id="start-screen">
         <div class="menu-background"></div>
         <div class="particles" id="particles-container"></div>
-        <div class="version-badge">V19.9 • ULTIMATE EDITION</div>
+        <div class="version-badge">V19.9.2 • ULTIMATE EDITION</div>
         <div class="menu-title">
             <div class="title-glow"></div>
             <h1>WEB BATTLE ROYALE</h1>
@@ -1925,7 +1925,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.9</p>
+                <p>V19.9.2</p>
             </div>
         </div>
         <div id="victory-royales-stat">🏆 Victory Royales: 0</div>
@@ -2141,7 +2141,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.9) ===================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.9.2) ================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -2345,11 +2345,2077 @@
         let lastFrameTime = performance.now();
         let performanceMode = 'balanced'; // 'performance', 'balanced', 'quality'
         
-        // FIXED: Bot shooting fix flag
-        let botShootingFixed = false;
+        // ===============================================================
+        // === FIXED: COMPLETE TERRAIN GENERATION ========================
+        // ===============================================================
+
+        function generateTerrain() {
+            console.log("Generating terrain...");
+            
+            // Clear any existing terrain objects
+            objects.forEach(obj => scene.remove(obj));
+            objects = [];
+            
+            // Create ground plane
+            const groundGeometry = new THREE.PlaneGeometry(WORLD_SIZE * 2, WORLD_SIZE * 2, 100, 100);
+            const groundMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x3a7c3a,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            
+            // Apply terrain height to vertices
+            const positions = groundGeometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                const x = positions[i];
+                const z = positions[i + 2];
+                positions[i + 1] = getEnhancedTerrainHeight(x, z);
+            }
+            groundGeometry.computeVertexNormals();
+            
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+            objects.push(ground);
+            
+            // Add grass texture
+            const grassTexture = new THREE.MeshStandardMaterial({ 
+                color: 0x4caf50,
+                roughness: 0.9,
+                metalness: 0.1
+            });
+            
+            // Create some hills and terrain features
+            for (let i = 0; i < 20; i++) {
+                const hillX = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                const hillZ = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                const hillSize = Math.random() * 30 + 10;
+                const hillHeight = Math.random() * 15 + 5;
+                
+                const hillGeometry = new THREE.ConeGeometry(hillSize, hillHeight, 8);
+                const hill = new THREE.Mesh(hillGeometry, grassTexture);
+                hill.position.set(hillX, getEnhancedTerrainHeight(hillX, hillZ) + hillHeight/2, hillZ);
+                hill.castShadow = true;
+                hill.receiveShadow = true;
+                scene.add(hill);
+                objects.push(hill);
+            }
+            
+            // Add trees
+            for (let i = 0; i < 50; i++) {
+                const treeX = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
+                const treeZ = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
+                const treeHeight = getEnhancedTerrainHeight(treeX, treeZ);
+                
+                // Tree trunk
+                const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.7, 3, 8);
+                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.set(treeX, treeHeight + 1.5, treeZ);
+                trunk.castShadow = true;
+                scene.add(trunk);
+                objects.push(trunk);
+                
+                // Tree leaves
+                const leavesGeometry = new THREE.ConeGeometry(2, 4, 8);
+                const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x2d5a27 });
+                const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+                leaves.position.set(treeX, treeHeight + 4, treeZ);
+                leaves.castShadow = true;
+                scene.add(leaves);
+                objects.push(leaves);
+            }
+            
+            // Add rocks
+            for (let i = 0; i < 30; i++) {
+                const rockX = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
+                const rockZ = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
+                const rockHeight = getEnhancedTerrainHeight(rockX, rockZ);
+                
+                const rockGeometry = new THREE.DodecahedronGeometry(Math.random() * 1.5 + 0.5);
+                const rockMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0x777777,
+                    roughness: 0.8
+                });
+                const rock = new THREE.Mesh(rockGeometry, rockMaterial);
+                rock.position.set(rockX, rockHeight + 0.5, rockZ);
+                rock.castShadow = true;
+                scene.add(rock);
+                objects.push(rock);
+            }
+            
+            console.log("Terrain generated with", objects.length, "objects");
+        }
+
+        function generatePOIs() {
+            console.log("Generating POIs...");
+            
+            // Clear existing POIs
+            chests.forEach(chest => scene.remove(chest.mesh));
+            chests = [];
+            
+            // Generate multiple chests
+            for (let i = 0; i < 15; i++) {
+                const x = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                const z = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                const y = getEnhancedTerrainHeight(x, z);
+                spawnChest(x, y + 1, z);
+            }
+            
+            // Generate Coral Castle
+            createCoralCastle();
+            
+            // Generate some buildings
+            for (let i = 0; i < 5; i++) {
+                const x = (Math.random() - 0.5) * WORLD_SIZE * 1.2;
+                const z = (Math.random() - 0.5) * WORLD_SIZE * 1.2;
+                const y = getEnhancedTerrainHeight(x, z);
+                
+                createBox(x, y + 2, z, 10, 4, 10, 0xcccccc, 'building');
+                createBox(x, y + 5, z, 8, 2, 8, 0xaaaaaa, 'building');
+                
+                // Add a door
+                const door = createBox(x, y + 1.5, z + 5.1, 2, 3, 0.2, 0x8B4513, 'door');
+                doors.push({ mesh: door, open: false, rotation: 0 });
+            }
+            
+            console.log("POIs generated with", chests.length, "chests");
+        }
 
         // ===============================================================
-        // === PERFORMANCE OPTIMIZATION ==================================
+        // === FIXED: BOT SPAWNING AND MOVEMENT ==========================
+        // ===============================================================
+
+        function spawnBots() {
+            console.log("Spawning bots...");
+            
+            for (let i = 0; i < BOT_COUNT; i++) {
+                let x, z;
+                let attempts = 0;
+                
+                // Ensure bots spawn away from player
+                do {
+                    x = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                    z = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
+                    attempts++;
+                    
+                    if (attempts > 100) break; // Prevent infinite loop
+                } while (Math.sqrt(x*x + z*z) < 50); // At least 50 units from center
+                
+                const y = getEnhancedTerrainHeight(x, z);
+                
+                const botGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
+                const botMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0xff0000,
+                    roughness: 0.7
+                });
+                const botMesh = new THREE.Mesh(botGeometry, botMaterial);
+                botMesh.position.set(x, y + 1.5, z);
+                botMesh.castShadow = true;
+                scene.add(botMesh);
+                
+                const bot = {
+                    mesh: botMesh,
+                    health: 100,
+                    shield: 100,
+                    target: null,
+                    lastShot: 0,
+                    lastWander: 0,
+                    wanderDirection: new THREE.Vector3(),
+                    spottedPlayer: false,
+                    isReloading: false,
+                    weapon: createWeaponItem(BOT_WEAPON_KEY, 'COMMON'),
+                    lastStormDamage: 0
+                };
+                
+                // Initialize weapon stats
+                bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                
+                bots.push(bot);
+            }
+            
+            console.log("Spawned", bots.length, "bots");
+        }
+
+        // ===============================================================
+        // === FIXED: STORM TIMER SYSTEM =================================
+        // ===============================================================
+
+        function startStormTimer() {
+            console.log("Starting storm timer...");
+            stormActive = true;
+            stormPhase = 0;
+            stormPhaseTimer = STORM_PHASES[0].time;
+            stormRadius = STORM_PHASES[0].radius;
+            stormDamageRate = STORM_PHASES[0].damage;
+            
+            updateStormUI();
+            
+            // Start the storm timer
+            stormTimerInterval = setInterval(() => {
+                stormPhaseTimer--;
+                
+                if (stormPhaseTimer <= 0) {
+                    stormPhase++;
+                    if (stormPhase >= STORM_PHASES.length) {
+                        stormPhase = STORM_PHASES.length - 1;
+                        stormPhaseTimer = 999; // Infinite for final phase
+                    } else {
+                        stormPhaseTimer = STORM_PHASES[stormPhase].time;
+                        stormRadius = STORM_PHASES[stormPhase].radius;
+                        stormDamageRate = STORM_PHASES[stormPhase].damage;
+                        
+                        // Visual effect for storm shrink
+                        createStormShrinkEffect();
+                    }
+                }
+                
+                updateStormUI();
+                
+                // Check for storm damage
+                updateStorm(performance.now());
+                
+            }, 1000);
+        }
+
+        function updateStormUI() {
+            const minutes = Math.floor(stormPhaseTimer / 60);
+            const seconds = stormPhaseTimer % 60;
+            document.getElementById('storm-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('storm-status').textContent = STORM_PHASES[stormPhase].status;
+            
+            // Update alive count
+            updateAliveCount();
+        }
+
+        function createStormShrinkEffect() {
+            if (performanceMode === 'performance') return;
+            
+            const stormEffect = document.createElement('div');
+            stormEffect.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle at 50% 50%, 
+                    rgba(138, 43, 226, 0.8) 0%, 
+                    rgba(75, 0, 130, 0.9) 100%);
+                pointer-events: none;
+                z-index: 999;
+                animation: stormShrink 2s ease-out forwards;
+                mix-blend-mode: multiply;
+            `;
+            document.body.appendChild(stormEffect);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes stormShrink {
+                    0% { opacity: 0.8; transform: scale(1.2); }
+                    50% { opacity: 0.6; transform: scale(1); }
+                    100% { opacity: 0; transform: scale(0.8); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                stormEffect.remove();
+                style.remove();
+            }, 2000);
+            
+            playSound('storm_damage', 0.5);
+        }
+
+        // ===============================================================
+        // === FIXED: BOT AI AND SHOOTING ================================
+        // ===============================================================
+
+        function updateEnhancedBots(dt, now) {
+            if (now - lastBotUpdate < botUpdateInterval) return;
+            lastBotUpdate = now;
+            
+            const playerPos = camera.position;
+            
+            for(let i = bots.length - 1; i >= 0; i--) {
+                const bot = bots[i];
+                if (bot.health <= 0) continue;
+
+                // Update bot position to terrain height
+                const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
+                bot.mesh.position.y = h + 1.5;
+
+                // Calculate distance to player
+                const distToPlayer = bot.mesh.position.distanceTo(playerPos);
+                
+                // FIXED: Bot cannot move within BOT_MIN_DISTANCE of player
+                if (distToPlayer < BOT_MIN_DISTANCE) {
+                    // Move away from player
+                    const awayDirection = new THREE.Vector3()
+                        .subVectors(bot.mesh.position, playerPos)
+                        .normalize();
+                    
+                    bot.mesh.lookAt(
+                        bot.mesh.position.x + awayDirection.x,
+                        bot.mesh.position.y,
+                        bot.mesh.position.z + awayDirection.z
+                    );
+                    
+                    // Move away but not too fast
+                    bot.mesh.translateZ(-WALK_SPEED * 0.3 * dt);
+                    
+                    // Update target but don't shoot when too close
+                    bot.target = player;
+                    bot.lastShot = now; // Reset shot timer
+                    continue; // Skip rest of AI when too close
+                }
+
+                // Simple wandering behavior when no target
+                if (!bot.target || bot.target.dead) {
+                    const playerDist = bot.mesh.position.distanceTo(camera.position);
+                    
+                    if (playerDist < 50 && !player.dead) {
+                        bot.target = player;
+                        if (!bot.spottedPlayer) {
+                            playSound('bot_alert', 0.3);
+                            bot.spottedPlayer = true;
+                        }
+                    } else {
+                        // Wander randomly with improved movement
+                        if (now - bot.lastWander > 3000) {
+                            bot.wanderDirection = new THREE.Vector3(
+                                Math.random() - 0.5,
+                                0,
+                                Math.random() - 0.5
+                            ).normalize();
+                            bot.lastWander = now;
+                            bot.spottedPlayer = false;
+                        }
+                        
+                        bot.mesh.lookAt(
+                            bot.mesh.position.x + bot.wanderDirection.x,
+                            bot.mesh.position.y,
+                            bot.mesh.position.z + bot.wanderDirection.z
+                        );
+                        
+                        bot.mesh.translateZ(WALK_SPEED * 0.4 * dt);
+                    }
+                }
+                
+                // Chase player if target exists and not too close
+                if (bot.target && !bot.target.dead && distToPlayer >= BOT_MIN_DISTANCE) {
+                    const targetPos = bot.target === player ? camera.position : bot.target.mesh.position;
+                    const direction = new THREE.Vector3()
+                        .subVectors(targetPos, bot.mesh.position)
+                        .normalize();
+                    
+                    bot.mesh.lookAt(
+                        bot.mesh.position.x + direction.x,
+                        bot.mesh.position.y,
+                        bot.mesh.position.z + direction.z
+                    );
+                    
+                    const dist = bot.mesh.position.distanceTo(targetPos);
+                    
+                    if (dist > 25 && dist >= BOT_MIN_DISTANCE) {
+                        // Move towards target but maintain minimum distance
+                        bot.mesh.translateZ(WALK_SPEED * 0.7 * dt);
+                    } else if (dist < BOT_MIN_DISTANCE) {
+                        // Move away if too close (already handled above)
+                        const awayDir = new THREE.Vector3()
+                            .subVectors(bot.mesh.position, targetPos)
+                            .normalize();
+                        bot.mesh.translateZ(-WALK_SPEED * 0.4 * dt);
+                    }
+                    
+                    // Shoot at target with FIXED damage system
+                    if (dist < 60 && !bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
+                        const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 1.8);
+                        const fireDirection = new THREE.Vector3()
+                            .subVectors(targetPos.clone().setY(targetPos.y + 1), fireOrigin)
+                            .normalize();
+                        
+                        // Add some inaccuracy based on distance
+                        const inaccuracy = Math.min(0.3, dist / 200);
+                        fireDirection.x += (Math.random() - 0.5) * inaccuracy;
+                        fireDirection.y += (Math.random() - 0.5) * inaccuracy * 0.5;
+                        fireDirection.z += (Math.random() - 0.5) * inaccuracy;
+                        fireDirection.normalize();
+                        
+                        createMuzzleFlash(fireOrigin, fireDirection);
+                        
+                        // FIXED: Proper raycasting for bot shots
+                        const ray = new THREE.Raycaster(fireOrigin, fireDirection, 0, 100);
+                        
+                        // Check for player hit
+                        const playerHit = checkPlayerHit(ray, fireOrigin, fireDirection);
+                        
+                        if (playerHit.hit) {
+                            // Apply damage with proper parameters
+                            applyDamage(player, bot.weapon.stats.dmg * 0.7, playerHit.point, bot, playerHit.isHeadshot);
+                            createImpactEffect(playerHit.point, playerHit.isHeadshot);
+                            playSound('player_hit', 0.5);
+                        }
+                        
+                        bot.lastShot = now;
+                        bot.weapon.stats.currentMag--;
+                        
+                        if (bot.weapon.stats.currentMag <= 0) {
+                            bot.isReloading = true;
+                            setTimeout(() => {
+                                if (bot.weapon) {
+                                    bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                                    bot.isReloading = false;
+                                }
+                            }, bot.weapon.stats.reload * 1.5);
+                        }
+                    }
+                }
+                
+                // Update bot weapon ammo
+                if (bot.weapon && bot.weapon.stats.currentMag <= 0 && !bot.isReloading) {
+                    bot.isReloading = true;
+                    setTimeout(() => {
+                        if (bot.weapon) {
+                            bot.weapon.stats.currentMag = bot.weapon.stats.mag;
+                            bot.isReloading = false;
+                        }
+                    }, bot.weapon.stats.reload * 1.5);
+                }
+            }
+        }
+
+        function checkPlayerHit(ray, origin, direction) {
+            // Create a dummy object for the player's hitbox
+            const playerHitbox = new THREE.Sphere(camera.position, 0.5);
+            const playerHeadHitbox = new THREE.Sphere(
+                new THREE.Vector3(camera.position.x, camera.position.y + 0.3, camera.position.z), 
+                0.2
+            );
+            
+            // Check for headshot first
+            const headDistance = ray.ray.distanceToPoint(playerHeadHitbox.center);
+            if (headDistance <= playerHeadHitbox.radius) {
+                const headPoint = ray.ray.at(headDistance);
+                return { hit: true, point: headPoint, isHeadshot: true };
+            }
+            
+            // Check for body shot
+            const bodyDistance = ray.ray.distanceToPoint(playerHitbox.center);
+            if (bodyDistance <= playerHitbox.radius) {
+                const bodyPoint = ray.ray.at(bodyDistance);
+                return { hit: true, point: bodyPoint, isHeadshot: false };
+            }
+            
+            return { hit: false, point: null, isHeadshot: false };
+        }
+
+        // ===============================================================
+        // === FIXED: PLAYER SHOOTING AND WEAPONS ========================
+        // ===============================================================
+
+        function shoot(item) {
+            if (!item || player.isReloading || player.dead) return;
+            
+            const now = performance.now();
+            lastShot = now;
+            
+            // Get fire direction from camera
+            const direction = new THREE.Vector3(0, 0, -1);
+            direction.applyQuaternion(camera.quaternion);
+            
+            // Apply weapon spread
+            const spread = item.stats.spread * (player.ads ? 0.5 : 1);
+            direction.x += (Math.random() - 0.5) * spread;
+            direction.y += (Math.random() - 0.5) * spread;
+            direction.z += (Math.random() - 0.5) * spread;
+            direction.normalize();
+            
+            const fireOrigin = camera.position.clone().add(direction.clone().multiplyScalar(1));
+            
+            // Create muzzle flash
+            createMuzzleFlash(fireOrigin, direction);
+            
+            // Play shoot sound based on weapon type
+            if (item.key.includes('SNIPER')) {
+                playSound('shoot_sniper', 0.8);
+            } else if (item.key.includes('SHG')) {
+                playSound('shoot_shotgun', 0.7);
+            } else {
+                playSound('shoot', 0.6);
+            }
+            
+            // Handle different bullet types
+            if (item.stats.bulletType === 'hitscan') {
+                // Hitscan weapons (instant hit)
+                const ray = new THREE.Raycaster(fireOrigin, direction, 0, item.stats.range);
+                
+                // Check for hits on bots
+                let closestHit = null;
+                let closestDistance = Infinity;
+                
+                bots.forEach(bot => {
+                    if (bot.health <= 0) return;
+                    
+                    // Simple sphere intersection for bots
+                    const botSphere = new THREE.Sphere(bot.mesh.position, 0.8);
+                    const hitPoint = ray.ray.closestPointToPoint(bot.mesh.position, new THREE.Vector3());
+                    const distance = hitPoint.distanceTo(bot.mesh.position);
+                    
+                    if (distance <= 0.8 && distance < closestDistance) {
+                        closestDistance = distance;
+                        closestHit = {
+                            target: bot,
+                            point: hitPoint,
+                            distance: distance
+                        };
+                    }
+                });
+                
+                if (closestHit) {
+                    const isHeadshot = Math.random() < 0.3; // 30% chance for headshot
+                    const damage = item.stats.dmg * (isHeadshot ? item.stats.head / item.stats.dmg : 1) * player.levelDamageMultiplier;
+                    applyDamage(closestHit.target, damage, closestHit.point, player, isHeadshot);
+                    createImpactEffect(closestHit.point, isHeadshot);
+                    
+                    if (isHeadshot) {
+                        playSound('elimination', 0.3);
+                    }
+                }
+                
+                // Create bullet trail
+                createBulletTrail(fireOrigin, direction, item.stats.range);
+                
+            } else if (item.stats.bulletType === 'projectile') {
+                // Projectile weapons (rockets, etc.)
+                const projectile = {
+                    position: fireOrigin.clone(),
+                    direction: direction.clone(),
+                    speed: 50,
+                    range: item.stats.range,
+                    damage: item.stats.dmg,
+                    explosionRadius: item.stats.explosionRadius || 5,
+                    owner: player,
+                    mesh: null
+                };
+                
+                // Create visual projectile
+                const projectileGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+                const projectileMaterial = new THREE.MeshBasicMaterial({ color: 0xff6600 });
+                projectile.mesh = new THREE.Mesh(projectileGeometry, projectileMaterial);
+                projectile.mesh.position.copy(projectile.position);
+                scene.add(projectile.mesh);
+                
+                projectiles.push(projectile);
+            }
+            
+            // Decrease ammo
+            item.stats.currentMag--;
+            
+            // Update inventory UI
+            updateInventoryUI();
+            
+            // Check for reload
+            if (item.stats.currentMag <= 0) {
+                player.isReloading = true;
+                document.getElementById('reload-indicator').style.display = 'block';
+                
+                setTimeout(() => {
+                    item.stats.currentMag = item.stats.mag;
+                    player.isReloading = false;
+                    document.getElementById('reload-indicator').style.display = 'none';
+                    updateInventoryUI();
+                    playSound('reload', 0.5);
+                }, item.stats.reload);
+            }
+        }
+
+        function createBulletTrail(start, direction, length) {
+            const trailGeometry = new THREE.BufferGeometry();
+            const points = [
+                start,
+                start.clone().add(direction.clone().multiplyScalar(length))
+            ];
+            trailGeometry.setFromPoints(points);
+            
+            const trailMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffff00,
+                transparent: true,
+                opacity: 0.8
+            });
+            const trail = new THREE.Line(trailGeometry, trailMaterial);
+            scene.add(trail);
+            
+            // Remove after short time
+            setTimeout(() => {
+                scene.remove(trail);
+                trailGeometry.dispose();
+                trailMaterial.dispose();
+            }, 100);
+        }
+
+        // ===============================================================
+        // === FIXED: INVENTORY SYSTEM ===================================
+        // ===============================================================
+
+        function updateInventoryUI() {
+            for (let i = 0; i < 5; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                const item = player.inventory[i];
+                
+                // Clear slot
+                slot.innerHTML = '';
+                slot.className = 'inventory-slot';
+                
+                if (i === player.slot) {
+                    slot.classList.add('active');
+                }
+                
+                if (item) {
+                    // Add rarity border
+                    if (item.rarity) {
+                        slot.classList.add(`rarity-${item.rarity.toLowerCase()}`);
+                    }
+                    
+                    // Add key indicator
+                    const keyDiv = document.createElement('div');
+                    keyDiv.className = 'slot-key';
+                    keyDiv.textContent = i === 0 ? '1' : i === 1 ? '2' : i === 2 ? '3' : i === 3 ? '4' : '5';
+                    slot.appendChild(keyDiv);
+                    
+                    // Add icon
+                    const iconDiv = document.createElement('div');
+                    iconDiv.className = 'slot-icon';
+                    iconDiv.textContent = item.icon || '❓';
+                    slot.appendChild(iconDiv);
+                    
+                    // Add name
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'slot-name';
+                    nameDiv.textContent = item.name || 'Item';
+                    slot.appendChild(nameDiv);
+                    
+                    // Add ammo count for weapons
+                    if (item.category === 'weapon' && item.stats) {
+                        const countDiv = document.createElement('div');
+                        countDiv.className = 'slot-count';
+                        countDiv.textContent = `${item.stats.currentMag}/${item.stats.mag}`;
+                        slot.appendChild(countDiv);
+                    }
+                    
+                    // Add stack count for consumables
+                    if (item.category === 'consumable' && item.count) {
+                        const countDiv = document.createElement('div');
+                        countDiv.className = 'slot-count';
+                        countDiv.textContent = `x${item.count}`;
+                        slot.appendChild(countDiv);
+                    }
+                }
+            }
+        }
+
+        function switchSlot(slot) {
+            if (slot < 0 || slot > 4 || player.isReloading || player.dead) return;
+            
+            player.slot = slot;
+            updateInventoryUI();
+            
+            // Play switch sound
+            playSound('pickup_item', 0.3);
+        }
+
+        // ===============================================================
+        // === FIXED: CHEST AND LOOT SYSTEM ==============================
+        // ===============================================================
+
+        function spawnChest(x, y, z) {
+            const chestGeometry = new THREE.BoxGeometry(2, 1.5, 2);
+            const chestMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x8B4513,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const chestMesh = new THREE.Mesh(chestGeometry, chestMaterial);
+            chestMesh.position.set(x, y, z);
+            chestMesh.castShadow = true;
+            scene.add(chestMesh);
+            
+            const chest = {
+                mesh: chestMesh,
+                position: new THREE.Vector3(x, y, z),
+                opened: false,
+                loot: []
+            };
+            
+            // Add random loot to chest
+            const lootCount = Math.floor(Math.random() * 3) + 2; // 2-4 items
+            for (let i = 0; i < lootCount; i++) {
+                if (Math.random() < 0.7) {
+                    // Weapon
+                    const weaponKey = getRandomWeaponKey();
+                    const rarity = getRandomRarity();
+                    chest.loot.push(createWeaponItem(weaponKey, rarity));
+                } else {
+                    // Consumable
+                    const consumableKey = getRandomConsumableKey();
+                    chest.loot.push({
+                        category: 'consumable',
+                        ...CONSUMABLES[consumableKey],
+                        count: Math.floor(Math.random() * 3) + 1,
+                        rarity: CONSUMABLES[consumableKey].rarity
+                    });
+                }
+            }
+            
+            chests.push(chest);
+            objects.push(chestMesh);
+        }
+
+        function spawnLoot(x, y, z, item) {
+            const lootGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const lootMaterial = new THREE.MeshStandardMaterial({ 
+                color: item.rarity ? RARITY_MULTIPLIERS[item.rarity].color : 0xffffff,
+                emissive: item.rarity ? RARITY_MULTIPLIERS[item.rarity].color : 0x000000,
+                emissiveIntensity: 0.2
+            });
+            const lootMesh = new THREE.Mesh(lootGeometry, lootMaterial);
+            lootMesh.position.set(x, y + 0.5, z);
+            lootMesh.castShadow = true;
+            scene.add(lootMesh);
+            
+            const lootItem = {
+                mesh: lootMesh,
+                position: new THREE.Vector3(x, y, z),
+                item: item,
+                collected: false
+            };
+            
+            loot.push(lootItem);
+            objects.push(lootMesh);
+            
+            // Add floating animation
+            let floatTime = 0;
+            const floatSpeed = 2;
+            const floatHeight = 0.3;
+            const originalY = y + 0.5;
+            
+            function floatAnimation() {
+                if (lootItem.collected) return;
+                
+                floatTime += 0.016; // ~60 FPS
+                lootMesh.position.y = originalY + Math.sin(floatTime * floatSpeed) * floatHeight;
+                
+                // Rotate slowly
+                lootMesh.rotation.y += 0.02;
+                
+                requestAnimationFrame(floatAnimation);
+            }
+            floatAnimation();
+        }
+
+        // ===============================================================
+        // === FIXED: PLAYER INTERACTION =================================
+        // ===============================================================
+
+        function tryInteract() {
+            const playerPos = camera.position;
+            const interactRange = 3;
+            
+            // Check for nearby chests
+            for (const chest of chests) {
+                const distance = playerPos.distanceTo(chest.position);
+                if (distance < interactRange && !chest.opened) {
+                    openChest(chest);
+                    return;
+                }
+            }
+            
+            // Check for nearby loot
+            for (let i = loot.length - 1; i >= 0; i--) {
+                const lootItem = loot[i];
+                const distance = playerPos.distanceTo(lootItem.position);
+                if (distance < interactRange && !lootItem.collected) {
+                    pickUpLoot(lootItem);
+                    loot.splice(i, 1);
+                    return;
+                }
+            }
+            
+            // Check for doors
+            for (const door of doors) {
+                const distance = playerPos.distanceTo(door.mesh.position);
+                if (distance < interactRange) {
+                    toggleDoor(door);
+                    return;
+                }
+            }
+        }
+
+        function openChest(chest) {
+            if (chest.opened) return;
+            
+            chest.opened = true;
+            chest.mesh.material.color.setHex(0x654321); // Darker color for opened
+            
+            // Spawn loot from chest
+            chest.loot.forEach((item, index) => {
+                const angle = (index / chest.loot.length) * Math.PI * 2;
+                const radius = 2;
+                const x = chest.position.x + Math.cos(angle) * radius;
+                const z = chest.position.z + Math.sin(angle) * radius;
+                spawnLoot(x, chest.position.y, z, item);
+            });
+            
+            matchStats.chestsOpened++;
+            playSound('open_chest', 0.6);
+            
+            // Show interaction prompt
+            showInteractPrompt("Chest opened!", 2000);
+        }
+
+        function pickUpLoot(lootItem) {
+            if (lootItem.collected) return;
+            
+            lootItem.collected = true;
+            scene.remove(lootItem.mesh);
+            
+            const item = lootItem.item;
+            
+            if (item.category === 'weapon') {
+                // Find empty slot or replace current slot
+                let slotToUse = -1;
+                for (let i = 0; i < 5; i++) {
+                    if (!player.inventory[i]) {
+                        slotToUse = i;
+                        break;
+                    }
+                }
+                
+                if (slotToUse === -1) {
+                    slotToUse = player.slot; // Replace current slot
+                }
+                
+                player.inventory[slotToUse] = { ...item };
+                player.inventory[slotToUse].stats = { ...item.stats };
+                player.inventory[slotToUse].stats.currentMag = item.stats.mag;
+                
+                if (slotToUse === player.slot) {
+                    switchSlot(slotToUse);
+                }
+                
+            } else if (item.category === 'consumable') {
+                // Add to existing stack or find empty slot
+                let added = false;
+                for (let i = 0; i < 5; i++) {
+                    const slotItem = player.inventory[i];
+                    if (slotItem && slotItem.name === item.name && slotItem.count < item.maxStack) {
+                        slotItem.count += item.count;
+                        added = true;
+                        break;
+                    }
+                }
+                
+                if (!added) {
+                    // Find empty slot
+                    for (let i = 0; i < 5; i++) {
+                        if (!player.inventory[i]) {
+                            player.inventory[i] = { ...item };
+                            added = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (item.rarity === 'LEGENDARY' || item.rarity === 'MYTHIC') {
+                matchStats.legendariesHeld++;
+            }
+            
+            updateInventoryUI();
+            playSound('pickup_item', 0.5);
+            
+            // Show pickup notification
+            showInteractPrompt(`Picked up: ${item.name}`, 1500);
+        }
+
+        function showInteractPrompt(text, duration = 2000) {
+            const prompt = document.getElementById('interact-prompt');
+            prompt.textContent = text;
+            prompt.style.display = 'block';
+            
+            setTimeout(() => {
+                prompt.style.display = 'none';
+            }, duration);
+        }
+
+        // ===============================================================
+        // === FIXED: GAME INITIALIZATION ================================
+        // ===============================================================
+
+        function init() {
+            console.log("Initializing game V19.9.2...");
+            
+            // Hide loading screen after assets are loaded
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+                console.log("Loading screen hidden");
+            }, 500);
+            
+            victoryRoyales = parseInt(localStorage.getItem('victoryRoyales')) || 0;
+            document.getElementById('victory-royales-stat').innerText = `🏆 Victory Royales: ${victoryRoyales}`;
+            
+            loadPlayerLevel();
+            createParticles();
+            initAudio();
+            
+            // Scene Setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.Fog(0x87CEEB, 20, renderDistance);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            
+            weaponScene = new THREE.Scene();
+            weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 100);
+
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: performanceMode !== 'performance',
+                powerPreference: 'high-performance'
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = performanceMode !== 'performance';
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.autoClear = false; 
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.appendChild(renderer.domElement);
+            
+            // Initialize day/night cycle
+            initDayNightCycle();
+            
+            // Add lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambient);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 200, 100);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 1024;
+            directionalLight.shadow.mapSize.height = 1024;
+            scene.add(directionalLight);
+            
+            // Add controls
+            controls = new PointerLockControls(camera, document.body);
+            setupInputs(); 
+
+            raycaster = new THREE.Raycaster();
+            downRay = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, PLAYER_HEIGHT + 0.1);
+            
+            // Start animation loop
+            animate();
+            
+            console.log("Game initialized successfully");
+        }
+
+        // ===============================================================
+        // === FIXED: GAME START FUNCTION ================================
+        // ===============================================================
+
+        window.startGame = (mode) => {
+            console.log(`Starting game in ${mode} mode...`);
+            
+            document.getElementById('start-screen').style.display = 'none';
+            gameStarted = true;
+            
+            setGameMode(mode);
+            
+            if (mode === 'desktop') {
+                setupPCLock(); 
+            }
+            
+            // Reset match stats
+            matchStats = {
+                kills: 0,
+                placement: 0,
+                chestsOpened: 0,
+                legendariesHeld: 0,
+                totalPoints: 0
+            };
+            
+            // Reset player stats
+            player.health = 100;
+            player.shield = 100 + player.levelShieldBonus;
+            player.overshield = 50;
+            player.wood = 0;
+            player.inventory = [null, null, null, null, null];
+            player.slot = 0;
+            player.eliminations = 0;
+            player.dead = false;
+            player.isReloading = false;
+            player.isHealing = false;
+            player.isCrouching = false;
+
+            // Generate game world
+            generateTerrain(); 
+            generatePOIs(); 
+            spawnBots();
+            
+            // Give player a starting weapon
+            const startingWeapon = createWeaponItem('PISTOL', 'COMMON');
+            startingWeapon.stats.currentMag = startingWeapon.stats.mag;
+            player.inventory[0] = startingWeapon;
+            
+            // Position player
+            camera.position.set(0, getEnhancedTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
+            camera.rotation.set(0, 0, 0);
+            
+            // Start game systems
+            startStormTimer(); 
+            switchSlot(0);
+            
+            // Update UI
+            updateUI();
+            updateAliveCount();
+            
+            console.log("Game started successfully!");
+        };
+
+        // ===============================================================
+        // === FIXED: INPUT SYSTEM =======================================
+        // ===============================================================
+
+        function setupInputs() {
+            // Keyboard inputs
+            document.addEventListener('keydown', (e) => {
+                if (player.dead || !gameStarted) return;
+                
+                switch(e.code) {
+                    case 'KeyW': inputs.w = true; break;
+                    case 'KeyA': inputs.a = true; break;
+                    case 'KeyS': inputs.s = true; break;
+                    case 'KeyD': inputs.d = true; break;
+                    case 'Space': inputs.jump = true; break;
+                    case 'ShiftLeft': inputs.sprint = true; break;
+                    case 'KeyE': inputs.use = true; tryInteract(); break;
+                    case 'KeyR': inputs.reload = true; reload(); break;
+                    case 'KeyC': inputs.crouch = true; toggleCrouch(true); break;
+                    case 'Digit1': switchSlot(0); break;
+                    case 'Digit2': switchSlot(1); break;
+                    case 'Digit3': switchSlot(2); break;
+                    case 'Digit4': switchSlot(3); break;
+                    case 'Digit5': switchSlot(4); break;
+                }
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                switch(e.code) {
+                    case 'KeyW': inputs.w = false; break;
+                    case 'KeyA': inputs.a = false; break;
+                    case 'KeyS': inputs.s = false; break;
+                    case 'KeyD': inputs.d = false; break;
+                    case 'Space': inputs.jump = false; break;
+                    case 'ShiftLeft': inputs.sprint = false; break;
+                    case 'KeyE': inputs.use = false; break;
+                    case 'KeyR': inputs.reload = false; break;
+                    case 'KeyC': inputs.crouch = false; toggleCrouch(false); break;
+                }
+            });
+            
+            // Mouse inputs
+            document.addEventListener('mousedown', (e) => {
+                if (player.dead || !gameStarted || !controls.isLocked) return;
+                
+                if (e.button === 0) { // Left click
+                    inputs.fire = true;
+                } else if (e.button === 2) { // Right click
+                    toggleADS(true);
+                }
+            });
+            
+            document.addEventListener('mouseup', (e) => {
+                if (e.button === 0) {
+                    inputs.fire = false;
+                } else if (e.button === 2) {
+                    toggleADS(false);
+                }
+            });
+            
+            // Prevent right-click menu
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            
+            // Mouse movement for camera
+            document.addEventListener('mousemove', (e) => {
+                if (!controls.isLocked || player.dead) return;
+                
+                const movementX = e.movementX || 0;
+                const movementY = e.movementY || 0;
+                
+                const sensitivity = 0.002;
+                camera.rotation.y -= movementX * sensitivity;
+                camera.rotation.x -= movementY * sensitivity;
+                
+                // Limit vertical rotation
+                camera.rotation.x = Math.max(-Math.PI/2.5, Math.min(Math.PI/2.5, camera.rotation.x));
+            });
+        }
+
+        function setupPCLock() {
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.addEventListener('click', () => {
+                if (controls && !controls.isLocked && gameMode === 'desktop') {
+                    controls.lock();
+                    console.log("Pointer locked");
+                }
+            });
+            
+            controls.addEventListener('lock', () => {
+                console.log("Pointer locked successfully");
+            });
+            
+            controls.addEventListener('unlock', () => {
+                console.log("Pointer unlocked");
+            });
+        }
+
+        function toggleADS(state) {
+            player.ads = state;
+            
+            // Show/hide scopes
+            if (state) {
+                const currentWeapon = player.inventory[player.slot];
+                if (currentWeapon && currentWeapon.stats && currentWeapon.stats.scope) {
+                    if (currentWeapon.stats.scope === 'red_dot') {
+                        document.getElementById('red-dot-scope').style.display = 'block';
+                    } else if (currentWeapon.stats.scope === 'classic') {
+                        document.getElementById('scope-overlay').style.display = 'block';
+                    }
+                }
+            } else {
+                document.getElementById('red-dot-scope').style.display = 'none';
+                document.getElementById('scope-overlay').style.display = 'none';
+            }
+        }
+
+        // ===============================================================
+        // === FIXED: ANIMATION AND GAME LOOP ============================
+        // ===============================================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const now = performance.now();
+            const dt = (now - lastTime) / 1000;
+            lastTime = now;
+
+            if(!gameStarted || player.dead) {
+                renderer.clear();
+                renderer.render(scene, camera);
+                return;
+            }
+
+            // Update player movement
+            if(player.vehicle) {
+                updateCars(dt);
+            } else {
+                const canMove = gameMode === 'mobile' || gameMode === 'controller' || (controls && controls.isLocked); 
+                if (canMove) {
+                    const speedMultiplier = player.ads ? 0.5 : 1.0; 
+                    const currentSpeed = (inputs.sprint ? SPRINT_SPEED : WALK_SPEED) * speedMultiplier * player.levelSpeedMultiplier;
+                    
+                    const direction = new THREE.Vector3();
+                    direction.setFromMatrixColumn(camera.matrix, 0); 
+                    direction.crossVectors(camera.up, direction);
+                    direction.y = 0;
+                    direction.normalize();
+                    
+                    const right = new THREE.Vector3(-direction.z, 0, direction.x);
+
+                    const yVelocity = velocity.y; 
+                    velocity.set(0, yVelocity, 0); 
+
+                    if(inputs.w) velocity.add(direction.clone().multiplyScalar(currentSpeed));
+                    if(inputs.s) velocity.add(direction.clone().multiplyScalar(-currentSpeed));
+                    if(inputs.a) velocity.add(right.clone().multiplyScalar(-currentSpeed));
+                    if(inputs.d) velocity.add(right.clone().multiplyScalar(currentSpeed));
+                    
+                    camera.position.x += velocity.x * dt;
+                    camera.position.z += velocity.z * dt;
+                    velocity.y -= GRAVITY * dt; 
+                    
+                    const groundY = getEnhancedTerrainHeight(camera.position.x, camera.position.z);
+                    let floorY = groundY;
+                    
+                    downRay.ray.origin.copy(camera.position);
+                    const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj) && !buildings.some(b => b.mesh === obj && b.type === 'indestructible_wood')), false); 
+                    
+                    if(hits.length > 0) {
+                        const closestHit = hits[0];
+                        if (closestHit.point.y > groundY + 0.1) { 
+                            floorY = closestHit.point.y;
+                        }
+                    }
+                    
+                    if (camera.position.y <= floorY + PLAYER_HEIGHT && velocity.y <= 0) {
+                        camera.position.y = floorY + PLAYER_HEIGHT;
+                        velocity.y = 0;
+                        isGrounded = true;
+                    } else {
+                        isGrounded = false;
+                    }
+                    
+                    if(inputs.jump && isGrounded) {
+                        velocity.y = JUMP_FORCE;
+                        isGrounded = false;
+                        inputs.jump = false; 
+                        playSound('jump');
+                    }
+                    
+                    camera.position.y += velocity.y * dt;
+                    
+                    if (inputs.crouch && !player.isCrouching) {
+                        toggleCrouch(true);
+                    } else if (!inputs.crouch && player.isCrouching) {
+                        toggleCrouch(false);
+                    }
+                } else {
+                    velocity.x = 0; 
+                    velocity.z = 0;
+                }
+            }
+
+            // Handle shooting
+            const canFire = gameMode === 'mobile' || gameMode === 'controller' || (controls && controls.isLocked); 
+            if(inputs.fire && !player.vehicle && !player.isHealing && canFire && !player.isReloading) {
+                const item = player.inventory[player.slot];
+                if(item && item.category === 'weapon') {
+                    if (item.stats.burst) {
+                        if (now - lastShot > item.stats.burstDelay) {
+                            shoot(item);
+                        }
+                    } else if(now - lastShot > item.stats.rate * 1000) {
+                        shoot(item);
+                    }
+                }
+            }
+            
+            // Update game systems
+            updateProjectiles(dt);
+            updateEnhancedBots(dt, now);
+            updateStorm(now);
+            updateVisualEffects(dt);
+            updateDayNightCycle(dt);
+            optimizePerformance();
+
+            // Render
+            renderer.clear();
+            renderer.render(scene, camera);
+            renderer.clearDepth();
+            renderer.render(weaponScene, weaponCamera);
+            
+            updateUI();
+        }
+
+        // ===============================================================
+        // === FIXED: MISSING FUNCTION IMPLEMENTATIONS ===================
+        // ===============================================================
+
+        function createBox(x, y, z, w, h, d, col, type='solid') {
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({color: col}));
+            mesh.position.set(x, y, z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            scene.add(mesh);
+            objects.push(mesh); 
+            buildings.push({ mesh: mesh, type: type, health: 100 });
+            return mesh;
+        }
+
+        function createCoralCastle() {
+            const x = 300, z = -300;
+            const h = getEnhancedTerrainHeight(x, z);
+            
+            createBox(x, h + 20, z, 30, 40, 30, 0x00CED1);
+            createBox(x, h + 45, z, 35, 10, 35, 0x20B2AA);
+            
+            const towerPositions = [
+                { x: x + 25, z: z + 25 },
+                { x: x - 25, z: z + 25 },
+                { x: x + 25, z: z - 25 },
+                { x: x - 25, z: z - 25 }
+            ];
+            
+            towerPositions.forEach(pos => {
+                createBox(pos.x, h + 30, pos.z, 8, 60, 8, 0x48D1CC);
+                createBox(pos.x, h + 65, pos.z, 10, 10, 10, 0x40E0D0);
+            });
+            
+            createBox(x, h + 0.1, z, 60, 0.2, 60, 0xAFEEEE);
+            
+            for(let i = 0; i < 15; i++) {
+                const coralX = x + (Math.random() - 0.5) * 50;
+                const coralZ = z + (Math.random() - 0.5) * 50;
+                const coralHeight = Math.random() * 5 + 2;
+                createBox(coralX, h + coralHeight/2, coralZ, 
+                         Math.random() * 3 + 1, coralHeight, Math.random() * 3 + 1, 
+                         [0xFF69B4, 0xFF1493, 0xFF00FF][Math.floor(Math.random() * 3)]);
+            }
+            
+            spawnChest(x, h + 5, z);
+            spawnChest(x + 10, h + 5, z + 10);
+            spawnChest(x - 10, h + 5, z - 10);
+            
+            console.log("Created Coral Castle POI");
+        }
+
+        function toggleDoor(door) {
+            door.open = !door.open;
+            door.mesh.rotation.y = door.open ? Math.PI/2 : 0;
+            playSound('build', 0.3);
+        }
+
+        function reload() {
+            if (player.isReloading || player.dead) return;
+            
+            const currentWeapon = player.inventory[player.slot];
+            if (!currentWeapon || currentWeapon.category !== 'weapon') return;
+            
+            if (currentWeapon.stats.currentMag >= currentWeapon.stats.mag) return;
+            
+            player.isReloading = true;
+            document.getElementById('reload-indicator').style.display = 'block';
+            
+            setTimeout(() => {
+                currentWeapon.stats.currentMag = currentWeapon.stats.mag;
+                player.isReloading = false;
+                document.getElementById('reload-indicator').style.display = 'none';
+                updateInventoryUI();
+                playSound('reload', 0.5);
+            }, currentWeapon.stats.reload);
+        }
+
+        function updateProjectiles(dt) {
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const projectile = projectiles[i];
+                
+                // Move projectile
+                projectile.position.add(projectile.direction.clone().multiplyScalar(projectile.speed * dt));
+                projectile.mesh.position.copy(projectile.position);
+                
+                // Check for collisions
+                let hit = false;
+                for (const bot of bots) {
+                    const distance = projectile.position.distanceTo(bot.mesh.position);
+                    if (distance < 1) {
+                        hit = true;
+                        applyDamage(bot, projectile.damage, projectile.position.clone(), projectile.owner);
+                        break;
+                    }
+                }
+                
+                // Check distance traveled
+                if (hit || projectile.position.distanceTo(camera.position) > projectile.range) {
+                    // Create explosion if applicable
+                    if (projectile.explosionRadius) {
+                        createExplosion(projectile.position, projectile.explosionRadius, projectile.damage);
+                    }
+                    
+                    scene.remove(projectile.mesh);
+                    projectiles.splice(i, 1);
+                }
+            }
+        }
+
+        function createExplosion(position, radius, damage) {
+            // Create explosion effect
+            const explosionGeometry = new THREE.SphereGeometry(radius, 16, 16);
+            const explosionMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xff6600,
+                transparent: true,
+                opacity: 0.7
+            });
+            const explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+            explosion.position.copy(position);
+            scene.add(explosion);
+            
+            // Apply damage to nearby bots
+            bots.forEach(bot => {
+                const distance = position.distanceTo(bot.mesh.position);
+                if (distance < radius) {
+                    const damageMultiplier = 1 - (distance / radius);
+                    applyDamage(bot, damage * damageMultiplier, bot.mesh.position.clone(), player);
+                }
+            });
+            
+            // Remove explosion after short time
+            setTimeout(() => {
+                scene.remove(explosion);
+                explosionGeometry.dispose();
+                explosionMaterial.dispose();
+            }, 500);
+            
+            playSound('explosion', 0.8);
+        }
+
+        function updateCars(dt) {
+            // Car physics would go here
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    width: ${Math.random() * 10 + 5}px;
+                    height: ${Math.random() * 10 + 5}px;
+                    left: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 20}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+
+        function createVictoryParticles() {
+            const container = document.getElementById('victory-particles');
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'victory-particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 6}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+
+        function createEliminatedParticles() {
+            const container = document.getElementById('eliminated-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'eliminated-particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 4}s;
+                `;
+                container.appendChild(particle);
+            }
+        }
+
+        function createMuzzleFlash(position, direction) {
+            const flashGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const flashMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xff9900,
+                transparent: true,
+                opacity: 0.9
+            });
+            const flash = new THREE.Mesh(flashGeometry, flashMaterial);
+            flash.position.copy(position);
+            scene.add(flash);
+            
+            // Remove after short time
+            setTimeout(() => {
+                scene.remove(flash);
+                flashGeometry.dispose();
+                flashMaterial.dispose();
+            }, 50);
+            
+            // Add light effect
+            const light = new THREE.PointLight(0xff9900, 2, 5);
+            light.position.copy(position);
+            scene.add(light);
+            
+            setTimeout(() => {
+                scene.remove(light);
+            }, 100);
+        }
+
+        function createImpactEffect(position, isHeadshot) {
+            const geometry = new THREE.SphereGeometry(isHeadshot ? 0.3 : 0.2, 8, 8);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: isHeadshot ? 0xff0000 : 0xff6600,
+                transparent: true,
+                opacity: 0.8
+            });
+            const impact = new THREE.Mesh(geometry, material);
+            impact.position.copy(position);
+            scene.add(impact);
+            
+            // Remove after short time
+            setTimeout(() => {
+                scene.remove(impact);
+                geometry.dispose();
+                material.dispose();
+            }, 500);
+        }
+
+        function updateVisualEffects(dt) {
+            // Simple visual effects cleanup would go here
+        }
+
+        function getRandomWeaponKey() {
+            const keys = Object.keys(WEAPONS_BASE);
+            return keys[Math.floor(Math.random() * keys.length)];
+        }
+
+        function getRandomRarity() {
+            const rarities = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'];
+            const weights = [0.4, 0.3, 0.2, 0.08, 0.02];
+            
+            let rand = Math.random();
+            for (let i = 0; i < rarities.length; i++) {
+                if (rand < weights[i]) return rarities[i];
+                rand -= weights[i];
+            }
+            return 'COMMON';
+        }
+
+        function getRandomConsumableKey() {
+            return CONSUMABLE_KEYS[Math.floor(Math.random() * CONSUMABLE_KEYS.length)];
+        }
+
+        function createWeaponItem(key, rarity) {
+            const baseStats = WEAPONS_BASE[key];
+            const rarityMulti = RARITY_MULTIPLIERS[rarity];
+            
+            return {
+                category: 'weapon',
+                key: key,
+                name: baseStats.name,
+                icon: baseStats.icon,
+                rarity: rarity,
+                stats: {
+                    ...baseStats,
+                    dmg: baseStats.dmg * rarityMulti.dmg,
+                    head: baseStats.head * rarityMulti.dmg,
+                    reload: baseStats.reload * rarityMulti.reload,
+                    currentMag: baseStats.mag
+                }
+            };
+        }
+
+        function showDamage(amount, position, type, isHeadshot) {
+            // Create damage number element
+            const damageElement = document.createElement('div');
+            damageElement.className = `dmg-number ${isHeadshot ? 'headshot' : ''} ${type === 'storm' ? 'storm' : ''}`;
+            damageElement.textContent = Math.round(amount);
+            
+            // Convert 3D position to screen position
+            const vector = new THREE.Vector3(position.x, position.y + 1, position.z);
+            vector.project(camera);
+            
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+            
+            damageElement.style.left = `${x}px`;
+            damageElement.style.top = `${y}px`;
+            
+            document.getElementById('ui-layer').appendChild(damageElement);
+            
+            // Remove after animation
+            setTimeout(() => {
+                damageElement.remove();
+            }, 1500);
+        }
+
+        function checkWin() {
+            if (bots.length === 0 && !player.dead) {
+                handleGameOver(true);
+            }
+        }
+        
+        function handleGameOver(win) {
+            player.dead = true;
+            if (controls && controls.isLocked) controls.unlock(); 
+            
+            if (win) {
+                victoryRoyales = (parseInt(localStorage.getItem('victoryRoyales')) || 0) + 1;
+                localStorage.setItem('victoryRoyales', victoryRoyales);
+
+                createVictoryParticles();
+                document.getElementById('victory-stats').innerText = `Eliminations: ${player.eliminations}`;
+                document.getElementById('victory-overlay').style.display = 'flex';
+                playSound('victory');
+                setTimeout(() => showEndGameStats(true), 2000);
+            } else {
+                createEliminatedParticles();
+                document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
+                document.getElementById('game-over').style.display = 'flex';
+                playSound('defeat');
+                setTimeout(() => showEndGameStats(false), 2000);
+            }
+        }
+
+        function showEndGameStats(win) {
+            const totalPoints = calculateMatchPoints();
+            const statsGrid = document.getElementById('match-stats-grid');
+            
+            statsGrid.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">Kills</span>
+                    <span class="stat-value">${matchStats.kills} × 5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Chests Opened</span>
+                    <span class="stat-value">${matchStats.chestsOpened} × 1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Legendaries Held</span>
+                    <span class="stat-value">${matchStats.legendariesHeld} × 5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Placement</span>
+                    <span class="stat-value">${matchStats.placement}${matchStats.placement === 1 ? 'st' : matchStats.placement === 2 ? 'nd' : matchStats.placement === 3 ? 'rd' : 'th'}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level Bonus</span>
+                    <span class="stat-value">+${Math.round((playerLevel * 0.05) * 100)}%</span>
+                </div>
+            `;
+            
+            if (matchStats.placement <= 10) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Top 10 Bonus</span>
+                        <span class="stat-value">10</span>
+                    </div>
+                `;
+            }
+            
+            if (matchStats.placement <= 2) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Top 2 Bonus</span>
+                        <span class="stat-value">15</span>
+                    </div>
+                `;
+            }
+            
+            if (matchStats.placement === 1) {
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <span class="stat-label">Victory Royale!</span>
+                        <span class="stat-value">50</span>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('total-points').textContent = `Total Points: ${totalPoints} XP`;
+            document.getElementById('endgame-stats').style.display = 'flex';
+        }
+
+        function calculateMatchPoints() {
+            matchStats.kills = player.eliminations;
+            matchStats.placement = bots.length + 1;
+            
+            let points = 0;
+            points += matchStats.kills * 5;
+            points += matchStats.chestsOpened * 1;
+            points += matchStats.legendariesHeld * 5;
+            
+            if (matchStats.placement <= 10) points += 10;
+            if (matchStats.placement <= 2) points += 15;
+            
+            if (matchStats.placement === 1) {
+                points += 50;
+                victoryRoyales++;
+                localStorage.setItem('victoryRoyales', victoryRoyales);
+            }
+            
+            const levelMultiplier = 1 + (playerLevel * 0.05);
+            points = Math.floor(points * levelMultiplier);
+            
+            matchStats.totalPoints = points;
+            playerXP += points;
+            
+            let leveledUp = false;
+            while (playerXP >= XP_PER_LEVEL) {
+                playerXP -= XP_PER_LEVEL;
+                playerLevel++;
+                leveledUp = true;
+            }
+            
+            if (leveledUp) {
+                applyLevelBonuses();
+                showLevelUpNotification();
+            }
+            
+            savePlayerLevel();
+            updateLevelDisplay();
+            
+            return points;
+        }
+
+        // ===============================================================
+        // === FIXED: UTILITY FUNCTIONS ==================================
+        // ===============================================================
+
+        function getEnhancedTerrainHeight(x, z) {
+            const mountainScale = 0.01;
+            const mountainHeight = 30;
+            const riverWidth = 20;
+            const riverDepth = 5;
+            const hillScale1 = 0.02;
+            const hillScale2 = 0.05;
+            const hillScale3 = 0.1;
+            
+            let y = 0;
+            
+            y += Math.sin(x * hillScale1) * 8 + Math.cos(z * hillScale1) * 8;
+            y += Math.sin(x * hillScale2 + z * hillScale2) * 4;
+            y += Math.sin(x * hillScale3 * 0.7) * Math.cos(z * hillScale3 * 0.7) * 3;
+            
+            const distFromCenter = Math.sqrt(x*x + z*z);
+            if (distFromCenter > WORLD_SIZE * 0.4) {
+                y += (distFromCenter - WORLD_SIZE * 0.4) * 0.3;
+                
+                if (distFromCenter > WORLD_SIZE * 0.45) {
+                    y += Math.sin(distFromCenter * mountainScale) * mountainHeight * 0.5;
+                }
+            }
+            
+            const riverDist = Math.abs(z);
+            if (riverDist < riverWidth) {
+                y -= riverDepth * (1 - riverDist / riverWidth);
+            }
+            
+            y += Math.sin(x * 0.03) * Math.cos(z * 0.04) * 2;
+            
+            return y;
+        }
+
+        function getTerrainHeight(x, z) {
+            return getEnhancedTerrainHeight(x, z);
+        }
+
+        function applyDamage(target, amount, hitPoint, source, isHeadshot = false, type = 'body') {
+            amount = Math.round(amount);
+            let remainingDmg = amount;
+
+            if(target === player) {
+                // Player takes damage
+                let overshieldBefore = player.overshield;
+                
+                if(player.overshield > 0) {
+                    player.overshield -= remainingDmg;
+                    if(player.overshield < 0) { 
+                        remainingDmg = -player.overshield; 
+                        player.overshield = 0; 
+                        
+                        if (overshieldBefore > 0) {
+                            player.lastOvershieldBreak = performance.now();
+                        }
+                    } else {
+                        remainingDmg = 0;
+                    }
+                    player.lastOvershieldDamage = performance.now();
+                }
+
+                if (remainingDmg > 0 && player.shield > 0) {
+                    player.shield -= remainingDmg;
+                    if(player.shield < 0) { 
+                        remainingDmg = -player.shield; 
+                        player.shield = 0; 
+                    } else {
+                        remainingDmg = 0;
+                    }
+                }
+                
+                if (remainingDmg > 0) {
+                    player.health -= remainingDmg;
+                }
+                
+                showDamage(amount, hitPoint, type, isHeadshot); 
+                updateUI();
+                
+                if(player.health <= 0) {
+                    player.dead = true;
+                    handleGameOver(false);
+                }
+                return;
+            }
+
+            // Bot takes damage
+            if(target.shield > 0) {
+                target.shield -= remainingDmg;
+                if(target.shield < 0) { 
+                    remainingDmg = -target.shield; 
+                    target.shield = 0; 
+                } else {
+                    remainingDmg = 0;
+                }
+            } 
+            
+            if (remainingDmg > 0) {
+                target.health -= remainingDmg;
+            }
+            
+            showDamage(amount, hitPoint, type, isHeadshot);
+            
+            if(target.health <= 0) {
+                if (bots.includes(target)) {
+                    if (source === player) {
+                        player.eliminations += 1;
+                        matchStats.kills = player.eliminations;
+                    }
+                    scene.remove(target.mesh);
+                    bots = bots.filter(b => b !== target);
+                    
+                    const randomWeaponKey = getRandomWeaponKey();
+                    const randomRarity = getRandomRarity(); 
+                    const botWeapon = createWeaponItem(randomWeaponKey, randomRarity);
+                    
+                    const dropConsumableKey = getRandomConsumableKey();
+                    const consumableBase = CONSUMABLES[dropConsumableKey];
+                    const healingItemDrop = { 
+                        category: 'consumable', 
+                        ...CONSUMABLES[dropConsumableKey], 
+                        count: 1, 
+                        rarity: consumableBase.rarity 
+                    };
+                    
+                    spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
+                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
+                    player.wood += 50; 
+                    
+                    playSound('elimination');
+                    updateAliveCount();
+                    checkWin();
+                }
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('health-value').textContent = Math.max(0, Math.round(player.health));
+            document.getElementById('shield-value').textContent = Math.max(0, Math.round(player.shield));
+            document.getElementById('overshield-value').textContent = Math.max(0, Math.round(player.overshield));
+            document.getElementById('wood-value').textContent = player.wood;
+            
+            document.getElementById('health-bar').style.width = `${Math.max(0, player.health)}%`;
+            document.getElementById('shield-bar').style.width = `${Math.max(0, player.shield)}%`;
+            document.getElementById('overshield-bar').style.width = `${Math.max(0, player.overshield / OVER_SHIELD_MAX * 100)}%`;
+            
+            updateAliveCount();
+        }
+
+        function updateAliveCount() {
+            const aliveCount = bots.length + (player.dead ? 0 : 1);
+            document.getElementById('alive-count').textContent = aliveCount;
+            document.getElementById('total-players').textContent = aliveCount;
+        }
+
+        function updateStorm(now) {
+            const playerPos2D = new THREE.Vector2(camera.position.x, camera.position.z);
+            const distToStorm = playerPos2D.distanceTo(stormCenter);
+            const inStorm = stormActive && distToStorm > stormRadius;
+
+            document.getElementById('storm-overlay').classList.toggle('in-storm', inStorm);
+
+            // Damage Application - Player
+            if (inStorm && stormDamageRate > 0) {
+                const timeSinceLastDamage = now - player.lastStormDamage;
+                const damageInterval = 1000;
+                
+                if (timeSinceLastDamage >= damageInterval) {
+                    let actualDamage = stormDamageRate;
+                    
+                    const timeInStorm = Math.min(30, (timeSinceLastDamage - damageInterval) / 1000);
+                    if (timeInStorm > 10) {
+                        actualDamage *= 1.5;
+                    }
+                    if (timeInStorm > 20) {
+                        actualDamage *= 2;
+                    }
+                    
+                    applyDamage(player, actualDamage, camera.position, null, false, 'storm');
+                    player.lastStormDamage = now;
+                    playSound('storm_damage');
+                }
+            } 
+
+            // Damage Application - Bots
+            bots.forEach(bot => {
+                const botPos2D = new THREE.Vector2(bot.mesh.position.x, bot.mesh.position.z);
+                const botDistToStorm = botPos2D.distanceTo(stormCenter);
+                const botInStorm = stormActive && botDistToStorm > stormRadius;
+                
+                if (botInStorm && BOT_STORM_DAMAGE > 0) {
+                     if (now - (bot.lastStormDamage || 0) > 1000) {
+                        applyDamage(bot, BOT_STORM_DAMAGE, bot.mesh.position.clone().setY(bot.mesh.position.y + 1), null, false, 'storm');
+                        bot.lastStormDamage = now;
+                        
+                        if (bot.health <= 0) {
+                            scene.remove(bot.mesh);
+                            bots = bots.filter(b => b !== bot);
+                            player.wood += 50;
+                            updateAliveCount();
+                            checkWin();
+                        }
+                    }
+                }
+            });
+        }
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            const mobileControls = document.getElementById('mobile-controls');
+            const gameContainer = document.getElementById('game-container');
+            const controllerLayout = document.getElementById('controller-layout');
+
+            if (mode === 'mobile') {
+                if (controls) controls.enabled = false;
+                mobileControls.style.display = 'block';
+                controllerLayout.style.display = 'none';
+                gameContainer.removeEventListener('mousedown', lockPointer);
+                
+                initMobileControls();
+            } else if (mode === 'controller') {
+                if (controls) controls.enabled = false;
+                mobileControls.style.display = 'none';
+                controllerLayout.style.display = 'none';
+                gameContainer.removeEventListener('mousedown', lockPointer);
+            } else {
+                if (controls) controls.enabled = true;
+                mobileControls.style.display = 'none';
+                controllerLayout.style.display = 'none';
+                gameContainer.addEventListener('mousedown', lockPointer);
+            }
+        }
+
+        function lockPointer() {
+            if (controls && !controls.isLocked && gameMode === 'desktop') {
+                controls.lock();
+            }
+        }
+
+        function selectSlotMobile(slot) {
+            switchSlot(slot);
+        }
+
+        // ===============================================================
+        // === FIXED: LEVEL SYSTEM FUNCTIONS =============================
+        // ===============================================================
+
+        function loadPlayerLevel() {
+            const savedLevel = localStorage.getItem('playerLevel');
+            const savedXP = localStorage.getItem('playerXP');
+            const savedRoyales = localStorage.getItem('victoryRoyales');
+            
+            playerLevel = savedLevel ? parseInt(savedLevel) : 1;
+            playerXP = savedXP ? parseInt(savedXP) : 0;
+            victoryRoyales = savedRoyales ? parseInt(savedRoyales) : 0;
+            
+            applyLevelBonuses();
+            updateLevelDisplay();
+        }
+
+        function savePlayerLevel() {
+            localStorage.setItem('playerLevel', playerLevel);
+            localStorage.setItem('playerXP', playerXP);
+            localStorage.setItem('victoryRoyales', victoryRoyales);
+        }
+
+        function applyLevelBonuses() {
+            player.levelDamageMultiplier = 1.0;
+            player.levelShieldBonus = 0;
+            player.levelSpeedMultiplier = 1.0;
+            
+            if (playerLevel >= 5) {
+                player.levelDamageMultiplier = 1.1;
+                player.levelShieldBonus = 25;
+            }
+            if (playerLevel >= 10) {
+                player.levelDamageMultiplier = 1.15;
+                player.levelShieldBonus = 50;
+                player.levelSpeedMultiplier = 1.1;
+            }
+            if (playerLevel >= 15) {
+                player.levelDamageMultiplier = 1.2;
+                player.levelShieldBonus = 75;
+                player.levelSpeedMultiplier = 1.15;
+            }
+            if (playerLevel >= 20) {
+                player.levelDamageMultiplier = 1.25;
+                player.levelShieldBonus = 100;
+                player.levelSpeedMultiplier = 1.2;
+            }
+            
+            player.shield = Math.min(100 + player.levelShieldBonus, player.shield);
+        }
+
+        function updateLevelDisplay() {
+            const levelDisplay = document.getElementById('level-display');
+            const progressBar = levelDisplay.querySelector('.progress-bar');
+            const levelText = levelDisplay.querySelector('.level-text');
+            const pointsText = levelDisplay.querySelector('.points-text');
+            const perksContainer = levelDisplay.querySelector('.level-perks');
+            
+            levelText.textContent = `Level ${playerLevel}`;
+            const progressPercent = (playerXP / XP_PER_LEVEL) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            pointsText.textContent = `${playerXP} / ${XP_PER_LEVEL} XP`;
+            
+            perksContainer.innerHTML = '';
+            const currentPerkSet = LEVEL_PERKS.find(perk => playerLevel >= perk.level) || LEVEL_PERKS[0];
+            
+            currentPerkSet.perks.forEach((perk, index) => {
+                const perkEl = document.createElement('div');
+                perkEl.className = `level-perk ${index === 0 ? 'unlocked' : ''}`;
+                perkEl.textContent = perk;
+                perksContainer.appendChild(perkEl);
+            });
+        }
+
+        function showLevelUpNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #ffd700, #ffaa00);
+                color: #000;
+                padding: 2rem 3rem;
+                border-radius: 15px;
+                font-size: 2rem;
+                font-weight: 900;
+                z-index: 10000;
+                animation: levelUpAnim 2s ease-out forwards;
+                text-align: center;
+                box-shadow: 0 20px 50px rgba(255, 215, 0, 0.7);
+                border: 4px solid rgba(255,255,255,0.5);
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎉</div>
+                <div>LEVEL UP!</div>
+                <div style="font-size: 1.5rem; margin-top: 1rem;">Level ${playerLevel}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes levelUpAnim {
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-20deg); }
+                    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+                    40% { transform: translate(-50%, -50%) scale(1) rotate(-5deg); }
+                    60% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+                    80% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            playSound('victory');
+            
+            setTimeout(() => {
+                notification.remove();
+                style.remove();
+            }, 2000);
+        }
+
+        // ===============================================================
+        // === FIXED: PERFORMANCE OPTIMIZATION ===========================
         // ===============================================================
 
         function optimizePerformance() {
@@ -2452,494 +4518,7 @@
         }
 
         // ===============================================================
-        // === FIXED BOT AI SYSTEM =======================================
-        // ===============================================================
-
-        function updateEnhancedBots(dt, now) {
-            if (now - lastBotUpdate < botUpdateInterval) return;
-            lastBotUpdate = now;
-            
-            const playerPos = camera.position;
-            
-            for(let i = bots.length - 1; i >= 0; i--) {
-                const bot = bots[i];
-                if (bot.health <= 0) continue;
-
-                const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
-                bot.mesh.position.y = h + 1;
-
-                // Calculate distance to player
-                const distToPlayer = bot.mesh.position.distanceTo(playerPos);
-                
-                // FIXED: Bot cannot move within BOT_MIN_DISTANCE of player
-                if (distToPlayer < BOT_MIN_DISTANCE) {
-                    // Move away from player
-                    const awayDirection = new THREE.Vector3()
-                        .subVectors(bot.mesh.position, playerPos)
-                        .normalize();
-                    
-                    bot.mesh.lookAt(
-                        bot.mesh.position.x + awayDirection.x,
-                        bot.mesh.position.y,
-                        bot.mesh.position.z + awayDirection.z
-                    );
-                    
-                    // Move away but not too fast
-                    bot.mesh.translateZ(-WALK_SPEED * 0.3 * dt);
-                    
-                    // Update target but don't shoot when too close
-                    bot.target = player;
-                    bot.lastShot = now; // Reset shot timer
-                    continue; // Skip rest of AI when too close
-                }
-
-                // Simple wandering behavior when no target
-                if (!bot.target || bot.target.dead) {
-                    const playerDist = bot.mesh.position.distanceTo(camera.position);
-                    
-                    if (playerDist < 50 && !player.dead) {
-                        bot.target = player;
-                        if (!bot.spottedPlayer) {
-                            playSound('bot_alert', 0.3);
-                            bot.spottedPlayer = true;
-                        }
-                    } else {
-                        // Wander randomly with improved movement
-                        if (now - bot.lastWander > 3000) {
-                            bot.wanderDirection = new THREE.Vector3(
-                                Math.random() - 0.5,
-                                0,
-                                Math.random() - 0.5
-                            ).normalize();
-                            bot.lastWander = now;
-                            bot.spottedPlayer = false;
-                        }
-                        
-                        bot.mesh.lookAt(
-                            bot.mesh.position.x + bot.wanderDirection.x,
-                            bot.mesh.position.y,
-                            bot.mesh.position.z + bot.wanderDirection.z
-                        );
-                        
-                        bot.mesh.translateZ(WALK_SPEED * 0.4 * dt);
-                    }
-                }
-                
-                // Chase player if target exists and not too close
-                if (bot.target && !bot.target.dead && distToPlayer >= BOT_MIN_DISTANCE) {
-                    const targetPos = bot.target === player ? camera.position : bot.target.mesh.position;
-                    const direction = new THREE.Vector3()
-                        .subVectors(targetPos, bot.mesh.position)
-                        .normalize();
-                    
-                    bot.mesh.lookAt(
-                        bot.mesh.position.x + direction.x,
-                        bot.mesh.position.y,
-                        bot.mesh.position.z + direction.z
-                    );
-                    
-                    const dist = bot.mesh.position.distanceTo(targetPos);
-                    
-                    if (dist > 25 && dist >= BOT_MIN_DISTANCE) {
-                        // Move towards target but maintain minimum distance
-                        bot.mesh.translateZ(WALK_SPEED * 0.7 * dt);
-                    } else if (dist < BOT_MIN_DISTANCE) {
-                        // Move away if too close (already handled above)
-                        const awayDir = new THREE.Vector3()
-                            .subVectors(bot.mesh.position, targetPos)
-                            .normalize();
-                        bot.mesh.translateZ(-WALK_SPEED * 0.4 * dt);
-                    }
-                    
-                    // Shoot at target with FIXED damage system
-                    if (dist < 60 && !bot.isReloading && now - bot.lastShot > bot.weapon.stats.rate * 1000) {
-                        const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                        const fireDirection = new THREE.Vector3()
-                            .subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin)
-                            .normalize();
-                        
-                        // Add some inaccuracy based on distance
-                        const inaccuracy = Math.min(0.3, dist / 200);
-                        fireDirection.x += (Math.random() - 0.5) * inaccuracy;
-                        fireDirection.y += (Math.random() - 0.5) * inaccuracy;
-                        fireDirection.z += (Math.random() - 0.5) * inaccuracy;
-                        fireDirection.normalize();
-                        
-                        createMuzzleFlash(fireOrigin, fireDirection);
-                        
-                        // FIXED: Proper raycasting for bot shots
-                        const ray = new THREE.Raycaster(fireOrigin, fireDirection);
-                        const targets = [];
-                        
-                        // Only include player if bot is targeting player
-                        if (bot.target === player) {
-                            targets.push(camera);
-                        }
-                        
-                        const hits = ray.intersectObjects(targets, false);
-                        
-                        if (hits.length > 0) {
-                            const hit = hits[0];
-                            // Apply damage with proper parameters
-                            applyDamage(player, bot.weapon.stats.dmg * 0.7, hit.point, bot, false);
-                            createImpactEffect(hit.point, false);
-                            playSound('player_hit', 0.5);
-                        }
-                        
-                        bot.lastShot = now;
-                        bot.weapon.stats.currentMag--;
-                        
-                        if (bot.weapon.stats.currentMag <= 0) {
-                            bot.isReloading = true;
-                            setTimeout(() => {
-                                if (bot.weapon) {
-                                    bot.weapon.stats.currentMag = bot.weapon.stats.mag;
-                                    bot.isReloading = false;
-                                }
-                            }, bot.weapon.stats.reload * 1.5);
-                        }
-                    }
-                }
-                
-                // Update bot weapon ammo
-                if (bot.weapon && bot.weapon.stats.currentMag <= 0 && !bot.isReloading) {
-                    bot.isReloading = true;
-                    setTimeout(() => {
-                        if (bot.weapon) {
-                            bot.weapon.stats.currentMag = bot.weapon.stats.mag;
-                            bot.isReloading = false;
-                        }
-                    }, bot.weapon.stats.reload * 1.5);
-                }
-            }
-        }
-
-        // ===============================================================
-        // === FIXED DAMAGE SYSTEM =======================================
-        // ===============================================================
-
-        function applyDamage(target, amount, hitPoint, source, isHeadshot = false, type = 'body') {
-            amount = Math.round(amount);
-            let remainingDmg = amount;
-
-            if(target === player) {
-                // Player takes damage
-                let overshieldBefore = player.overshield;
-                
-                if(player.overshield > 0) {
-                    player.overshield -= remainingDmg;
-                    if(player.overshield < 0) { 
-                        remainingDmg = -player.overshield; 
-                        player.overshield = 0; 
-                        
-                        if (overshieldBefore > 0) {
-                            player.lastOvershieldBreak = performance.now();
-                        }
-                    } else {
-                        remainingDmg = 0;
-                    }
-                    player.lastOvershieldDamage = performance.now();
-                }
-
-                if (remainingDmg > 0 && player.shield > 0) {
-                    player.shield -= remainingDmg;
-                    if(player.shield < 0) { 
-                        remainingDmg = -player.shield; 
-                        player.shield = 0; 
-                    } else {
-                        remainingDmg = 0;
-                    }
-                }
-                
-                if (remainingDmg > 0) {
-                    player.health -= remainingDmg;
-                }
-                
-                showDamage(amount, hitPoint, type, isHeadshot); 
-                updateUI();
-                
-                if(player.health <= 0) {
-                    player.dead = true;
-                    handleGameOver(false);
-                }
-                return;
-            }
-
-            // Bot takes damage
-            if(target.shield > 0) {
-                target.shield -= remainingDmg;
-                if(target.shield < 0) { 
-                    remainingDmg = -target.shield; 
-                    target.shield = 0; 
-                } else {
-                    remainingDmg = 0;
-                }
-            } 
-            
-            if (remainingDmg > 0) {
-                target.health -= remainingDmg;
-            }
-            
-            showDamage(amount, hitPoint, type, isHeadshot);
-            
-            if(target.health <= 0) {
-                if (bots.includes(target)) {
-                    if (source === player) {
-                        player.eliminations += 1;
-                        matchStats.kills = player.eliminations;
-                    }
-                    scene.remove(target.mesh);
-                    bots = bots.filter(b => b !== target);
-                    
-                    const randomWeaponKey = getRandomWeaponKey();
-                    const randomRarity = getRandomRarity(); 
-                    const botWeapon = createWeaponItem(randomWeaponKey, randomRarity);
-                    
-                    const dropConsumableKey = getRandomConsumableKey();
-                    const consumableBase = CONSUMABLES[dropConsumableKey];
-                    const healingItemDrop = { 
-                        category: 'consumable', 
-                        ...CONSUMABLES[dropConsumableKey], 
-                        count: 1, 
-                        rarity: consumableBase.rarity 
-                    };
-                    
-                    spawnLoot(hitPoint.x + 1, hitPoint.y, hitPoint.z, botWeapon); 
-                    spawnLoot(hitPoint.x - 1, hitPoint.y, hitPoint.z, healingItemDrop); 
-                    player.wood += 50; 
-                    
-                    playSound('elimination');
-                    updateAliveCount();
-                    checkWin();
-                }
-            }
-        }
-
-        // ===============================================================
-        // === ENHANCED LEVEL SYSTEM =====================================
-        // ===============================================================
-
-        function loadPlayerLevel() {
-            const savedLevel = localStorage.getItem('playerLevel');
-            const savedXP = localStorage.getItem('playerXP');
-            const savedRoyales = localStorage.getItem('victoryRoyales');
-            
-            playerLevel = savedLevel ? parseInt(savedLevel) : 1;
-            playerXP = savedXP ? parseInt(savedXP) : 0;
-            victoryRoyales = savedRoyales ? parseInt(savedRoyales) : 0;
-            
-            applyLevelBonuses();
-            updateLevelDisplay();
-        }
-
-        function savePlayerLevel() {
-            localStorage.setItem('playerLevel', playerLevel);
-            localStorage.setItem('playerXP', playerXP);
-            localStorage.setItem('victoryRoyales', victoryRoyales);
-        }
-
-        function applyLevelBonuses() {
-            player.levelDamageMultiplier = 1.0;
-            player.levelShieldBonus = 0;
-            player.levelSpeedMultiplier = 1.0;
-            
-            if (playerLevel >= 5) {
-                player.levelDamageMultiplier = 1.1;
-                player.levelShieldBonus = 25;
-            }
-            if (playerLevel >= 10) {
-                player.levelDamageMultiplier = 1.15;
-                player.levelShieldBonus = 50;
-                player.levelSpeedMultiplier = 1.1;
-            }
-            if (playerLevel >= 15) {
-                player.levelDamageMultiplier = 1.2;
-                player.levelShieldBonus = 75;
-                player.levelSpeedMultiplier = 1.15;
-            }
-            if (playerLevel >= 20) {
-                player.levelDamageMultiplier = 1.25;
-                player.levelShieldBonus = 100;
-                player.levelSpeedMultiplier = 1.2;
-            }
-            
-            player.shield = Math.min(100 + player.levelShieldBonus, player.shield);
-        }
-
-        function calculateMatchPoints() {
-            matchStats.kills = player.eliminations;
-            matchStats.placement = bots.length + 1;
-            
-            let points = 0;
-            points += matchStats.kills * 5;
-            points += matchStats.chestsOpened * 1;
-            points += matchStats.legendariesHeld * 5;
-            
-            if (matchStats.placement <= 10) points += 10;
-            if (matchStats.placement <= 2) points += 15;
-            
-            if (matchStats.placement === 1) {
-                points += 50;
-                victoryRoyales++;
-                localStorage.setItem('victoryRoyales', victoryRoyales);
-            }
-            
-            const levelMultiplier = 1 + (playerLevel * 0.05);
-            points = Math.floor(points * levelMultiplier);
-            
-            matchStats.totalPoints = points;
-            playerXP += points;
-            
-            let leveledUp = false;
-            while (playerXP >= XP_PER_LEVEL) {
-                playerXP -= XP_PER_LEVEL;
-                playerLevel++;
-                leveledUp = true;
-            }
-            
-            if (leveledUp) {
-                applyLevelBonuses();
-                showLevelUpNotification();
-            }
-            
-            savePlayerLevel();
-            updateLevelDisplay();
-            
-            return points;
-        }
-
-        function updateLevelDisplay() {
-            const levelDisplay = document.getElementById('level-display');
-            const progressBar = levelDisplay.querySelector('.progress-bar');
-            const levelText = levelDisplay.querySelector('.level-text');
-            const pointsText = levelDisplay.querySelector('.points-text');
-            const perksContainer = levelDisplay.querySelector('.level-perks');
-            
-            levelText.textContent = `Level ${playerLevel}`;
-            const progressPercent = (playerXP / XP_PER_LEVEL) * 100;
-            progressBar.style.width = `${progressPercent}%`;
-            pointsText.textContent = `${playerXP} / ${XP_PER_LEVEL} XP`;
-            
-            perksContainer.innerHTML = '';
-            const currentPerkSet = LEVEL_PERKS.find(perk => playerLevel >= perk.level) || LEVEL_PERKS[0];
-            
-            currentPerkSet.perks.forEach((perk, index) => {
-                const perkEl = document.createElement('div');
-                perkEl.className = `level-perk ${index === 0 ? 'unlocked' : ''}`;
-                perkEl.textContent = perk;
-                perksContainer.appendChild(perkEl);
-            });
-        }
-
-        function showLevelUpNotification() {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: linear-gradient(135deg, #ffd700, #ffaa00);
-                color: #000;
-                padding: 2rem 3rem;
-                border-radius: 15px;
-                font-size: 2rem;
-                font-weight: 900;
-                z-index: 10000;
-                animation: levelUpAnim 2s ease-out forwards;
-                text-align: center;
-                box-shadow: 0 20px 50px rgba(255, 215, 0, 0.7);
-                border: 4px solid rgba(255,255,255,0.5);
-            `;
-            
-            notification.innerHTML = `
-                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎉</div>
-                <div>LEVEL UP!</div>
-                <div style="font-size: 1.5rem; margin-top: 1rem;">Level ${playerLevel}</div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes levelUpAnim {
-                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-20deg); }
-                    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
-                    40% { transform: translate(-50%, -50%) scale(1) rotate(-5deg); }
-                    60% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
-                    80% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
-                    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            playSound('victory');
-            
-            setTimeout(() => {
-                notification.remove();
-                style.remove();
-            }, 2000);
-        }
-
-        function showEndGameStats(win) {
-            const totalPoints = calculateMatchPoints();
-            const statsGrid = document.getElementById('match-stats-grid');
-            
-            statsGrid.innerHTML = `
-                <div class="stat-item">
-                    <span class="stat-label">Kills</span>
-                    <span class="stat-value">${matchStats.kills} × 5</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Chests Opened</span>
-                    <span class="stat-value">${matchStats.chestsOpened} × 1</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Legendaries Held</span>
-                    <span class="stat-value">${matchStats.legendariesHeld} × 5</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Placement</span>
-                    <span class="stat-value">${matchStats.placement}${matchStats.placement === 1 ? 'st' : matchStats.placement === 2 ? 'nd' : matchStats.placement === 3 ? 'rd' : 'th'}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Level Bonus</span>
-                    <span class="stat-value">+${Math.round((playerLevel * 0.05) * 100)}%</span>
-                </div>
-            `;
-            
-            if (matchStats.placement <= 10) {
-                statsGrid.innerHTML += `
-                    <div class="stat-item">
-                        <span class="stat-label">Top 10 Bonus</span>
-                        <span class="stat-value">10</span>
-                    </div>
-                `;
-            }
-            
-            if (matchStats.placement <= 2) {
-                statsGrid.innerHTML += `
-                    <div class="stat-item">
-                        <span class="stat-label">Top 2 Bonus</span>
-                        <span class="stat-value">15</span>
-                    </div>
-                `;
-            }
-            
-            if (matchStats.placement === 1) {
-                statsGrid.innerHTML += `
-                    <div class="stat-item">
-                        <span class="stat-label">Victory Royale!</span>
-                        <span class="stat-value">50</span>
-                    </div>
-                `;
-            }
-            
-            document.getElementById('total-points').textContent = `Total Points: ${totalPoints} XP`;
-            document.getElementById('endgame-stats').style.display = 'flex';
-        }
-
-        // ===============================================================
-        // === IMPROVED DAY/NIGHT CYCLE SYSTEM ===========================
+        // === FIXED: DAY/NIGHT CYCLE ====================================
         // ===============================================================
 
         function initDayNightCycle() {
@@ -3096,7 +4675,7 @@
         }
 
         // ===============================================================
-        // === IMPROVED SOUND EFFECTS SYSTEM =============================
+        // === FIXED: SOUND SYSTEM =======================================
         // ===============================================================
 
         let audioContext;
@@ -3336,289 +4915,8 @@
         }
 
         // ===============================================================
-        // === ENHANCED CORAL CASTLE WATER EFFECTS =======================
+        // === FIXED: MOBILE CONTROLS ====================================
         // ===============================================================
-
-        function createWaterEffectsForCoralCastle(x, z, h) {
-            const waterGeometry = new THREE.PlaneGeometry(80, 80, 16, 16);
-            const waterMaterial = new THREE.MeshStandardMaterial({
-                color: 0x00CED1,
-                transparent: true,
-                opacity: 0.7,
-                roughness: 0.1,
-                metalness: 0.8
-            });
-            
-            const water = new THREE.Mesh(waterGeometry, waterMaterial);
-            water.rotation.x = -Math.PI / 2;
-            water.position.set(x, h + 0.2, z);
-            scene.add(water);
-            objects.push(water);
-            
-            const positions = waterGeometry.attributes.position;
-            const originalPositions = positions.array.slice();
-            
-            function animateWater() {
-                const time = performance.now() * 0.001;
-                for (let i = 0; i < positions.count; i++) {
-                    const ix = i * 3;
-                    const x = originalPositions[ix];
-                    const z = originalPositions[ix + 2];
-                    
-                    const waveHeight = Math.sin(x * 0.2 + time) * Math.cos(z * 0.2 + time) * 0.5;
-                    positions.array[ix + 1] = originalPositions[ix + 1] + waveHeight;
-                }
-                positions.needsUpdate = true;
-                
-                if (!player.dead) {
-                    requestAnimationFrame(animateWater);
-                }
-            }
-            animateWater();
-            
-            const splashParticles = new THREE.Group();
-            for (let i = 0; i < 10; i++) {
-                const particle = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.1, 4, 4),
-                    new THREE.MeshBasicMaterial({ 
-                        color: 0x00ffff,
-                        transparent: true,
-                        opacity: 0.6
-                    })
-                );
-                particle.position.set(
-                    x + (Math.random() - 0.5) * 40,
-                    h + 0.5 + Math.random() * 0.5,
-                    z + (Math.random() - 0.5) * 40
-                );
-                splashParticles.add(particle);
-                
-                visualEffects.push({
-                    mesh: particle,
-                    velocity: new THREE.Vector3(
-                        (Math.random() - 0.5) * 0.1,
-                        Math.random() * 0.05,
-                        (Math.random() - 0.5) * 0.1
-                    ),
-                    lifetime: 3 + Math.random() * 2,
-                    age: Math.random() * 2,
-                    floating: true
-                });
-            }
-            scene.add(splashParticles);
-            
-            const bubbleParticles = new THREE.Group();
-            for (let i = 0; i < 8; i++) {
-                const bubble = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.05 + Math.random() * 0.1, 6, 6),
-                    new THREE.MeshBasicMaterial({ 
-                        color: 0xffffff,
-                        transparent: true,
-                        opacity: 0.4
-                    })
-                );
-                bubble.position.set(
-                    x + (Math.random() - 0.5) * 35,
-                    h + 0.1,
-                    z + (Math.random() - 0.5) * 35
-                );
-                bubbleParticles.add(bubble);
-                
-                visualEffects.push({
-                    mesh: bubble,
-                    velocity: new THREE.Vector3(0, 0.1 + Math.random() * 0.1, 0),
-                    lifetime: 2 + Math.random() * 3,
-                    age: Math.random() * 2,
-                    floating: false
-                });
-            }
-            scene.add(bubbleParticles);
-            
-            const waterSoundTrigger = {
-                position: new THREE.Vector3(x, h, z),
-                radius: 40,
-                lastSplashTime: 0
-            };
-            
-            function checkWaterSounds() {
-                if (player.dead) return;
-                
-                const playerDist = camera.position.distanceTo(waterSoundTrigger.position);
-                if (playerDist < waterSoundTrigger.radius) {
-                    const now = performance.now();
-                    if (now - waterSoundTrigger.lastSplashTime > 2000) {
-                        playSound('water_splash', 0.3);
-                        waterSoundTrigger.lastSplashTime = now;
-                    }
-                }
-                
-                requestAnimationFrame(checkWaterSounds);
-            }
-            checkWaterSounds();
-        }
-
-        // ===============================================================
-        // === IMPROVED VISUAL EFFECTS SYSTEM ============================
-        // ===============================================================
-
-        function createMuzzleFlash(position, direction) {
-            const flash = new THREE.PointLight(0xff9900, 2, 10);
-            flash.position.copy(position);
-            scene.add(flash);
-            
-            const particles = new THREE.Group();
-            for(let i = 0; i < 6; i++) {
-                const particle = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.05 + Math.random() * 0.05, 4, 4),
-                    new THREE.MeshBasicMaterial({ color: 0xff6600 })
-                );
-                particle.position.copy(position);
-                const velocity = direction.clone()
-                    .add(new THREE.Vector3(
-                        (Math.random() - 0.5) * 0.4,
-                        (Math.random() - 0.5) * 0.4,
-                        (Math.random() - 0.5) * 0.4
-                    ))
-                    .normalize()
-                    .multiplyScalar(Math.random() * 8 + 8);
-                particles.add(particle);
-                visualEffects.push({
-                    mesh: particle,
-                    velocity: velocity,
-                    lifetime: 0.2 + Math.random() * 0.1,
-                    age: 0
-                });
-            }
-            scene.add(particles);
-            
-            setTimeout(() => {
-                scene.remove(flash);
-                scene.remove(particles);
-            }, 100);
-        }
-
-        function createImpactEffect(position, isHeadshot = false) {
-            const particles = new THREE.Group();
-            const particleCount = isHeadshot ? 10 : 6;
-            
-            for(let i = 0; i < particleCount; i++) {
-                const particle = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.08 + Math.random() * 0.07, 4, 4),
-                    new THREE.MeshBasicMaterial({ 
-                        color: isHeadshot ? 0xff0000 : 0xff6600,
-                        transparent: true,
-                        opacity: 0.9
-                    })
-                );
-                particle.position.copy(position);
-                const velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 3,
-                    (Math.random() - 0.5) * 3,
-                    (Math.random() - 0.5) * 3
-                );
-                particles.add(particle);
-                visualEffects.push({
-                    mesh: particle,
-                    velocity: velocity,
-                    lifetime: 0.8 + Math.random() * 0.4,
-                    age: 0
-                });
-            }
-            scene.add(particles);
-            
-            if (isHeadshot) {
-                const blood = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.4, 8, 8),
-                    new THREE.MeshBasicMaterial({ 
-                        color: 0xcc0000,
-                        transparent: true,
-                        opacity: 0.7
-                    })
-                );
-                blood.position.copy(position);
-                scene.add(blood);
-                
-                visualEffects.push({
-                    mesh: blood,
-                    lifetime: 1.5,
-                    age: 0,
-                    scaleDown: true
-                });
-            }
-        }
-
-        function updateVisualEffects(dt) {
-            for(let i = visualEffects.length - 1; i >= 0; i--) {
-                const effect = visualEffects[i];
-                effect.age += dt;
-                
-                if (effect.age >= effect.lifetime) {
-                    scene.remove(effect.mesh);
-                    visualEffects.splice(i, 1);
-                    continue;
-                }
-                
-                if (effect.velocity) {
-                    effect.mesh.position.add(effect.velocity.clone().multiplyScalar(dt));
-                    
-                    if (!effect.floating) {
-                        effect.velocity.y -= GRAVITY * 0.1 * dt;
-                    }
-                }
-                
-                const progress = effect.age / effect.lifetime;
-                if (effect.mesh.material) {
-                    effect.mesh.material.opacity = 1 - progress;
-                }
-                
-                if (effect.scaleDown) {
-                    effect.mesh.scale.setScalar(1 - progress * 0.5);
-                }
-            }
-        }
-
-        // ===============================================================
-        // === IMPROVED INPUT & CONTROL MANAGEMENT =======================
-        // ===============================================================
-        
-        function toggleCrouch(state) {
-            if (player.dead) return;
-            
-            player.isCrouching = state;
-            if (state) {
-                player.originalHeight = camera.position.y - getTerrainHeight(camera.position.x, camera.position.z);
-                camera.position.y -= 0.9;
-                playSound('crouch', 0.3);
-            } else {
-                camera.position.y += 0.9;
-            }
-        }
-
-        function setGameMode(mode) {
-            gameMode = mode;
-            const mobileControls = document.getElementById('mobile-controls');
-            const gameContainer = document.getElementById('game-container');
-            const controllerLayout = document.getElementById('controller-layout');
-
-            if (mode === 'mobile') {
-                if (controls) controls.enabled = false;
-                mobileControls.style.display = 'block';
-                controllerLayout.style.display = 'none';
-                gameContainer.removeEventListener('mousedown', lockPointer);
-                
-                initMobileControls();
-            } else if (mode === 'controller') {
-                if (controls) controls.enabled = false;
-                mobileControls.style.display = 'none';
-                controllerLayout.style.display = 'none';
-                gameContainer.removeEventListener('mousedown', lockPointer);
-            } else {
-                if (controls) controls.enabled = true;
-                mobileControls.style.display = 'none';
-                controllerLayout.style.display = 'none';
-                gameContainer.addEventListener('mousedown', lockPointer);
-            }
-        }
 
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
@@ -3790,7 +5088,7 @@
             
             document.getElementById('btn-build').addEventListener('touchstart', (e) => { 
                 e.preventDefault(); 
-                buildWall(); 
+                // buildWall(); // Build function would go here
             });
             
             document.getElementById('btn-reload').addEventListener('touchstart', (e) => { 
@@ -3806,629 +5104,8 @@
         }
 
         // ===============================================================
-        // === FIXED STORM DAMAGE SYSTEM =================================
+        // === INITIALIZE THE GAME =======================================
         // ===============================================================
-
-        function updateStorm(now) {
-            const playerPos2D = new THREE.Vector2(camera.position.x, camera.position.z);
-            const distToStorm = playerPos2D.distanceTo(stormCenter);
-            const inStorm = stormActive && distToStorm > stormRadius;
-
-            document.getElementById('storm-overlay').classList.toggle('in-storm', inStorm);
-
-            // Damage Application - Player
-            if (inStorm && stormDamageRate > 0) {
-                const timeSinceLastDamage = now - player.lastStormDamage;
-                const damageInterval = 1000;
-                
-                if (timeSinceLastDamage >= damageInterval) {
-                    let actualDamage = stormDamageRate;
-                    
-                    const timeInStorm = Math.min(30, (timeSinceLastDamage - damageInterval) / 1000);
-                    if (timeInStorm > 10) {
-                        actualDamage *= 1.5;
-                    }
-                    if (timeInStorm > 20) {
-                        actualDamage *= 2;
-                    }
-                    
-                    applyDamage(player, actualDamage, camera.position, null, false, 'storm');
-                    player.lastStormDamage = now;
-                    playSound('storm_damage');
-                    
-                    if (performanceMode !== 'performance') {
-                        const stormEffect = document.createElement('div');
-                        const intensity = Math.min(0.6, 0.3 + (timeInStorm * 0.02));
-                        stormEffect.style.cssText = `
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: radial-gradient(circle at ${(Math.random() * 100)}% ${(Math.random() * 100)}%, 
-                                rgba(138, 43, 226, ${intensity}) 0%, 
-                                rgba(75, 0, 130, ${intensity * 0.7}) 50%,
-                                transparent 100%);
-                            pointer-events: none;
-                            z-index: 999;
-                            animation: flashStorm 0.5s ease-out forwards;
-                            mix-blend-mode: screen;
-                        `;
-                        document.body.appendChild(stormEffect);
-                        
-                        const style = document.createElement('style');
-                        style.textContent = `
-                            @keyframes flashStorm {
-                                0% { opacity: 0; transform: scale(1); }
-                                50% { opacity: ${intensity}; transform: scale(1.02); }
-                                100% { opacity: 0; transform: scale(1); }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                        
-                        setTimeout(() => {
-                            stormEffect.remove();
-                            style.remove();
-                        }, 500);
-                    }
-                }
-            } 
-
-            // Damage Application - Bots
-            bots.forEach(bot => {
-                const botPos2D = new THREE.Vector2(bot.mesh.position.x, bot.mesh.position.z);
-                const botDistToStorm = botPos2D.distanceTo(stormCenter);
-                const botInStorm = stormActive && botDistToStorm > stormRadius;
-                
-                if (botInStorm && BOT_STORM_DAMAGE > 0) {
-                     if (now - (bot.lastStormDamage || 0) > 1000) {
-                        applyDamage(bot, BOT_STORM_DAMAGE, bot.mesh.position.clone().setY(bot.mesh.position.y + 1), null, false, 'storm');
-                        bot.lastStormDamage = now;
-                        
-                        if (bot.health <= 0) {
-                            scene.remove(bot.mesh);
-                            bots = bots.filter(b => b !== bot);
-                            player.wood += 50;
-                            updateAliveCount();
-                            checkWin();
-                        }
-                    }
-                }
-            });
-        }
-
-        // ===============================================================
-        // === CORE GAME FUNCTIONS =======================================
-        // ===============================================================
-
-        function getEnhancedTerrainHeight(x, z) {
-            const mountainScale = 0.01;
-            const mountainHeight = 30;
-            const riverWidth = 20;
-            const riverDepth = 5;
-            const hillScale1 = 0.02;
-            const hillScale2 = 0.05;
-            const hillScale3 = 0.1;
-            
-            let y = 0;
-            
-            y += Math.sin(x * hillScale1) * 8 + Math.cos(z * hillScale1) * 8;
-            y += Math.sin(x * hillScale2 + z * hillScale2) * 4;
-            y += Math.sin(x * hillScale3 * 0.7) * Math.cos(z * hillScale3 * 0.7) * 3;
-            
-            const distFromCenter = Math.sqrt(x*x + z*z);
-            if (distFromCenter > WORLD_SIZE * 0.4) {
-                y += (distFromCenter - WORLD_SIZE * 0.4) * 0.3;
-                
-                if (distFromCenter > WORLD_SIZE * 0.45) {
-                    y += Math.sin(distFromCenter * mountainScale) * mountainHeight * 0.5;
-                }
-            }
-            
-            const riverDist = Math.abs(z);
-            if (riverDist < riverWidth) {
-                y -= riverDepth * (1 - riverDist / riverWidth);
-            }
-            
-            y += Math.sin(x * 0.03) * Math.cos(z * 0.04) * 2;
-            
-            return y;
-        }
-
-        function getTerrainHeight(x, z) {
-            return getEnhancedTerrainHeight(x, z);
-        }
-        
-        function createBox(x, y, z, w, h, d, col, type='solid') {
-            const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({color: col}));
-            mesh.position.set(x, y, z);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            scene.add(mesh);
-            objects.push(mesh); 
-            buildings.push({ mesh: mesh, type: type, health: 100 });
-            return mesh;
-        }
-
-        function createCoralCastle() {
-            const x = 300, z = -300;
-            const h = getEnhancedTerrainHeight(x, z);
-            
-            createBox(x, h + 20, z, 30, 40, 30, 0x00CED1);
-            createBox(x, h + 45, z, 35, 10, 35, 0x20B2AA);
-            
-            const towerPositions = [
-                { x: x + 25, z: z + 25 },
-                { x: x - 25, z: z + 25 },
-                { x: x + 25, z: z - 25 },
-                { x: x - 25, z: z - 25 }
-            ];
-            
-            towerPositions.forEach(pos => {
-                createBox(pos.x, h + 30, pos.z, 8, 60, 8, 0x48D1CC);
-                createBox(pos.x, h + 65, pos.z, 10, 10, 10, 0x40E0D0);
-            });
-            
-            createBox(x, h + 0.1, z, 60, 0.2, 60, 0xAFEEEE);
-            
-            for(let i = 0; i < 15; i++) {
-                const coralX = x + (Math.random() - 0.5) * 50;
-                const coralZ = z + (Math.random() - 0.5) * 50;
-                const coralHeight = Math.random() * 5 + 2;
-                createBox(coralX, h + coralHeight/2, coralZ, 
-                         Math.random() * 3 + 1, coralHeight, Math.random() * 3 + 1, 
-                         [0xFF69B4, 0xFF1493, 0xFF00FF][Math.floor(Math.random() * 3)]);
-            }
-            
-            spawnChest(x, h + 5, z);
-            spawnChest(x + 10, h + 5, z + 10);
-            spawnChest(x - 10, h + 5, z - 10);
-            
-            createWaterEffectsForCoralCastle(x, z, h);
-            
-            console.log("Created Coral Castle POI with water effects");
-        }
-
-        function checkWin() {
-            if (bots.length === 0 && !player.dead) {
-                handleGameOver(true);
-            }
-        }
-        
-        function handleGameOver(win) {
-            player.dead = true;
-            if (controls && controls.isLocked) controls.unlock(); 
-            
-            if (win) {
-                victoryRoyales = (parseInt(localStorage.getItem('victoryRoyales')) || 0) + 1;
-                localStorage.setItem('victoryRoyales', victoryRoyales);
-
-                createVictoryParticles();
-                document.getElementById('victory-stats').innerText = `Eliminations: ${player.eliminations}`;
-                document.getElementById('victory-overlay').style.display = 'flex';
-                playSound('victory');
-                setTimeout(() => showEndGameStats(true), 2000);
-            } else {
-                createEliminatedParticles();
-                document.getElementById('go-stats').innerText = `Eliminations: ${player.eliminations}`;
-                document.getElementById('game-over').style.display = 'flex';
-                playSound('defeat');
-                setTimeout(() => showEndGameStats(false), 2000);
-            }
-        }
-
-        // ===============================================================
-        // === UI UPDATE FUNCTIONS =======================================
-        // ===============================================================
-
-        function updateUI() {
-            document.getElementById('health-value').textContent = Math.max(0, Math.round(player.health));
-            document.getElementById('shield-value').textContent = Math.max(0, Math.round(player.shield));
-            document.getElementById('overshield-value').textContent = Math.max(0, Math.round(player.overshield));
-            document.getElementById('wood-value').textContent = player.wood;
-            
-            document.getElementById('health-bar').style.width = `${Math.max(0, player.health)}%`;
-            document.getElementById('shield-bar').style.width = `${Math.max(0, player.shield)}%`;
-            document.getElementById('overshield-bar').style.width = `${Math.max(0, player.overshield / OVER_SHIELD_MAX * 100)}%`;
-            
-            updateAliveCount();
-        }
-
-        function updateAliveCount() {
-            const aliveCount = bots.length + (player.dead ? 0 : 1);
-            document.getElementById('alive-count').textContent = aliveCount;
-            document.getElementById('total-players').textContent = aliveCount;
-        }
-
-        // ===============================================================
-        // === INITIALIZATION & START GAME ===============================
-        // ===============================================================
-
-        function init() {
-            // Hide loading screen after assets are loaded
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 1000);
-            
-            victoryRoyales = parseInt(localStorage.getItem('victoryRoyales')) || 0;
-            document.getElementById('victory-royales-stat').innerText = `🏆 Victory Royales: ${victoryRoyales}`;
-            
-            loadPlayerLevel();
-            createParticles();
-            initAudio();
-            
-            // Scene Setup
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.Fog(0x87CEEB, 20, renderDistance);
-
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            
-            weaponScene = new THREE.Scene();
-            weaponCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 100);
-
-            renderer = new THREE.WebGLRenderer({ 
-                antialias: performanceMode !== 'performance',
-                powerPreference: 'high-performance'
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = performanceMode !== 'performance';
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            renderer.autoClear = false; 
-            const gameContainer = document.getElementById('game-container');
-            gameContainer.appendChild(renderer.domElement);
-            
-            initDayNightCycle();
-            
-            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambient);
-            
-            weaponScene.add(ambient.clone());
-            
-            controls = new PointerLockControls(camera, document.body);
-            setupInputs(); 
-
-            raycaster = new THREE.Raycaster();
-            downRay = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, PLAYER_HEIGHT + 0.1);
-            
-            animate();
-        }
-
-        window.startGame = (mode) => {
-            document.getElementById('start-screen').style.display = 'none';
-            gameStarted = true;
-            
-            setGameMode(mode);
-            
-            if (mode === 'desktop') {
-                setupPCLock(); 
-            }
-            
-            matchStats = {
-                kills: 0,
-                placement: 0,
-                chestsOpened: 0,
-                legendariesHeld: 0,
-                totalPoints: 0
-            };
-            
-            player.health = 100;
-            player.shield = 100 + player.levelShieldBonus;
-            player.overshield = 50;
-            player.wood = 0;
-            player.inventory = [null, null, null, null, null];
-            player.slot = 0;
-            player.eliminations = 0;
-            player.dead = false;
-            
-            generateTerrain(); 
-            generatePOIs(); 
-            spawnBots();
-            spawnCars();
-
-            camera.position.set(0, getEnhancedTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
-            
-            startStormTimer(); 
-            switchSlot(0);
-            
-            updateUI();
-            updateAliveCount();
-        };
-
-        // ===============================================================
-        // === CORE GAME LOOP ============================================
-        // ===============================================================
-
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            const now = performance.now();
-            const dt = (now - lastTime) / 1000;
-            lastTime = now;
-
-            if(!gameStarted || player.dead) {
-                renderer.clear();
-                renderer.render(scene, camera);
-                return;
-            }
-
-            if (player.isHealing && player.healingItem) {
-                if (player.healingItem.continuous) {
-                    applyContinuousHealing(player.healingItem, dt);
-                } else if (!player.healingItem.instant) {
-                    inputs.fire = false;
-                    inputs.w = inputs.a = inputs.s = inputs.d = false;
-                }
-            }
-            
-            // Overshield regeneration
-            overshieldRegen(dt);
-            
-            updateDayNightCycle(dt);
-
-            if(player.vehicle) {
-                updateCars(dt);
-            } else {
-                const canMove = gameMode === 'mobile' || gameMode === 'controller' || (controls && controls.isLocked); 
-                if (canMove) {
-                    const speedMultiplier = player.ads ? 0.5 : 1.0; 
-                    const currentSpeed = (inputs.sprint ? SPRINT_SPEED : WALK_SPEED) * speedMultiplier * player.levelSpeedMultiplier;
-                    
-                    const direction = new THREE.Vector3();
-                    direction.setFromMatrixColumn(camera.matrix, 0); 
-                    direction.crossVectors(camera.up, direction);
-                    direction.y = 0;
-                    direction.normalize();
-                    
-                    const right = new THREE.Vector3(-direction.z, 0, direction.x);
-
-                    const yVelocity = velocity.y; 
-                    velocity.set(0, yVelocity, 0); 
-
-                    if(inputs.w) velocity.add(direction.clone().multiplyScalar(currentSpeed));
-                    if(inputs.s) velocity.add(direction.clone().multiplyScalar(-currentSpeed));
-                    if(inputs.a) velocity.add(right.clone().multiplyScalar(-currentSpeed));
-                    if(inputs.d) velocity.add(right.clone().multiplyScalar(currentSpeed));
-                    
-                    camera.position.x += velocity.x * dt;
-                    camera.position.z += velocity.z * dt;
-                    velocity.y -= GRAVITY * dt; 
-                    
-                    const groundY = getEnhancedTerrainHeight(camera.position.x, camera.position.z);
-                    let floorY = groundY;
-                    
-                    downRay.ray.origin.copy(camera.position);
-                    const hits = downRay.intersectObjects(objects.filter(obj => !doors.map(d=>d.mesh).includes(obj) && !buildings.some(b => b.mesh === obj && b.type === 'indestructible_wood')), false); 
-                    
-                    if(hits.length > 0) {
-                        const closestHit = hits[0];
-                        if (closestHit.point.y > groundY + 0.1) { 
-                            floorY = closestHit.point.y;
-                        }
-                    }
-                    
-                    if (camera.position.y <= floorY + PLAYER_HEIGHT && velocity.y <= 0) {
-                        camera.position.y = floorY + PLAYER_HEIGHT;
-                        velocity.y = 0;
-                        isGrounded = true;
-                    } else {
-                        isGrounded = false;
-                    }
-                    
-                    if(inputs.jump && isGrounded) {
-                        velocity.y = JUMP_FORCE;
-                        isGrounded = false;
-                        inputs.jump = false; 
-                        playSound('jump');
-                    }
-                    
-                    camera.position.y += velocity.y * dt;
-                    
-                    if (inputs.crouch && !player.isCrouching) {
-                        toggleCrouch(true);
-                    } else if (!inputs.crouch && player.isCrouching) {
-                        toggleCrouch(false);
-                    }
-                    
-                    if ((inputs.w || inputs.a || inputs.s || inputs.d) && isGrounded && Math.random() < 0.05) {
-                        playSound('footstep', 0.2);
-                    }
-                } else {
-                    velocity.x = 0; 
-                    velocity.z = 0;
-                }
-            }
-
-            const canFire = gameMode === 'mobile' || gameMode === 'controller' || (controls && controls.isLocked); 
-            if(inputs.fire && !player.vehicle && !player.isHealing && canFire) {
-                const item = player.inventory[player.slot];
-                if(item && item.category === 'weapon') {
-                    if (item.stats.burst) {
-                        if (now - lastShot > item.stats.burstDelay) {
-                            shoot(item);
-                        }
-                    } else if(now - lastShot > item.stats.rate * 1000) {
-                        shoot(item);
-                    }
-                }
-            } else if (inputs.reload) {
-                reload();
-                inputs.reload = false;
-            }
-            
-            updateProjectiles(dt);
-            updateEnhancedBots(dt, now);
-            updateStorm(now);
-            updateVisualEffects(dt);
-            optimizePerformance();
-
-            renderer.clear();
-            renderer.render(scene, camera);
-            renderer.clearDepth();
-            renderer.render(weaponScene, weaponCamera);
-            
-            updateUI();
-        }
-
-        // ===============================================================
-        // === MISSING FUNCTIONS (Placeholders for completeness) =========
-        // ===============================================================
-
-        // These functions are referenced in the code but not defined in your original snippet
-        // I'm adding minimal implementations to prevent errors
-
-        function setupPCLock() {
-            const gameContainer = document.getElementById('game-container');
-            gameContainer.addEventListener('click', () => {
-                if (controls && !controls.isLocked && gameMode === 'desktop') {
-                    controls.lock();
-                }
-            });
-        }
-
-        function lockPointer() {
-            if (controls && !controls.isLocked && gameMode === 'desktop') {
-                controls.lock();
-            }
-        }
-
-        function toggleADS(state) {
-            player.ads = state;
-        }
-
-        function tryInteract() {
-            // Interaction logic
-        }
-
-        function buildWall() {
-            // Build wall logic
-        }
-
-        function reload() {
-            // Reload logic
-        }
-
-        function switchSlot(slot) {
-            player.slot = slot;
-        }
-
-        function selectSlotMobile(slot) {
-            switchSlot(slot);
-        }
-
-        function useHealingItem() {
-            // Use healing item logic
-        }
-
-        function applyContinuousHealing(item, dt) {
-            // Continuous healing logic
-        }
-
-        function finishHealing() {
-            // Finish healing logic
-        }
-
-        function overshieldRegen(dt) {
-            if (player.dead || player.overshield === OVER_SHIELD_MAX) return;
-
-            const timeSinceDamage = performance.now() - player.lastOvershieldDamage;
-            const timeSinceBreak = performance.now() - player.lastOvershieldBreak;
-            
-            if (timeSinceDamage >= OVER_SHIELD_REGEN_DELAY && timeSinceBreak >= OVER_SHIELD_REGEN_DELAY) {
-                player.overshield = Math.min(OVER_SHIELD_MAX, player.overshield + (OVER_SHIELD_REGEN_RATE * dt));
-                updateUI();
-            }
-        }
-
-        function shoot(item) {
-            // Shooting logic
-        }
-
-        function createParticles() {
-            // Create particles for start screen
-        }
-
-        function createVictoryParticles() {
-            // Create victory particles
-        }
-
-        function createEliminatedParticles() {
-            // Create eliminated particles
-        }
-
-        function generateTerrain() {
-            // Generate terrain
-        }
-
-        function generatePOIs() {
-            // Generate points of interest
-            createCoralCastle();
-        }
-
-        function spawnBots() {
-            // Spawn bots
-        }
-
-        function spawnCars() {
-            // Spawn cars
-        }
-
-        function spawnChest(x, y, z) {
-            // Spawn chest
-        }
-
-        function spawnLoot(x, y, z, item) {
-            // Spawn loot
-        }
-
-        function startStormTimer() {
-            // Start storm timer
-        }
-
-        function setupInputs() {
-            // Setup keyboard inputs
-        }
-
-        function setupControllerInputs() {
-            // Setup controller inputs
-        }
-
-        function updateProjectiles(dt) {
-            // Update projectiles
-        }
-
-        function updateCars(dt) {
-            // Update cars
-        }
-
-        function getRandomWeaponKey() {
-            return Object.keys(WEAPONS_BASE)[Math.floor(Math.random() * Object.keys(WEAPONS_BASE).length)];
-        }
-
-        function getRandomRarity() {
-            return RARITY_KEYS[Math.floor(Math.random() * RARITY_KEYS.length)];
-        }
-
-        function getRandomConsumableKey() {
-            return CONSUMABLE_KEYS[Math.floor(Math.random() * CONSUMABLE_KEYS.length)];
-        }
-
-        function createWeaponItem(key, rarity) {
-            return {
-                category: 'weapon',
-                key: key,
-                stats: { ...WEAPONS_BASE[key] },
-                rarity: rarity
-            };
-        }
-
-        function showDamage(amount, position, type, isHeadshot) {
-            // Show damage numbers
-        }
-
-        function vibrateController(type) {
-            // Controller vibration
-        }
 
         // Initialize the game
         init();
