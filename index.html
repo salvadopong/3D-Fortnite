@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.9.2 - Ultimate Edition</title>
+    <title>Web Battle Royale: V19.9.3 - Ultimate Edition</title>
     <style>
         /* ======================================= */
         /* === V19.9 ULTIMATE UI REDESIGN === */
@@ -1526,6 +1526,16 @@
                 rgba(255,170,0,0.3));
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
+        
+        /* Healing button for mobile */
+        #btn-heal {
+            bottom: 160px; left: 30px;
+            border-color: #00d2ff;
+            background: linear-gradient(135deg,
+                rgba(0,210,255,0.6),
+                rgba(0,168,255,0.5));
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+        }
 
         /* === ULTIMATE VICTORY & ELIMINATED SCREENS === */
         #victory-overlay {
@@ -1588,7 +1598,7 @@
         }
         
         #victory-text::after {
-            content: 'V19.9';
+            content: 'V19.9.3';
             display: block;
             font-size: 2rem;
             margin-top: 1rem;
@@ -1903,7 +1913,7 @@
     <div id="start-screen">
         <div class="menu-background"></div>
         <div class="particles" id="particles-container"></div>
-        <div class="version-badge">V19.9.2 • ULTIMATE EDITION</div>
+        <div class="version-badge">V19.9.3 • ULTIMATE EDITION</div>
         <div class="menu-title">
             <div class="title-glow"></div>
             <h1>WEB BATTLE ROYALE</h1>
@@ -1925,7 +1935,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.9.2</p>
+                <p>V19.9.3</p>
             </div>
         </div>
         <div id="victory-royales-stat">🏆 Victory Royales: 0</div>
@@ -2092,6 +2102,7 @@
             <!-- New Mobile Controls for V19.9 -->
             <div id="btn-crouch" class="mobile-button">CROUCH</div>
             <div id="btn-switch-weapon" class="mobile-button">SWITCH</div>
+            <div id="btn-heal" class="mobile-button">HEAL</div>
         </div>
     </div>
 
@@ -2141,7 +2152,7 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === CORE CONSTANTS AND CONFIGURATION (V19.9.2) ================
+        // === CORE CONSTANTS AND CONFIGURATION (V19.9.3) ================
         // ===============================================================
         
         const WORLD_SIZE = 600;
@@ -2150,7 +2161,7 @@
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
         const JUMP_FORCE = 15;
-        const PLAYER_HEIGHT = 1.8;
+        let PLAYER_HEIGHT = 1.8;
         const SHOTGUN_PELLETS = 4;
         
         // UPDATED: Player starts with 100 Health, 100 Shields, 50 Overshields
@@ -2262,7 +2273,7 @@
             levelShieldBonus: 0,
             levelSpeedMultiplier: 1.0,
             isCrouching: false,
-            originalHeight: PLAYER_HEIGHT
+            originalHeight: 1.8
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false, crouch: false };
@@ -2353,10 +2364,12 @@
             console.log("Generating terrain...");
             
             // Clear any existing terrain objects
-            objects.forEach(obj => scene.remove(obj));
+            objects.forEach(obj => {
+                try { scene.remove(obj); } catch(e) {}
+            });
             objects = [];
             
-            // Create ground plane
+            // Create ground plane with proper geometry
             const groundGeometry = new THREE.PlaneGeometry(WORLD_SIZE * 2, WORLD_SIZE * 2, 100, 100);
             const groundMaterial = new THREE.MeshStandardMaterial({ 
                 color: 0x3a7c3a,
@@ -2369,15 +2382,20 @@
             for (let i = 0; i < positions.length; i += 3) {
                 const x = positions[i];
                 const z = positions[i + 2];
-                positions[i + 1] = getEnhancedTerrainHeight(x, z);
+                const height = getEnhancedTerrainHeight(x, z);
+                positions[i + 1] = height;
             }
+            
             groundGeometry.computeVertexNormals();
             
             const ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
             ground.receiveShadow = true;
+            ground.position.y = -5; // Lower the ground a bit
             scene.add(ground);
             objects.push(ground);
+            
+            console.log("Ground generated");
             
             // Add grass texture
             const grassTexture = new THREE.MeshStandardMaterial({ 
@@ -2387,7 +2405,7 @@
             });
             
             // Create some hills and terrain features
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 10; i++) {
                 const hillX = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
                 const hillZ = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
                 const hillSize = Math.random() * 30 + 10;
@@ -2395,7 +2413,7 @@
                 
                 const hillGeometry = new THREE.ConeGeometry(hillSize, hillHeight, 8);
                 const hill = new THREE.Mesh(hillGeometry, grassTexture);
-                hill.position.set(hillX, getEnhancedTerrainHeight(hillX, hillZ) + hillHeight/2, hillZ);
+                hill.position.set(hillX, getEnhancedTerrainHeight(hillX, hillZ) + hillHeight/2 - 5, hillZ);
                 hill.castShadow = true;
                 hill.receiveShadow = true;
                 scene.add(hill);
@@ -2403,10 +2421,10 @@
             }
             
             // Add trees
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) {
                 const treeX = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
                 const treeZ = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
-                const treeHeight = getEnhancedTerrainHeight(treeX, treeZ);
+                const treeHeight = getEnhancedTerrainHeight(treeX, treeZ) - 5;
                 
                 // Tree trunk
                 const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.7, 3, 8);
@@ -2428,10 +2446,10 @@
             }
             
             // Add rocks
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 15; i++) {
                 const rockX = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
                 const rockZ = (Math.random() - 0.5) * WORLD_SIZE * 1.8;
-                const rockHeight = getEnhancedTerrainHeight(rockX, rockZ);
+                const rockHeight = getEnhancedTerrainHeight(rockX, rockZ) - 5;
                 
                 const rockGeometry = new THREE.DodecahedronGeometry(Math.random() * 1.5 + 0.5);
                 const rockMaterial = new THREE.MeshStandardMaterial({ 
@@ -2452,14 +2470,16 @@
             console.log("Generating POIs...");
             
             // Clear existing POIs
-            chests.forEach(chest => scene.remove(chest.mesh));
+            chests.forEach(chest => {
+                try { scene.remove(chest.mesh); } catch(e) {}
+            });
             chests = [];
             
             // Generate multiple chests
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 10; i++) {
                 const x = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
                 const z = (Math.random() - 0.5) * WORLD_SIZE * 1.5;
-                const y = getEnhancedTerrainHeight(x, z);
+                const y = getEnhancedTerrainHeight(x, z) - 4;
                 spawnChest(x, y + 1, z);
             }
             
@@ -2467,10 +2487,10 @@
             createCoralCastle();
             
             // Generate some buildings
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 3; i++) {
                 const x = (Math.random() - 0.5) * WORLD_SIZE * 1.2;
                 const z = (Math.random() - 0.5) * WORLD_SIZE * 1.2;
-                const y = getEnhancedTerrainHeight(x, z);
+                const y = getEnhancedTerrainHeight(x, z) - 5;
                 
                 createBox(x, y + 2, z, 10, 4, 10, 0xcccccc, 'building');
                 createBox(x, y + 5, z, 8, 2, 8, 0xaaaaaa, 'building');
@@ -2503,7 +2523,7 @@
                     if (attempts > 100) break; // Prevent infinite loop
                 } while (Math.sqrt(x*x + z*z) < 50); // At least 50 units from center
                 
-                const y = getEnhancedTerrainHeight(x, z);
+                const y = getEnhancedTerrainHeight(x, z) - 4;
                 
                 const botGeometry = new THREE.CapsuleGeometry(0.5, 1.5, 4, 8);
                 const botMaterial = new THREE.MeshStandardMaterial({ 
@@ -2643,7 +2663,7 @@
                 if (bot.health <= 0) continue;
 
                 // Update bot position to terrain height
-                const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z);
+                const h = getEnhancedTerrainHeight(bot.mesh.position.x, bot.mesh.position.z) - 4;
                 bot.mesh.position.y = h + 1.5;
 
                 // Calculate distance to player
@@ -2819,6 +2839,7 @@
             if (!item || player.isReloading || player.dead) return;
             
             const now = performance.now();
+            if (now - lastShot < item.stats.rate * 1000) return;
             lastShot = now;
             
             // Get fire direction from camera
@@ -3254,7 +3275,7 @@
         // ===============================================================
 
         function init() {
-            console.log("Initializing game V19.9.2...");
+            console.log("Initializing game V19.9.3...");
             
             // Hide loading screen after assets are loaded
             setTimeout(() => {
@@ -3354,6 +3375,8 @@
             player.isReloading = false;
             player.isHealing = false;
             player.isCrouching = false;
+            PLAYER_HEIGHT = 1.8;
+            player.originalHeight = 1.8;
 
             // Generate game world
             generateTerrain(); 
@@ -3365,8 +3388,8 @@
             startingWeapon.stats.currentMag = startingWeapon.stats.mag;
             player.inventory[0] = startingWeapon;
             
-            // Position player
-            camera.position.set(0, getEnhancedTerrainHeight(0, 0) + PLAYER_HEIGHT + 2, 0);
+            // Position player at center
+            camera.position.set(0, getEnhancedTerrainHeight(0, 0) + PLAYER_HEIGHT - 4, 0);
             camera.rotation.set(0, 0, 0);
             
             // Start game systems
@@ -3399,6 +3422,7 @@
                     case 'KeyE': inputs.use = true; tryInteract(); break;
                     case 'KeyR': inputs.reload = true; reload(); break;
                     case 'KeyC': inputs.crouch = true; toggleCrouch(true); break;
+                    case 'KeyF': useConsumable(); break;
                     case 'Digit1': switchSlot(0); break;
                     case 'Digit2': switchSlot(1); break;
                     case 'Digit3': switchSlot(2); break;
@@ -3457,6 +3481,21 @@
                 // Limit vertical rotation
                 camera.rotation.x = Math.max(-Math.PI/2.5, Math.min(Math.PI/2.5, camera.rotation.x));
             });
+            
+            // Controller connection
+            window.addEventListener("gamepadconnected", (e) => {
+                gamepad = e.gamepad;
+                controllerConnected = true;
+                document.getElementById('controller-notification').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('controller-notification').style.display = 'none';
+                }, 3000);
+            });
+            
+            window.addEventListener("gamepaddisconnected", (e) => {
+                gamepad = null;
+                controllerConnected = false;
+            });
         }
 
         function setupPCLock() {
@@ -3513,6 +3552,11 @@
                 return;
             }
 
+            // Update controller input
+            if (gameMode === 'controller' && controllerConnected) {
+                updateControllerInput();
+            }
+
             // Update player movement
             if(player.vehicle) {
                 updateCars(dt);
@@ -3542,7 +3586,7 @@
                     camera.position.z += velocity.z * dt;
                     velocity.y -= GRAVITY * dt; 
                     
-                    const groundY = getEnhancedTerrainHeight(camera.position.x, camera.position.z);
+                    const groundY = getEnhancedTerrainHeight(camera.position.x, camera.position.z) - 4;
                     let floorY = groundY;
                     
                     downRay.ray.origin.copy(camera.position);
@@ -3572,6 +3616,7 @@
                     
                     camera.position.y += velocity.y * dt;
                     
+                    // Handle crouching
                     if (inputs.crouch && !player.isCrouching) {
                         toggleCrouch(true);
                     } else if (!inputs.crouch && player.isCrouching) {
@@ -3631,8 +3676,8 @@
         }
 
         function createCoralCastle() {
-            const x = 300, z = -300;
-            const h = getEnhancedTerrainHeight(x, z);
+            const x = 100, z = -100;
+            const h = getEnhancedTerrainHeight(x, z) - 5;
             
             createBox(x, h + 20, z, 30, 40, 30, 0x00CED1);
             createBox(x, h + 45, z, 35, 10, 35, 0x20B2AA);
@@ -3651,7 +3696,7 @@
             
             createBox(x, h + 0.1, z, 60, 0.2, 60, 0xAFEEEE);
             
-            for(let i = 0; i < 15; i++) {
+            for(let i = 0; i < 8; i++) {
                 const coralX = x + (Math.random() - 0.5) * 50;
                 const coralZ = z + (Math.random() - 0.5) * 50;
                 const coralHeight = Math.random() * 5 + 2;
@@ -4683,13 +4728,18 @@
 
         function initAudio() {
             if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.log("Audio context not supported");
+                }
             }
         }
 
         function playSound(type, volume = 1.0) {
             if (!audioContext) initAudio();
             if (performanceMode === 'performance') volume *= 0.5;
+            if (!audioContext) return;
             
             const now = performance.now();
             const gainNode = audioContext.createGain();
@@ -5088,7 +5138,7 @@
             
             document.getElementById('btn-build').addEventListener('touchstart', (e) => { 
                 e.preventDefault(); 
-                // buildWall(); // Build function would go here
+                buildWall(); 
             });
             
             document.getElementById('btn-reload').addEventListener('touchstart', (e) => { 
@@ -5101,6 +5151,260 @@
                 const nextSlot = (player.slot + 1) % 5;
                 switchSlot(nextSlot);
             });
+            
+            document.getElementById('btn-heal').addEventListener('touchstart', (e) => { 
+                e.preventDefault(); 
+                useConsumable(); 
+            });
+        }
+
+        // ===============================================================
+        // === FIXED: MISSING CRITICAL FUNCTIONS =========================
+        // ===============================================================
+
+        function toggleCrouch(state) {
+            if (player.dead || !gameStarted) return;
+            
+            if (state && !player.isCrouching) {
+                // Crouch
+                player.isCrouching = true;
+                PLAYER_HEIGHT = 1.0;
+                if (controls && controls.isLocked) {
+                    controls.getObject().position.y -= 0.8;
+                }
+                camera.position.y -= 0.8;
+                playSound('jump', 0.3);
+            } else if (!state && player.isCrouching) {
+                // Stand up - check if there's room above
+                const headCheck = new THREE.Raycaster(
+                    camera.position.clone(),
+                    new THREE.Vector3(0, 1, 0),
+                    0,
+                    0.9
+                );
+                
+                const hits = headCheck.intersectObjects(objects, false);
+                
+                if (hits.length === 0) {
+                    player.isCrouching = false;
+                    PLAYER_HEIGHT = 1.8;
+                    if (controls && controls.isLocked) {
+                        controls.getObject().position.y += 0.8;
+                    }
+                    camera.position.y += 0.8;
+                    playSound('jump', 0.3);
+                } else {
+                    // Can't stand up - stay crouched
+                    player.isCrouching = true;
+                }
+            }
+        }
+
+        function useConsumable() {
+            if (player.dead || player.isHealing || player.isReloading) return;
+            
+            const currentItem = player.inventory[player.slot];
+            if (!currentItem || currentItem.category !== 'consumable') return;
+            
+            // Check if already at max
+            if (currentItem.type === 'shield') {
+                if (player.shield >= currentItem.max) return;
+            } else if (currentItem.type === 'health') {
+                if (player.health >= currentItem.max) return;
+            } else if (currentItem.type === 'continuous') {
+                if (player.health >= 100 && player.shield >= 100) return;
+            }
+            
+            player.isHealing = true;
+            player.healingItem = currentItem;
+            player.healingStartTime = performance.now();
+            
+            // Show healing progress
+            const healingProgress = document.getElementById('healing-progress');
+            const healingBar = document.getElementById('healing-bar');
+            const healingText = document.getElementById('healing-text');
+            
+            healingText.textContent = `USING ${currentItem.name.toUpperCase()}...`;
+            healingProgress.style.display = 'block';
+            healingBar.style.width = '0%';
+            
+            const healDuration = currentItem.time;
+            const healInterval = 50;
+            const totalSteps = healDuration / healInterval;
+            let step = 0;
+            
+            const healIntervalId = setInterval(() => {
+                step++;
+                const progress = (step / totalSteps) * 100;
+                healingBar.style.width = `${progress}%`;
+                
+                // Apply continuous healing for Chug Jug
+                if (currentItem.continuous && currentItem.type === 'continuous') {
+                    const elapsed = step * healInterval;
+                    const healthPerSecond = 100 / (healDuration / 1000);
+                    const shieldPerSecond = 100 / (healDuration / 1000);
+                    
+                    player.health = Math.min(100, player.health + (healthPerSecond * (healInterval/1000)));
+                    player.shield = Math.min(100, player.shield + (shieldPerSecond * (healInterval/1000)));
+                    updateUI();
+                }
+                
+                if (step >= totalSteps) {
+                    clearInterval(healIntervalId);
+                    healingProgress.style.display = 'none';
+                    player.isHealing = false;
+                    
+                    // Apply instant healing
+                    if (!currentItem.continuous) {
+                        if (currentItem.instant) {
+                            // Instant shield (Mini)
+                            if (currentItem.type === 'shield') {
+                                player.shield = Math.min(currentItem.max, player.shield + currentItem.val);
+                            }
+                        } else {
+                            // Med Kit or Big Shield
+                            if (currentItem.type === 'health') {
+                                player.health = Math.min(100, player.health + currentItem.val);
+                            } else if (currentItem.type === 'shield') {
+                                player.shield = Math.min(100, player.shield + currentItem.val);
+                            }
+                        }
+                        updateUI();
+                    }
+                    
+                    // Remove item from inventory
+                    currentItem.count--;
+                    if (currentItem.count <= 0) {
+                        player.inventory[player.slot] = null;
+                    }
+                    updateInventoryUI();
+                    playSound('pickup_item', 0.3);
+                }
+            }, healInterval);
+        }
+
+        function buildWall() {
+            if (player.dead || player.wood < 10) return;
+            
+            player.wood -= 10;
+            updateUI();
+            
+            // Calculate build position in front of player
+            const direction = new THREE.Vector3(0, 0, -1);
+            direction.applyQuaternion(camera.quaternion);
+            direction.y = 0;
+            direction.normalize();
+            
+            const buildDistance = 3;
+            const buildPosition = camera.position.clone().add(direction.multiplyScalar(buildDistance));
+            buildPosition.y = getEnhancedTerrainHeight(buildPosition.x, buildPosition.z) - 3;
+            
+            // Create wall
+            const wallGeometry = new THREE.BoxGeometry(2, 2, 0.2);
+            const wallMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xdeb887,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+            wall.position.copy(buildPosition);
+            
+            // Orient wall to face player
+            wall.lookAt(camera.position);
+            wall.rotation.x = 0;
+            wall.rotation.z = 0;
+            
+            wall.castShadow = true;
+            wall.receiveShadow = true;
+            scene.add(wall);
+            
+            // Add to buildings array
+            buildings.push({ 
+                mesh: wall, 
+                type: 'wood_wall', 
+                health: 100,
+                playerBuilt: true
+            });
+            objects.push(wall);
+            
+            playSound('build', 0.5);
+            
+            // Show build notification
+            showInteractPrompt('Wall built!', 1500);
+        }
+
+        function updateControllerInput() {
+            if (!gamepad || !controllerConnected || player.dead) return;
+            
+            try {
+                const gp = navigator.getGamepads()[gamepad.index];
+                if (!gp) return;
+                
+                // Movement
+                const deadZone = 0.1;
+                const leftStickX = Math.abs(gp.axes[0]) > deadZone ? gp.axes[0] : 0;
+                const leftStickY = Math.abs(gp.axes[1]) > deadZone ? gp.axes[1] : 0;
+                
+                inputs.w = leftStickY < -deadZone;
+                inputs.s = leftStickY > deadZone;
+                inputs.a = leftStickX < -deadZone;
+                inputs.d = leftStickX > deadZone;
+                inputs.sprint = gp.buttons[4]?.pressed || false;
+                
+                // Camera
+                const rightStickX = Math.abs(gp.axes[2]) > deadZone ? gp.axes[2] : 0;
+                const rightStickY = Math.abs(gp.axes[3]) > deadZone ? gp.axes[3] : 0;
+                
+                const sensitivity = 0.05;
+                camera.rotation.y -= rightStickX * sensitivity;
+                camera.rotation.x -= rightStickY * sensitivity;
+                camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                
+                // Buttons
+                inputs.jump = gp.buttons[0]?.pressed || false;
+                inputs.fire = gp.buttons[7]?.pressed || false; // Right trigger
+                inputs.reload = gp.buttons[2]?.pressed || false; // X button
+                inputs.crouch = gp.buttons[1]?.pressed || false; // B button
+                inputs.use = gp.buttons[3]?.pressed || false; // Y button
+                
+                // ADS (Left trigger)
+                const adsPressure = gp.buttons[6]?.value || 0;
+                if (adsPressure > 0.5 && !player.ads) {
+                    toggleADS(true);
+                } else if (adsPressure <= 0.5 && player.ads) {
+                    toggleADS(false);
+                }
+                
+                // D-pad for slot selection
+                if (gp.buttons[15]?.pressed) switchSlot(0); // Up
+                if (gp.buttons[16]?.pressed) switchSlot(1); // Down
+                if (gp.buttons[17]?.pressed) switchSlot(2); // Left
+                if (gp.buttons[18]?.pressed) switchSlot(3); // Right
+                
+                // Handle button actions
+                if (inputs.jump && isGrounded) {
+                    velocity.y = JUMP_FORCE;
+                    isGrounded = false;
+                    playSound('jump', 0.5);
+                }
+                
+                if (inputs.reload) {
+                    reload();
+                }
+                
+                if (inputs.use) {
+                    tryInteract();
+                }
+                
+                if (inputs.crouch && !player.isCrouching) {
+                    toggleCrouch(true);
+                } else if (!inputs.crouch && player.isCrouching) {
+                    toggleCrouch(false);
+                }
+                
+            } catch (error) {
+                console.error('Controller update error:', error);
+            }
         }
 
         // ===============================================================
