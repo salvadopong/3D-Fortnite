@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Web Battle Royale: V19.8 - Solar Edition</title>
+    <title>Web Battle Royale: V19.9 - Solar Eclipse Edition</title>
     <style>
         /* ======================================= */
-        /* === V19.8 SOLAR UI REDESIGN === */
+        /* === V19.9 SOLAR ECLIPSE UI REDESIGN === */
         /* ======================================= */
         
         * {
@@ -30,10 +30,10 @@
             color: white;
         }
 
-        /* --- PRE-GAME START SCREEN (V19.8 Solar Design) --- */
+        /* --- PRE-GAME START SCREEN (V19.9 Solar Eclipse Design) --- */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #000428 0%, #004e92 50%, #000428 100%);
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; z-index: 1000;
             text-align: center;
@@ -41,56 +41,56 @@
             overflow: hidden;
         }
         
-        /* Solar flare background */
-        .solar-flare {
+        /* Solar eclipse background */
+        .solar-eclipse {
             position: absolute;
             width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, 
-                rgba(255, 200, 0, 0.3) 0%,
-                rgba(255, 100, 0, 0.2) 20%,
-                rgba(0, 78, 146, 0.1) 40%,
+                rgba(255, 100, 0, 0.1) 0%,
+                rgba(255, 50, 0, 0.05) 20%,
+                rgba(0, 0, 40, 0.1) 40%,
                 transparent 70%);
-            animation: solarPulse 4s infinite alternate;
+            animation: eclipsePulse 8s infinite alternate;
         }
         
-        @keyframes solarPulse {
+        @keyframes eclipsePulse {
             0% { opacity: 0.3; transform: scale(1); }
-            100% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 0.7; transform: scale(1.05); }
         }
 
         #start-screen h1 { 
             font-size: 5.5rem; 
             margin-bottom: 1rem; 
-            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ff4500 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 900;
             letter-spacing: 3px;
-            animation: solarGlow 3s infinite alternate;
+            animation: eclipseGlow 4s infinite alternate;
             position: relative;
             z-index: 2;
-            text-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 50px rgba(255, 107, 107, 0.5);
         }
         
-        @keyframes solarGlow {
-            0% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 140, 0, 0.3); }
-            100% { text-shadow: 0 0 60px rgba(255, 215, 0, 0.8), 0 0 120px rgba(255, 69, 0, 0.5); }
+        @keyframes eclipseGlow {
+            0% { text-shadow: 0 0 30px rgba(255, 107, 107, 0.5), 0 0 60px rgba(78, 205, 196, 0.3); }
+            100% { text-shadow: 0 0 60px rgba(255, 107, 107, 0.8), 0 0 120px rgba(69, 183, 209, 0.5); }
         }
         
         #start-screen h1::after {
-            content: 'V19.8 • SOLAR EDITION';
+            content: 'V19.9 • SOLAR ECLIPSE';
             display: block;
             font-size: 1.8rem;
-            color: #00ffff;
+            color: #4ecdc4;
             margin-top: 0.5rem;
-            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            text-shadow: 0 0 30px rgba(78, 205, 196, 0.8);
             animation: cyanPulse 3s infinite alternate;
         }
         
         @keyframes cyanPulse {
-            0% { opacity: 0.7; text-shadow: 0 0 20px rgba(0, 255, 255, 0.7); }
-            100% { opacity: 1; text-shadow: 0 0 40px rgba(0, 255, 255, 1), 0 0 80px rgba(0, 255, 255, 0.6); }
+            0% { opacity: 0.7; text-shadow: 0 0 20px rgba(78, 205, 196, 0.7); }
+            100% { opacity: 1; text-shadow: 0 0 40px rgba(78, 205, 196, 1), 0 0 80px rgba(78, 205, 196, 0.6); }
         }
 
         #start-screen .subtitle { 
@@ -121,7 +121,7 @@
             padding: 1.3rem 2.8rem; 
             margin: 0; 
             font-size: 1.4rem;
-            background: linear-gradient(135deg, #ff8c00, #ff4500);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             color: white; 
             border: none; 
             border-radius: 20px; 
@@ -130,7 +130,7 @@
             font-family: 'Poppins', sans-serif; 
             font-weight: 700;
             box-shadow: 
-                0 15px 40px rgba(255, 69, 0, 0.6),
+                0 15px 40px rgba(255, 107, 107, 0.6),
                 inset 0 1px 0 rgba(255,255,255,0.3);
             position: relative;
             overflow: hidden;
@@ -155,33 +155,33 @@
         .game-button:hover { 
             transform: translateY(-5px) scale(1.05);
             box-shadow: 
-                0 20px 50px rgba(255, 69, 0, 0.8),
+                0 20px 50px rgba(255, 107, 107, 0.8),
                 inset 0 1px 0 rgba(255,255,255,0.4),
-                0 0 40px rgba(255, 69, 0, 0.6);
+                0 0 40px rgba(255, 107, 107, 0.6);
         }
         
         .game-button:active { 
             transform: scale(0.95) translateY(0); 
-            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
             transition: transform 0.1s;
         }
         
         .game-button.mobile { 
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
-            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.6);
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6);
         }
         
         .game-button.mobile:hover { 
-            background: linear-gradient(135deg, #00b8ff, #0077ff); 
+            background: linear-gradient(135deg, #3dbdb5, #35a7c1); 
         }
         
         .game-button.controller { 
-            background: linear-gradient(135deg, #9d4edd, #560bad);
+            background: linear-gradient(135deg, #9d4edd, #6a11cb);
             box-shadow: 0 15px 40px rgba(157, 78, 221, 0.6);
         }
         
         .game-button.controller:hover { 
-            background: linear-gradient(135deg, #7b2cbf, #3c096c); 
+            background: linear-gradient(135deg, #8b3eca, #5900b3); 
         }
         
         /* === NEW: REORGANIZED LEVEL STATS === */
@@ -192,19 +192,19 @@
             font-size: 1.1rem;
             color: #ffd700; 
             font-weight: 600;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             padding: 1rem 1.5rem;
             border-radius: 15px;
             border: 3px solid rgba(255, 215, 0, 0.4);
             z-index: 2;
             animation: fadeIn 1s ease-out 1.5s backwards;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             gap: 0.5rem;
-            min-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            min-width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
         
         .level-display {
@@ -225,10 +225,10 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ff4500);
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
             transition: width 0.5s ease;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
         }
         
         .progress-text {
@@ -239,8 +239,8 @@
         
         #points-to-next {
             font-size: 0.8rem;
-            color: #00ffff;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            color: #4ecdc4;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.7);
         }
 
         /* === ENHANCED CROSSHAIR === */
@@ -383,15 +383,15 @@
             transform: translateX(-50%);
             display: flex;
             gap: 2rem;
-            background: rgba(0, 4, 40, 0.95);
+            background: rgba(15, 12, 41, 0.95);
             backdrop-filter: blur(30px);
             padding: 1rem 2rem;
             border-radius: 20px;
-            border: 3px solid rgba(255, 140, 0, 0.5);
+            border: 3px solid rgba(255, 107, 107, 0.5);
             box-shadow: 
                 0 15px 50px rgba(0, 0, 0, 0.8),
                 inset 0 1px 0 rgba(255,255,255,0.2),
-                0 0 30px rgba(255, 140, 0, 0.4);
+                0 0 30px rgba(255, 107, 107, 0.4);
             z-index: 20;
         }
         
@@ -432,8 +432,8 @@
             text-shadow: 0 0 20px rgba(157, 78, 221, 0.7);
         }
         #storm-status {
-            color: #00ffff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+            color: #4ecdc4;
+            text-shadow: 0 0 20px rgba(78, 205, 196, 0.7);
         }
 
         /* === ENHANCED PLAYER STATS === */
@@ -444,18 +444,18 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            width: 280px;
+            width: 300px;
             z-index: 20;
         }
         
         .stat-card {
             background: linear-gradient(135deg, 
-                rgba(0, 4, 40, 0.95) 0%,
-                rgba(0, 78, 146, 0.95) 100%);
+                rgba(15, 12, 41, 0.95) 0%,
+                rgba(48, 43, 99, 0.95) 100%);
             backdrop-filter: blur(25px);
             border-radius: 15px;
-            padding: 1rem 1.5rem;
-            border: 3px solid rgba(255,255,255,0.2);
+            padding: 1.2rem 1.8rem;
+            border: 3px solid rgba(255,255,255,0.25);
             box-shadow: 
                 0 10px 40px rgba(0, 0, 0, 0.7),
                 inset 0 1px 0 rgba(255,255,255,0.15),
@@ -477,27 +477,27 @@
         }
         
         .stat-card:hover {
-            border-color: rgba(255, 140, 0, 0.5);
+            border-color: rgba(255, 107, 107, 0.5);
             transform: translateY(-8px) scale(1.03);
             box-shadow: 
                 0 20px 50px rgba(0, 0, 0, 0.9),
                 inset 0 1px 0 rgba(255,255,255,0.2),
-                0 0 40px rgba(255, 140, 0, 0.5);
+                0 0 40px rgba(255, 107, 107, 0.5);
         }
         
         .stat-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.2rem;
             margin-bottom: 0.8rem;
             position: relative;
             z-index: 2;
         }
         
         .stat-icon {
-            font-size: 1.3rem;
-            width: 45px;
-            height: 45px;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -513,7 +513,7 @@
         
         .stat-title {
             flex: 1;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: rgba(255,255,255,0.98);
             text-transform: uppercase;
@@ -522,7 +522,7 @@
         }
         
         .stat-value {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 900;
             color: #ffd700;
             min-width: 60px;
@@ -533,9 +533,9 @@
         }
         
         .stat-bar-container {
-            height: 10px;
+            height: 12px;
             background: rgba(255,255,255,0.15);
-            border-radius: 5px;
+            border-radius: 6px;
             overflow: hidden;
             position: relative;
             z-index: 2;
@@ -546,7 +546,7 @@
         
         .stat-bar {
             height: 100%;
-            border-radius: 5px;
+            border-radius: 6px;
             transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -649,7 +649,7 @@
         }
         
         .resource-amount {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 900;
             color: white;
             text-shadow: 0 3px 10px rgba(0,0,0,0.7);
@@ -666,11 +666,11 @@
         }
         
         .inventory-slot {
-            width: 80px;
-            height: 95px;
+            width: 85px;
+            height: 100px;
             background: linear-gradient(135deg, 
-                rgba(0, 4, 40, 0.98) 0%,
-                rgba(0, 78, 146, 0.98) 100%);
+                rgba(15, 12, 41, 0.98) 0%,
+                rgba(48, 43, 99, 0.98) 100%);
             backdrop-filter: blur(25px);
             border-radius: 15px;
             border: 3px solid rgba(255,255,255,0.25);
@@ -734,19 +734,19 @@
         }
         
         .slot-icon {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 0.5rem;
             text-shadow: 0 0 15px currentColor;
             filter: drop-shadow(0 0 6px currentColor);
         }
         
         .slot-name {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 800;
             color: rgba(255,255,255,0.98);
             text-transform: uppercase;
             text-align: center;
-            max-width: 70px;
+            max-width: 75px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -758,7 +758,7 @@
             position: absolute;
             bottom: 8px;
             right: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 900;
             color: #ffd700;
             background: rgba(0,0,0,0.7);
@@ -892,14 +892,14 @@
             width: 450px;
             height: 50px;
             background: linear-gradient(135deg, 
-                rgba(0, 4, 40, 0.95) 0%,
-                rgba(0, 78, 146, 0.95) 100%);
+                rgba(15, 12, 41, 0.95) 0%,
+                rgba(48, 43, 99, 0.95) 100%);
             border-radius: 30px;
             display: none;
             overflow: hidden;
-            border: 4px solid rgba(0, 212, 255, 0.7);
+            border: 4px solid rgba(78, 205, 196, 0.7);
             box-shadow: 
-                0 20px 60px rgba(0, 212, 255, 0.5),
+                0 20px 60px rgba(78, 205, 196, 0.5),
                 inset 0 1px 0 rgba(255,255,255,0.25);
             backdrop-filter: blur(20px);
         }
@@ -955,7 +955,7 @@
             font-size: 1.4rem;
             text-shadow: 
                 0 3px 12px rgba(0,0,0,0.9),
-                0 0 25px rgba(0, 212, 255, 0.7);
+                0 0 25px rgba(78, 205, 196, 0.7);
             letter-spacing: 3px;
         }
 
@@ -1003,65 +1003,71 @@
         /* === ENHANCED VISUAL EFFECTS === */
         .muzzle-flash {
             position: absolute;
-            width: 25px;
-            height: 25px;
-            background: radial-gradient(circle, #ffaa00, #ff6600, transparent 75%);
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ffaa00, #ff6600, transparent 80%);
             border-radius: 50%;
             pointer-events: none;
             animation: muzzleFlash 0.15s forwards;
             z-index: 100;
+            filter: blur(1px);
         }
         
         @keyframes muzzleFlash {
-            0% { opacity: 1; transform: scale(0.5); }
-            100% { opacity: 0; transform: scale(2.5); }
+            0% { opacity: 1; transform: scale(0.5); filter: blur(0px); }
+            50% { opacity: 1; transform: scale(1.5); filter: blur(1px); }
+            100% { opacity: 0; transform: scale(2.5); filter: blur(2px); }
         }
         
         .bullet-trail {
             position: absolute;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, #ffaa00, #ff6600, transparent);
             pointer-events: none;
-            animation: bulletTrail 0.25s forwards;
+            animation: bulletTrail 0.3s forwards;
             z-index: 99;
+            filter: blur(0.5px);
         }
         
         @keyframes bulletTrail {
-            0% { width: 0; opacity: 1; }
-            100% { width: 70px; opacity: 0; }
+            0% { width: 0; opacity: 1; transform: scaleY(1); }
+            100% { width: 100px; opacity: 0; transform: scaleY(0.5); }
         }
         
         .impact-effect {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #ff8800, #ff4400, transparent 75%);
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #ff8800, #ff4400, transparent 80%);
             border-radius: 50%;
             pointer-events: none;
             animation: impactEffect 0.4s forwards;
             z-index: 98;
+            filter: blur(1px);
         }
         
         @keyframes impactEffect {
-            0% { opacity: 1; transform: scale(0.5); }
-            100% { opacity: 0; transform: scale(2.5); }
+            0% { opacity: 1; transform: scale(0.5); filter: blur(0px); }
+            50% { opacity: 1; transform: scale(2); filter: blur(1px); }
+            100% { opacity: 0; transform: scale(2.5); filter: blur(2px); }
         }
         
         .blood-effect {
             position: absolute;
-            width: 25px;
-            height: 25px;
-            background: radial-gradient(circle, #ff0000, #990000, transparent 75%);
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ff0000, #990000, transparent 80%);
             border-radius: 50%;
             pointer-events: none;
             animation: bloodEffect 0.5s forwards;
             z-index: 97;
+            filter: blur(1px);
         }
         
         @keyframes bloodEffect {
-            0% { opacity: 1; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(2); }
-            100% { opacity: 0; transform: scale(2.5); }
+            0% { opacity: 1; transform: scale(0.5); filter: blur(0px); }
+            50% { opacity: 1; transform: scale(2.2); filter: blur(1px); }
+            100% { opacity: 0; transform: scale(2.8); filter: blur(2px); }
         }
 
         /* === ENHANCED FPS COUNTER === */
@@ -1069,7 +1075,7 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             color: #00ff00;
             padding: 0.6rem 1.2rem;
             border-radius: 10px;
@@ -1110,7 +1116,7 @@
             position: absolute;
             top: 0; right: 0;
             width: 50%; height: 100%;
-            background: rgba(0, 212, 255, 0.05);
+            background: rgba(78, 205, 196, 0.05);
             pointer-events: auto;
             touch-action: none;
             z-index: 6;
@@ -1162,7 +1168,7 @@
             top: 0; right: 0;
             width: 100%; height: 100%;
             background: radial-gradient(circle at 80% 50%, 
-                rgba(0, 212, 255, 0.1) 0%,
+                rgba(78, 205, 196, 0.1) 0%,
                 transparent 70%);
             pointer-events: none;
             z-index: 6;
@@ -1171,11 +1177,11 @@
         /* Enhanced Mobile Action Buttons - AIM BUTTON MOVED */
         .mobile-button {
             position: absolute;
-            width: 95px; height: 95px;
+            width: 100px; height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, 
-                rgba(0, 4, 40, 0.98),
-                rgba(0, 78, 146, 0.98));
+                rgba(15, 12, 41, 0.98),
+                rgba(48, 43, 99, 0.98));
             border: 5px solid rgba(255,255,255,0.4);
             color: white;
             font-weight: 900;
@@ -1210,7 +1216,7 @@
         
         #btn-fire { 
             bottom: 140px; right: 50px; 
-            width: 110px; height: 110px;
+            width: 120px; height: 120px;
             border-color: #ff4444;
             background: linear-gradient(135deg, 
                 rgba(255,0,0,0.7),
@@ -1231,11 +1237,11 @@
         
         #btn-jump { 
             bottom: 270px; right: 60px;
-            border-color: #00d4ff;
+            border-color: #4ecdc4;
             background: linear-gradient(135deg,
-                rgba(0,212,255,0.7),
-                rgba(0,168,255,0.6));
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+                rgba(78,205,196,0.7),
+                rgba(69,183,209,0.6));
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
         }
         
         #btn-interact { 
@@ -1260,7 +1266,7 @@
         /* MOVED AIM BUTTON - Away from inventory */
         #btn-ads { 
             top: 50px; right: 160px;  /* MOVED TO TOP RIGHT */
-            width: 85px; height: 85px;
+            width: 90px; height: 90px;
             font-size: 1rem;
             border-color: #0099ff;
             background: linear-gradient(135deg,
@@ -1271,13 +1277,13 @@
         
         #btn-reload { 
             top: 50px; right: 50px;
-            width: 80px; height: 80px;
+            width: 85px; height: 85px;
             font-size: 0.9rem;
-            border-color: #00d4ff;
+            border-color: #4ecdc4;
             background: linear-gradient(135deg,
-                rgba(0,212,255,0.7),
-                rgba(0,168,255,0.6));
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+                rgba(78,205,196,0.7),
+                rgba(69,183,209,0.6));
+            box-shadow: 0 0 25px rgba(78, 205, 196, 0.4);
             display: none;
         }
 
@@ -1342,7 +1348,7 @@
         }
         
         #victory-text::after {
-            content: 'V19.8';
+            content: 'V19.9';
             display: block;
             font-size: 3rem;
             margin-top: 2rem;
@@ -1402,26 +1408,27 @@
         
         #level-stats-title {
             font-size: 4.5rem;
-            background: linear-gradient(135deg, #ff8c00, #ff4500, #9d4edd);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #9d4edd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 2rem;
             font-weight: 900;
-            text-shadow: 0 20px 50px rgba(255, 140, 0, 0.6);
+            text-shadow: 0 20px 50px rgba(255, 107, 107, 0.6);
             animation: slideDown 1s ease-out;
         }
         
         .stats-breakdown {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             padding: 2.5rem;
             border-radius: 25px;
             margin: 2rem 0;
             max-width: 650px;
             width: 90%;
-            border: 4px solid rgba(255, 140, 0, 0.6);
+            border: 4px solid rgba(255, 107, 107, 0.6);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
             animation: scaleIn 0.8s ease-out 0.5s backwards;
+            backdrop-filter: blur(20px);
         }
         
         .stat-row {
@@ -1485,7 +1492,7 @@
         
         .level-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ff4500, #9d4edd);
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #9d4edd);
             transition: width 1s ease-out;
             border-radius: 9px;
         }
@@ -1565,7 +1572,7 @@
             margin-top: 3rem;
             padding: 1.8rem 4rem;
             font-size: 1.8rem;
-            background: linear-gradient(135deg, #ff8c00, #ff4500);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             color: white;
             border: none;
             border-radius: 25px;
@@ -1573,9 +1580,9 @@
             font-family: 'Poppins', sans-serif;
             font-weight: 900;
             box-shadow: 
-                0 20px 60px rgba(255, 140, 0, 0.8),
+                0 20px 60px rgba(255, 107, 107, 0.8),
                 inset 0 1px 0 rgba(255,255,255,0.5),
-                0 0 40px rgba(255, 140, 0, 0.6);
+                0 0 40px rgba(255, 107, 107, 0.6);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
             position: relative;
@@ -1600,12 +1607,12 @@
         }
         
         .restart-btn:hover {
-            background: linear-gradient(135deg, #ff6600, #cc3700);
+            background: linear-gradient(135deg, #ff4d4d, #3dbdb5);
             transform: translateY(-8px);
             box-shadow: 
-                0 25px 70px rgba(255, 140, 0, 1),
+                0 25px 70px rgba(255, 107, 107, 1),
                 inset 0 1px 0 rgba(255,255,255,0.6),
-                0 0 50px rgba(255, 140, 0, 0.8);
+                0 0 50px rgba(255, 107, 107, 0.8);
         }
         
         #game-over .restart-btn {
@@ -1658,8 +1665,8 @@
             position: absolute;
             width: 100%; height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(255, 140, 0, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(78, 205, 196, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 40% 80%, rgba(157, 78, 221, 0.3) 0%, transparent 50%);
             animation: backgroundPulse 8s infinite alternate;
         }
@@ -1673,7 +1680,7 @@
             position: absolute;
             top: 25px;
             right: 25px;
-            background: linear-gradient(135deg, #ff8c00, #ff4500);
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             color: #fff;
             padding: 1rem 2rem;
             border-radius: 30px;
@@ -1681,7 +1688,7 @@
             font-size: 1.1rem;
             animation: badgeGlow 2s infinite alternate;
             box-shadow: 
-                0 10px 35px rgba(255, 140, 0, 0.6),
+                0 10px 35px rgba(255, 107, 107, 0.6),
                 inset 0 1px 0 rgba(255,255,255,0.4);
             border: 3px solid rgba(255,255,255,0.4);
             text-transform: uppercase;
@@ -1690,8 +1697,8 @@
         }
         
         @keyframes badgeGlow {
-            0% { box-shadow: 0 10px 35px rgba(255, 140, 0, 0.6); }
-            100% { box-shadow: 0 15px 45px rgba(255, 140, 0, 0.9), 0 0 40px rgba(255, 140, 0, 0.4); }
+            0% { box-shadow: 0 10px 35px rgba(255, 107, 107, 0.6); }
+            100% { box-shadow: 0 15px 45px rgba(255, 107, 107, 0.9), 0 0 40px rgba(255, 107, 107, 0.4); }
         }
         
         .menu-title {
@@ -1704,21 +1711,21 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 130%; height: 130%;
-            background: radial-gradient(circle, rgba(255, 140, 0, 0.5) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.5) 0%, transparent 70%);
             filter: blur(60px);
             z-index: 1;
         }
 
-        /* === NEW: MINI-MAP === */
+        /* === ENHANCED MINI-MAP === */
         #mini-map {
             position: absolute;
             top: 120px;
             right: 20px;
-            width: 200px;
-            height: 200px;
-            background: rgba(0, 4, 40, 0.9);
+            width: 220px;
+            height: 220px;
+            background: rgba(15, 12, 41, 0.9);
             border-radius: 20px;
-            border: 3px solid rgba(255, 140, 0, 0.6);
+            border: 3px solid rgba(255, 107, 107, 0.6);
             backdrop-filter: blur(20px);
             z-index: 20;
             overflow: hidden;
@@ -1730,13 +1737,13 @@
             height: 100%;
         }
         
-        /* === NEW: SETTINGS MENU === */
+        /* === ENHANCED SETTINGS MENU === */
         #settings-menu {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 4, 40, 0.98);
+            background: rgba(15, 12, 41, 0.98);
             backdrop-filter: blur(40px);
             z-index: 1002;
             flex-direction: column;
@@ -1746,38 +1753,39 @@
         }
         
         .settings-container {
-            background: rgba(0, 78, 146, 0.8);
+            background: rgba(48, 43, 99, 0.9);
             padding: 2.5rem;
             border-radius: 25px;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
-            border: 4px solid rgba(255, 140, 0, 0.6);
+            border: 4px solid rgba(255, 107, 107, 0.6);
             box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
         }
         
         .settings-title {
-            font-size: 2.5rem;
-            color: #ff8c00;
+            font-size: 2.8rem;
+            color: #ff6b6b;
             margin-bottom: 2rem;
             text-align: center;
-            text-shadow: 0 0 30px rgba(255, 140, 0, 0.7);
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.7);
         }
         
         .setting-item {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
         }
         
         .setting-label {
             display: block;
             margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: rgba(255,255,255,0.95);
         }
         
         .setting-slider {
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 10px;
+            border-radius: 5px;
             background: rgba(255,255,255,0.2);
             outline: none;
             -webkit-appearance: none;
@@ -1785,21 +1793,22 @@
         
         .setting-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: #ff8c00;
+            background: #ff6b6b;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.7);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+            border: 2px solid white;
         }
         
-        /* === NEW: PAUSE MENU === */
+        /* === ENHANCED PAUSE MENU === */
         #pause-menu {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 4, 40, 0.95);
+            background: rgba(15, 12, 41, 0.98);
             backdrop-filter: blur(40px);
             z-index: 1002;
             flex-direction: column;
@@ -1809,35 +1818,38 @@
         }
         
         .pause-title {
-            font-size: 4rem;
-            color: #ff8c00;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 40px rgba(255, 140, 0, 0.8);
+            font-size: 4.5rem;
+            color: #ff6b6b;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 40px rgba(255, 107, 107, 0.8);
+            animation: pulse 2s infinite alternate;
         }
         
-        /* === NEW: GRAPHICS SETTINGS === */
+        /* === ENHANCED GRAPHICS SETTINGS === */
         .graphics-option {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
-            padding: 0.8rem;
+            padding: 1rem;
             background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
         
         .graphics-option:hover {
             background: rgba(255,255,255,0.2);
             transform: translateX(5px);
+            border-color: rgba(255, 107, 107, 0.5);
         }
         
         .graphics-option input {
             margin-right: 1rem;
-            transform: scale(1.3);
+            transform: scale(1.5);
         }
         
-        /* === NEW: HIT MARKER === */
+        /* === ENHANCED HIT MARKER === */
         .hit-marker {
             position: absolute;
             top: 50%; left: 50%;
@@ -1871,20 +1883,56 @@
             50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
         }
+
+        /* === PERFORMANCE MONITOR === */
+        #performance-monitor {
+            position: absolute;
+            top: 60px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #4ecdc4;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-family: 'Poppins', monospace;
+            font-size: 0.9rem;
+            font-weight: 800;
+            z-index: 1000;
+            border: 2px solid rgba(78, 205, 196, 0.4);
+            backdrop-filter: blur(15px);
+            text-shadow: 0 0 10px #4ecdc4;
+        }
+        
+        /* === BOT COUNT DISPLAY === */
+        #bot-count-display {
+            position: absolute;
+            top: 100px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #ff6b6b;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-family: 'Poppins', monospace;
+            font-size: 0.9rem;
+            font-weight: 800;
+            z-index: 1000;
+            border: 2px solid rgba(255, 107, 107, 0.4);
+            backdrop-filter: blur(15px);
+            text-shadow: 0 0 10px #ff6b6b;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="start-screen">
-        <div class="solar-flare"></div>
+        <div class="solar-eclipse"></div>
         <div class="menu-background"></div>
-        <div class="version-badge">V19.8 • SOLAR EDITION</div>
+        <div class="version-badge">V19.9 • SOLAR ECLIPSE</div>
         <div class="menu-title">
             <div class="title-glow"></div>
             <h1>WEB BATTLE ROYALE</h1>
         </div>
-        <p class="subtitle">Experience the ultimate solar-powered shooter</p>
+        <p class="subtitle">Experience the ultimate eclipse-powered shooter</p>
         <div class="button-container">
             <button class="game-button mobile" onclick="startGame('mobile')">📱 Mobile Mode</button>
             <button class="game-button" onclick="startGame('desktop')">🖥️ Desktop Mode</button>
@@ -1901,7 +1949,7 @@
             </div>
             <div class="stat-item">
                 <h3>Version</h3>
-                <p>V19.8</p>
+                <p>V19.9</p>
             </div>
         </div>
         <!-- MOVED LEVEL STATS TO BOTTOM LEFT -->
@@ -1948,6 +1996,12 @@
         <div id="hud-container">
             <!-- FPS Counter -->
             <div id="fps-counter">60</div>
+            
+            <!-- Performance Monitor -->
+            <div id="performance-monitor">GPU: High | RAM: Normal</div>
+            
+            <!-- Bot Count Display -->
+            <div id="bot-count-display">Bots: 24</div>
             
             <!-- Top Bar -->
             <div id="top-bar">
@@ -2008,6 +2062,10 @@
                     <div class="resource-item">
                         <div class="resource-icon">🪵</div>
                         <div class="resource-amount" id="wood-value">0</div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">⚡</div>
+                        <div class="resource-amount" id="performance-value">High</div>
                     </div>
                 </div>
             </div>
@@ -2120,11 +2178,11 @@
             <div class="setting-item">
                 <label class="setting-label">Graphics Quality</label>
                 <div class="graphics-option">
-                    <input type="radio" id="graphics-low" name="graphics" value="low" checked>
+                    <input type="radio" id="graphics-low" name="graphics" value="low">
                     <label for="graphics-low">Low Performance</label>
                 </div>
                 <div class="graphics-option">
-                    <input type="radio" id="graphics-medium" name="graphics" value="medium">
+                    <input type="radio" id="graphics-medium" name="graphics" value="medium" checked>
                     <label for="graphics-medium">Medium (Recommended)</label>
                 </div>
                 <div class="graphics-option">
@@ -2144,7 +2202,7 @@
     <div id="pause-menu">
         <h2 class="pause-title">GAME PAUSED</h2>
         <button class="restart-btn" onclick="resumeGame()" style="margin-bottom: 1rem;">RESUME</button>
-        <button class="restart-btn" onclick="openSettings()" style="margin-bottom: 1rem; background: linear-gradient(135deg, #0099ff, #0066cc);">SETTINGS</button>
+        <button class="restart-btn" onclick="openSettings()" style="margin-bottom: 1rem; background: linear-gradient(135deg, #4ecdc4, #45b7d1);">SETTINGS</button>
         <button class="restart-btn" onclick="location.reload()">RETURN TO LOBBY</button>
     </div>
 
@@ -2165,31 +2223,31 @@
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
         // ===============================================================
-        // === V19.8 ENHANCED CONSTANTS AND CONFIGURATION ================
+        // === V19.9 ENHANCED CONSTANTS AND CONFIGURATION ================
         // ===============================================================
         
         const WORLD_SIZE = 600;
-        let BOT_COUNT = 24; // UPDATED: Increased to 24 bots
+        let BOT_COUNT = 24;
         const GRAVITY = 40.0; 
         const WALK_SPEED = 10; 
         const SPRINT_SPEED = 20; 
         const JUMP_FORCE = 15;
         const PLAYER_HEIGHT = 1.8;
-        const SHOTGUN_PELLETS = 4;
+        const SHOTGUN_PELLETS = 8; // Increased for better shotgun spread
         
         const OVER_SHIELD_MAX = 50;
         const OVER_SHIELD_REGEN_RATE = 15;
         const OVER_SHIELD_REGEN_DELAY = 7000;
         
         // === ENHANCED LEVELING SYSTEM ===
-        const POINTS_PER_KILL = 5;
-        const POINTS_TOP_10 = 10;
-        const POINTS_TOP_2 = 15;
-        const POINTS_PER_CHEST = 1;
-        const POINTS_PER_LEGENDARY = 5;
-        const BASE_POINTS_PER_LEVEL = 150;
+        const POINTS_PER_KILL = 10; // Increased
+        const POINTS_TOP_10 = 20; // Increased
+        const POINTS_TOP_2 = 30; // Increased
+        const POINTS_PER_CHEST = 2; // Increased
+        const POINTS_PER_LEGENDARY = 10; // Increased
+        const BASE_POINTS_PER_LEVEL = 200; // Increased for more progression
         
-        // === ENHANCED WEAPONS CONFIG - UPDATED SNIPER DAMAGE ===
+        // === FORTNITE-STYLE WEAPON BALANCING ===
         const RARITY_MULTIPLIERS = {
             COMMON: { dmg: 1.0, reload: 1.0, color: '#b0b0b0' },
             UNCOMMON: { dmg: 1.15, reload: 0.9, color: '#28a745' },
@@ -2200,28 +2258,284 @@
         };
         const RARITY_KEYS = Object.keys(RARITY_MULTIPLIERS);
 
-        // Weapons configuration with UPDATED SNIPER DAMAGE
+        // FORTNITE-STYLE WEAPON BALANCING
         const WEAPONS_BASE = {
-            PUMP: { name: "Pump Shotgun", dmg: 30 * 1.5, head: 35 * 1.5, rate: 1.2, mag: 5, range: 30, spread: 0.25, pellets: SHOTGUN_PELLETS, auto: false, icon: '💥', reload: 3000, recoil: 0.0, bulletType: 'hitscan' }, 
-            AUTO_SHG: { name: "Auto Shotgun", dmg: 30, head: 50, rate: 0.4, mag: 8, range: 25, spread: 0.3, pellets: SHOTGUN_PELLETS, auto: true, icon: '🔥', reload: 3500, recoil: 0.0, bulletType: 'hitscan' },
-            RFAR: { name: "Rapid Fire AR", dmg: 14, head: 21, rate: 0.1, mag: 30, range: 150, spread: 0.04, pellets: 1, auto: true, icon: '💨', reload: 2500, recoil: 0.0, bulletType: 'hitscan' }, 
-            DMR: { name: "DMR", dmg: 25, head: 40, rate: 0.35, mag: 15, range: 250, spread: 0.015, pellets: 1, auto: false, icon: '🎯', reload: 2800, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
-            STINGER: { name: "Stinger SMG", dmg: 15, head: 22.5, rate: 0.07, mag: 20, range: 70, spread: 0.07, pellets: 1, auto: true, icon: '⚡', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
-            BURST_SMG: { name: "Burst SMG", dmg: 18, head: 30, rate: 0.15, mag: 30, burst: 2, burstDelay: 300, range: 80, spread: 0.05, pellets: 1, auto: false, icon: '✨', reload: 2000, recoil: 0.0, bulletType: 'hitscan' },
-            // UPDATED: Bolt Sniper - 129 body, 219 head
-            BOLT_SNIPER: { name: "Bolt Sniper", dmg: 129, head: 219, rate: 2.5, mag: 2, range: 600, spread: 0.001, pellets: 1, auto: false, icon: '💀', reload: 4000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
-            SCOPED_SMG: { name: "Scoped SMG", dmg: 12, head: 18, rate: 0.1, mag: 40, range: 100, spread: 0.03, pellets: 1, auto: true, icon: '👁️', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' },
-            DRUM_SMG: { name: "Drum SMG", dmg: 10, head: 15, rate: 0.08, mag: 50, range: 80, spread: 0.08, pellets: 1, auto: true, icon: '🥁', reload: 1200, recoil: 0.0, bulletType: 'hitscan' },
-            // UPDATED: Falcon Sniper - 79 body, 119 head
-            FALCON_SNIPER: { name: "Falcon Sniper", dmg: 79, head: 119, rate: 0.7, mag: 3, range: 500, spread: 0.005, pellets: 1, auto: false, icon: '🦅', reload: 2500, recoil: 0.0, bulletType: 'hitscan', scope: 'red_dot' }, 
-            STRANGLED_RIFLE: { name: "Strangled Rifle", dmg: 35, head: 55, rate: 0.45, mag: 30, range: 180, spread: 0.02, pellets: 1, auto: false, icon: '⛓️', reload: 2500, recoil: 0.0, bulletType: 'hitscan' },
-            // UPDATED: Normal Sniper - 131 body, 231 head
-            SNIPER:{name: "Sniper", dmg: 131, head: 231, rate: 1.5, mag: 1,  range: 600,spread: 0.001,pellets:1, auto: false,icon:'🔭', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'classic' },
-            PISTOL: { name: "Pistol", dmg: 12, head: 18, rate: 0.5, mag: 15, range: 100, spread: 0.05, pellets: 1, auto: false, icon: '💣', reload: 1500, recoil: 0.0, bulletType: 'hitscan' },
-            ROCKET_LAUNCHER: { name: "R. Launcher", dmg: 50, head: 0, rate: 4.0, mag: 1, range: 300, spread: 0.0, pellets: 1, auto: false, icon: '🚀', reload: 4500, recoil: 0.0, bulletType: 'projectile', explosionRadius: 5, explosionDamage: 200 },
-            DUAL_SMG: { name: "Dual Micro SMGS", dmg: 11.25, head: 17.5, rate: 0.05, mag: 130, range: 70, spread: 0.1, pellets: 1, auto: true, icon: '🔪', reload: 2250, recoil: 0.0, bulletType: 'hitscan' },
-            HEAVY_AR: { name: "Heavy AR", dmg: 30, head: 55, rate: 0.12, mag: 30, range: 200, spread: 0.035, pellets: 1, auto: false, icon: '🎖️', reload: 3000, recoil: 0.0, bulletType: 'hitscan', scope: 'holo_twister' }
+            // Shotguns
+            PUMP: { 
+                name: "Pump Shotgun", 
+                dmg: 95, // High damage per pellet
+                head: 180, // Headshot multiplier 1.9x
+                rate: 0.7, // Slower fire rate
+                mag: 5, 
+                range: 30, 
+                spread: 0.25, 
+                pellets: SHOTGUN_PELLETS, 
+                auto: false, 
+                icon: '💥', 
+                reload: 4000, // Slow reload
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            }, 
+            
+            AUTO_SHG: { 
+                name: "Auto Shotgun", 
+                dmg: 70, 
+                head: 133, // 1.9x headshot
+                rate: 0.35, // Faster than pump
+                mag: 8, 
+                range: 25, 
+                spread: 0.3, 
+                pellets: 5, // Fewer pellets
+                auto: true, 
+                icon: '🔥', 
+                reload: 3500, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            // ARs - Balanced for Fortnite style
+            RFAR: { 
+                name: "Rapid Fire AR", 
+                dmg: 18, // Lower damage, high fire rate
+                head: 32, // 1.75x headshot
+                rate: 0.08, // Very fast
+                mag: 30, 
+                range: 180, 
+                spread: 0.05, 
+                pellets: 1, 
+                auto: true, 
+                icon: '💨', 
+                reload: 2500, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            }, 
+            
+            // UPDATED: Heavy AR - Semi-auto, high damage
+            HEAVY_AR: { 
+                name: "Heavy AR", 
+                dmg: 44, // High damage per shot
+                head: 88, // 2.0x headshot
+                rate: 0.3, // Semi-auto, slower rate
+                mag: 25, 
+                range: 250, // Long range
+                spread: 0.015, // Very accurate
+                pellets: 1, 
+                auto: false, // Non-automatic
+                icon: '🎖️', 
+                reload: 3200, 
+                recoil: 0.0, 
+                bulletType: 'hitscan',
+                scope: 'holo_twister' 
+            },
+            
+            // DMR - Marksman rifle
+            DMR: { 
+                name: "DMR", 
+                dmg: 60, 
+                head: 108, // 1.8x headshot
+                rate: 0.4, 
+                mag: 15, 
+                range: 300, 
+                spread: 0.01, // Very accurate
+                pellets: 1, 
+                auto: false, 
+                icon: '🎯', 
+                reload: 2800, 
+                recoil: 0.0, 
+                bulletType: 'hitscan', 
+                scope: 'red_dot' 
+            },
+            
+            // SMGs
+            STINGER: { 
+                name: "Stinger SMG", 
+                dmg: 17, 
+                head: 26, // 1.5x headshot
+                rate: 0.06, // Very fast
+                mag: 25, 
+                range: 70, 
+                spread: 0.09, 
+                pellets: 1, 
+                auto: true, 
+                icon: '⚡', 
+                reload: 1800, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            BURST_SMG: { 
+                name: "Burst SMG", 
+                dmg: 21, 
+                head: 37, // 1.75x headshot
+                rate: 0.15, 
+                mag: 30, 
+                burst: 3, // 3-round burst
+                burstDelay: 100, 
+                range: 80, 
+                spread: 0.06, 
+                pellets: 1, 
+                auto: false, 
+                icon: '✨', 
+                reload: 2200, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            DRUM_SMG: { 
+                name: "Drum SMG", 
+                dmg: 14, // Low damage
+                head: 21, // 1.5x headshot
+                rate: 0.07, // Fast
+                mag: 60, // Large mag
+                range: 70, 
+                spread: 0.1, // High spread
+                pellets: 1, 
+                auto: true, 
+                icon: '🥁', 
+                reload: 2500, // Long reload
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            // UPDATED: Snipers - High headshot damage
+            BOLT_SNIPER: { 
+                name: "Bolt Sniper", 
+                dmg: 105, // High body damage
+                head: 262, // 2.5x headshot multiplier
+                rate: 3.0, // Very slow
+                mag: 1, // Single shot
+                range: 600, 
+                spread: 0.001, // Extremely accurate
+                pellets: 1, 
+                auto: false, 
+                icon: '💀', 
+                reload: 4500, // Long reload
+                recoil: 0.0, 
+                bulletType: 'hitscan', 
+                scope: 'classic' 
+            },
+            
+            SNIPER:{ 
+                name: "Sniper Rifle", 
+                dmg: 116, 
+                head: 290, // 2.5x headshot
+                rate: 2.5, 
+                mag: 1, 
+                range: 600,
+                spread: 0.001,
+                pellets:1, 
+                auto: false,
+                icon:'🔭', 
+                reload: 4000, 
+                recoil: 0.0, 
+                bulletType: 'hitscan', 
+                scope: 'classic' 
+            },
+            
+            FALCON_SNIPER: { 
+                name: "Falcon Sniper", 
+                dmg: 85, 
+                head: 191, // 2.25x headshot
+                rate: 1.2, 
+                mag: 3, 
+                range: 400, 
+                spread: 0.003, 
+                pellets: 1, 
+                auto: false, 
+                icon: '🦅', 
+                reload: 3000, 
+                recoil: 0.0, 
+                bulletType: 'hitscan', 
+                scope: 'red_dot' 
+            }, 
+            
+            // Scoped weapons
+            SCOPED_SMG: { 
+                name: "Scoped SMG", 
+                dmg: 16, 
+                head: 24, // 1.5x headshot
+                rate: 0.09, 
+                mag: 35, 
+                range: 120, 
+                spread: 0.02, 
+                pellets: 1, 
+                auto: true, 
+                icon: '👁️', 
+                reload: 2600, 
+                recoil: 0.0, 
+                bulletType: 'hitscan', 
+                scope: 'red_dot' 
+            },
+            
+            // Pistols
+            PISTOL: { 
+                name: "Pistol", 
+                dmg: 28, 
+                head: 56, // 2.0x headshot
+                rate: 0.4, 
+                mag: 12, 
+                range: 100, 
+                spread: 0.04, 
+                pellets: 1, 
+                auto: false, 
+                icon: '💣', 
+                reload: 1800, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            // Special weapons
+            STRANGLED_RIFLE: { 
+                name: "Strangled Rifle", 
+                dmg: 75, 
+                head: 150, // 2.0x headshot
+                rate: 0.5, 
+                mag: 20, 
+                range: 200, 
+                spread: 0.02, 
+                pellets: 1, 
+                auto: false, 
+                icon: '⛓️', 
+                reload: 3000, 
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            },
+            
+            ROCKET_LAUNCHER: { 
+                name: "R. Launcher", 
+                dmg: 100, 
+                head: 0, 
+                rate: 4.0, 
+                mag: 1, 
+                range: 300, 
+                spread: 0.0, 
+                pellets: 1, 
+                auto: false, 
+                icon: '🚀', 
+                reload: 5000, 
+                recoil: 0.0, 
+                bulletType: 'projectile', 
+                explosionRadius: 8, 
+                explosionDamage: 250 
+            },
+            
+            DUAL_SMG: { 
+                name: "Dual SMGs", 
+                dmg: 15, 
+                head: 23, // 1.5x headshot
+                rate: 0.04, // Very fast
+                mag: 140, // Huge mag
+                range: 60, 
+                spread: 0.12, // High spread
+                pellets: 1, 
+                auto: true, 
+                icon: '🔪', 
+                reload: 3500, // Very long reload
+                recoil: 0.0, 
+                bulletType: 'hitscan' 
+            }
         };
+        
         const MYTHIC_WEAPON_KEY = 'STRANGLED_RIFLE'; 
         const BOT_WEAPON_KEY = 'RFAR'; 
         
@@ -2251,7 +2565,7 @@
         let scene, camera, renderer, controls;
         let weaponScene, weaponCamera, viewModel;
         let raycaster, downRay;
-        let sunMesh; // NEW: Sun object
+        let sunMesh;
         
         // Enhanced player with new stats
         let player = { 
@@ -2283,7 +2597,10 @@
             // Settings
             sensitivity: 1.0,
             volume: 1.0,
-            graphicsQuality: 'medium'
+            graphicsQuality: 'medium',
+            // Camera fixes
+            cameraClampMin: -Math.PI / 2 + 0.1, // Prevent upside down
+            cameraClampMax: Math.PI / 2 - 0.1
         };
         
         let inputs = { w: false, a: false, s: false, d: false, jump: false, sprint: false, fire: false, reload: false, use: false };
@@ -2297,15 +2614,14 @@
         let gameStarted = false;
         let gamePaused = false;
         
-        // === ENHANCED MOBILE CONTROLS WITH HIGH SENSITIVITY ===
+        // === ENHANCED MOBILE CONTROLS ===
         let mobileTouchActive = false;
         let lastTouchX = 0;
         let lastTouchY = 0;
         let touchDeltaX = 0;
         let touchDeltaY = 0;
-        const MOBILE_SENSITIVITY = 0.008; // UPDATED: Much higher sensitivity
-        const MOBILE_SMOOTHING = 0.1;
-        const MAX_CAMERA_ANGLE = Math.PI / 2 - 0.1;
+        const MOBILE_SENSITIVITY = 0.006; // Balanced sensitivity
+        const MOBILE_SMOOTHING = 0.15;
         
         // Controller variables
         let gamepad = null;
@@ -2323,7 +2639,7 @@
                 start: false, select: false
             }
         };
-        const CONTROLLER_SENSITIVITY = 0.04;
+        const CONTROLLER_SENSITIVITY = 0.03;
         
         // Enhanced Arrays
         let bots = [];
@@ -2341,6 +2657,11 @@
         let frameCount = 0;
         let fps = 60;
         let miniMapCanvas, miniMapCtx;
+        
+        // Performance tracking
+        let frameTimes = [];
+        let performanceLevel = 'High';
+        let lastPerformanceUpdate = 0;
 
         // Storm State
         let stormRadius = STORM_PHASES[0].radius;
@@ -2390,9 +2711,9 @@
             switch(type) {
                 case 'shoot':
                     oscillator.type = 'sawtooth';
-                    oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.3 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(120, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(60, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.4 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.2);
@@ -2400,9 +2721,9 @@
                     
                 case 'player_hit':
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(350, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(120, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.15);
@@ -2412,7 +2733,7 @@
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.4 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.5 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.3);
@@ -2421,7 +2742,7 @@
                 case 'reload':
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.1 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.1);
@@ -2432,7 +2753,7 @@
                         const clickGain = audioContext.createGain();
                         clickOsc.type = 'square';
                         clickOsc.frequency.setValueAtTime(150, audioContext.currentTime);
-                        clickGain.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
+                        clickGain.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
                         clickGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
                         clickOsc.connect(clickGain);
                         clickGain.connect(masterGainNode);
@@ -2450,7 +2771,7 @@
                             const noteGain = audioContext.createGain();
                             noteOsc.type = 'sine';
                             noteOsc.frequency.setValueAtTime(freq, audioContext.currentTime);
-                            noteGain.gain.setValueAtTime(0.3 * player.volume, audioContext.currentTime);
+                            noteGain.gain.setValueAtTime(0.4 * player.volume, audioContext.currentTime);
                             noteGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                             noteOsc.connect(noteGain);
                             noteGain.connect(masterGainNode);
@@ -2464,7 +2785,7 @@
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(130.81, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(87.31, audioContext.currentTime + 0.5);
-                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.3 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.5);
@@ -2472,9 +2793,9 @@
                     
                 case 'jump':
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.1 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(250, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(120, audioContext.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.15);
@@ -2483,7 +2804,7 @@
                 case 'build':
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(80, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.2);
@@ -2491,9 +2812,9 @@
                     
                 case 'storm_damage':
                     oscillator.type = 'sawtooth';
-                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
-                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(450, audioContext.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(250, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.2);
@@ -2503,7 +2824,7 @@
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(261.63, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(523.25, audioContext.currentTime + 0.3);
-                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.25 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.3);
@@ -2513,7 +2834,7 @@
                     oscillator.type = 'triangle';
                     oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime);
                     oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.2 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.15);
@@ -2521,8 +2842,8 @@
                     
                 case 'explosion':
                     oscillator.type = 'sawtooth';
-                    oscillator.frequency.setValueAtTime(50, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.4 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(60, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.5 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.5);
@@ -2530,8 +2851,8 @@
                     
                 case 'impact_hit':
                     oscillator.type = 'square';
-                    oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.1 * player.volume, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(180, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.15 * player.volume, audioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.1);
@@ -2561,16 +2882,16 @@
                     vibrationPattern = { duration: 200, weakMagnitude: 1.0, strongMagnitude: 0.7 };
                     break;
                 case 'shoot':
-                    vibrationPattern = { duration: 80, weakMagnitude: 0.4, strongMagnitude: 0.8 };
+                    vibrationPattern = { duration: 100, weakMagnitude: 0.5, strongMagnitude: 0.9 };
                     break;
                 case 'hit':
-                    vibrationPattern = { duration: 250, weakMagnitude: 0.8, strongMagnitude: 1.0 };
+                    vibrationPattern = { duration: 300, weakMagnitude: 0.9, strongMagnitude: 1.0 };
                     break;
                 case 'reload':
-                    vibrationPattern = { duration: 300, weakMagnitude: 0.2, strongMagnitude: 0.4 };
+                    vibrationPattern = { duration: 400, weakMagnitude: 0.3, strongMagnitude: 0.5 };
                     break;
                 case 'jump':
-                    vibrationPattern = { duration: 100, weakMagnitude: 0.5, strongMagnitude: 0.2 };
+                    vibrationPattern = { duration: 120, weakMagnitude: 0.6, strongMagnitude: 0.3 };
                     break;
                 default:
                     vibrationPattern = { duration: 100, weakMagnitude: 0.3, strongMagnitude: 0.1 };
@@ -2648,7 +2969,7 @@
             
             trail.style.left = `${x1}px`;
             trail.style.top = `${y1}px`;
-            trail.style.width = `${length}px`;
+            trail.style.width = `${Math.min(length, 150)}px`;
             trail.style.transform = `rotate(${angle}deg)`;
             trail.style.transformOrigin = '0 0';
             
@@ -2658,7 +2979,7 @@
                 if (trail.parentNode) {
                     trail.parentNode.removeChild(trail);
                 }
-            }, 250);
+            }, 300);
         }
 
         function createImpactEffect(position, isHeadshot = false) {
@@ -2678,7 +2999,7 @@
                 if (effect.parentNode) {
                     effect.parentNode.removeChild(effect);
                 }
-            }, isHeadshot ? 500 : 400);
+            }, isHeadshot ? 600 : 500);
         }
 
         // ===============================================================
@@ -2773,32 +3094,27 @@
         // ===============================================================
 
         function getTerrainHeight(x, z) {
-            // ENHANCED: More realistic terrain with varied grass patterns
+            // ENHANCED: More realistic terrain with varied patterns
             const scale1 = 0.012;
             const scale2 = 0.035;
             const scale3 = 0.0015;
             
-            // Base terrain with mountains
             let y = (Math.sin(x * scale1) * 28 + Math.cos(z * scale1) * 28) + 
                     (Math.sin(x * scale2 + z * scale2) * 12);
             
-            // Realistic mountain ranges
             const mountain1 = Math.exp(-((x + 200)*(x + 200) + (z + 200)*(z + 200)) / 28000) * 55;
             const mountain2 = Math.exp(-((x - 200)*(x - 200) + (z - 200)*(z - 200)) / 38000) * 65;
             const mountain3 = Math.exp(-((x + 300)*(x + 300) + (z - 300)*(z - 300)) / 45000) * 45;
             
             y += mountain1 + mountain2 + mountain3;
             
-            // River valleys
             const river1 = Math.sin(x * scale3) * 18;
             const river2 = Math.cos(z * scale3) * 18;
             y -= Math.abs(river1) * 0.35 + Math.abs(river2) * 0.35;
             
-            // Rolling hills
             const hillScale = 0.025;
             y += Math.sin(x * hillScale) * Math.cos(z * hillScale) * 8;
             
-            // Smooth edges for storm
             const dist = Math.sqrt(x*x + z*z);
             if (dist > WORLD_SIZE * 0.45) y += (dist - WORLD_SIZE * 0.45) * 0.35;
             
@@ -2809,12 +3125,17 @@
             const geometry = new THREE.BoxGeometry(w, h, d);
             let material;
             
-            // ENHANCED: Better materials based on graphics quality
             if (player.graphicsQuality === 'ultra') {
                 material = new THREE.MeshStandardMaterial({
                     color: col,
-                    roughness: 0.7,
-                    metalness: 0.1
+                    roughness: 0.6,
+                    metalness: 0.2,
+                    envMapIntensity: 0.5
+                });
+            } else if (player.graphicsQuality === 'high') {
+                material = new THREE.MeshPhongMaterial({ 
+                    color: col,
+                    shininess: 30
                 });
             } else {
                 material = new THREE.MeshLambertMaterial({ color: col });
@@ -2839,8 +3160,9 @@
             const doorMat = new THREE.MeshStandardMaterial({ 
                 color: 0x8B4513, 
                 transparent: true, 
-                opacity: 0.8,
-                roughness: 0.8
+                opacity: 0.9,
+                roughness: 0.7,
+                metalness: 0.2
             });
             const doorMesh = new THREE.Mesh(doorGeo, doorMat);
             doorMesh.position.set(x, y + 1.5, z);
@@ -2897,7 +3219,7 @@
         function createVictoryParticles() {
             const container = document.getElementById('victory-particles');
             container.innerHTML = '';
-            for(let i = 0; i < 120; i++) {
+            for(let i = 0; i < 150; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'victory-particle';
                 particle.style.left = `${Math.random() * 100}%`;
@@ -2911,7 +3233,7 @@
         function createEliminatedParticles() {
             const container = document.getElementById('eliminated-particles');
             container.innerHTML = '';
-            for(let i = 0; i < 100; i++) {
+            for(let i = 0; i < 120; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'eliminated-particle';
                 particle.style.left = `${Math.random() * 100}%`;
@@ -2942,10 +3264,10 @@
                 crosshair.style.display = 'none';
                 if (isClassicScope) {
                     scopeOverlay.style.display = 'block';
-                    camera.fov = 8;
+                    camera.fov = 6; // Narrower for sniper scopes
                 } else if (isRedDotScope || isHoloScope) {
                     redDotScope.style.display = 'block';
-                    camera.fov = (item.stats.name === WEAPONS_BASE.FALCON_SNIPER.name) ? 18 : 30;
+                    camera.fov = item.stats.name === 'Falcon Sniper' ? 15 : 25;
                 }
             } else {
                 const isSniperFamily = item && item.category === 'weapon' && (item.stats.scope === 'classic' || item.stats.scope === 'red_dot' || item.stats.scope === 'holo_twister');
@@ -3003,7 +3325,7 @@
             if (player.wood < 10) return;
             
             playSound('build');
-            if (controllerConnected) vibrateController('light');
+            if (controllerConnected) vibrateController('medium');
 
             const wallGeo = new THREE.BoxGeometry(4, 4, 0.1);
             let wallMat;
@@ -3011,8 +3333,15 @@
                 wallMat = new THREE.MeshStandardMaterial({ 
                     color: 0x8B4513, 
                     transparent: true, 
-                    opacity: 0.8,
-                    roughness: 0.9
+                    opacity: 0.9,
+                    roughness: 0.8,
+                    metalness: 0.1
+                });
+            } else if (player.graphicsQuality === 'high') {
+                wallMat = new THREE.MeshPhongMaterial({ 
+                    color: 0x8B4513, 
+                    transparent: true, 
+                    opacity: 0.9
                 });
             } else {
                 wallMat = new THREE.MeshLambertMaterial({ color: 0x8B4513, transparent: true, opacity: 0.8 });
@@ -3140,25 +3469,44 @@
 
         function createSun() {
             // ENHANCED: Create a realistic sun far away in the sky
-            const sunGeometry = new THREE.SphereGeometry(50, 32, 32);
+            const sunGeometry = new THREE.SphereGeometry(60, 64, 64);
             const sunMaterial = new THREE.MeshBasicMaterial({
                 color: 0xffd700,
                 emissive: 0xff8c00,
-                emissiveIntensity: 2.0
+                emissiveIntensity: 2.5,
+                transparent: true,
+                opacity: 0.9
             });
             
             sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
-            sunMesh.position.set(0, 500, -1000); // Far away in the sky
+            sunMesh.position.set(0, 600, -1200);
             scene.add(sunMesh);
             
             // Add sun glow with lens flare effect
-            const sunLight = new THREE.PointLight(0xffd700, 2, 2000);
+            const sunLight = new THREE.PointLight(0xffd700, 2.5, 2500);
             sunLight.position.copy(sunMesh.position);
             scene.add(sunLight);
             
             // Add ambient light from sun
-            const ambientSunLight = new THREE.AmbientLight(0xffd700, 0.3);
+            const ambientSunLight = new THREE.AmbientLight(0xffd700, 0.4);
             scene.add(ambientSunLight);
+            
+            // Add directional light for shadows
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 250, 100);
+            directionalLight.castShadow = player.graphicsQuality !== 'low';
+            
+            if (player.graphicsQuality !== 'low') {
+                directionalLight.shadow.camera.right = 200;
+                directionalLight.shadow.camera.left = -200;
+                directionalLight.shadow.camera.top = 200;
+                directionalLight.shadow.camera.bottom = -200;
+                directionalLight.shadow.mapSize.width = player.graphicsQuality === 'ultra' ? 4096 : 
+                                                      player.graphicsQuality === 'high' ? 2048 : 1024;
+                directionalLight.shadow.mapSize.height = player.graphicsQuality === 'ultra' ? 4096 : 
+                                                       player.graphicsQuality === 'high' ? 2048 : 1024;
+            }
+            scene.add(directionalLight);
         }
 
         function generateTerrain() {
@@ -3180,46 +3528,53 @@
             position.needsUpdate = true;
             geometry.computeVertexNormals();
             
-            // ENHANCED: Realistic grass with texture-like appearance
-            let grassMat;
+            // ENHANCED: Realistic terrain material
+            let terrainMat;
             if (player.graphicsQuality === 'ultra') {
-                grassMat = new THREE.MeshStandardMaterial({ 
+                terrainMat = new THREE.MeshStandardMaterial({ 
                     color: 0x3a8b3a,
-                    roughness: 0.9,
-                    metalness: 0.0
+                    roughness: 0.8,
+                    metalness: 0.0,
+                    flatShading: false
                 });
             } else if (player.graphicsQuality === 'high') {
-                grassMat = new THREE.MeshLambertMaterial({ 
-                    color: 0x3a8b3a
+                terrainMat = new THREE.MeshPhongMaterial({ 
+                    color: 0x3a8b3a,
+                    shininess: 30
                 });
             } else {
-                grassMat = new THREE.MeshBasicMaterial({ color: 0x3a8b3a });
+                terrainMat = new THREE.MeshLambertMaterial({ color: 0x3a8b3a });
             }
             
-            const terrain = new THREE.Mesh(geometry, grassMat);
+            const terrain = new THREE.Mesh(geometry, terrainMat);
             
             if (player.graphicsQuality !== 'low') {
                 terrain.receiveShadow = true;
-                terrain.castShadow = true;
+                terrain.castShadow = false;
             }
             
             scene.add(terrain);
             objects.push(terrain); 
             
-            // Add realistic snow on mountains
-            for(let i = 0; i < 6; i++) {
+            // Add realistic snow on mountains with better distribution
+            for(let i = 0; i < 8; i++) {
                 const snowX = (Math.random() - 0.5) * 400;
                 const snowZ = (Math.random() - 0.5) * 400;
                 const snowH = getTerrainHeight(snowX, snowZ);
-                if (snowH > 35) {
-                    const snowGeo = new THREE.SphereGeometry(18 + Math.random() * 25, 20, 20);
-                    const snowMat = new THREE.MeshStandardMaterial({ 
-                        color: 0xffffff, 
-                        roughness: 0.8,
-                        metalness: 0.0
-                    });
+                if (snowH > 40) {
+                    const snowGeo = new THREE.SphereGeometry(20 + Math.random() * 30, 32, 32);
+                    let snowMat;
+                    if (player.graphicsQuality === 'ultra') {
+                        snowMat = new THREE.MeshStandardMaterial({ 
+                            color: 0xffffff, 
+                            roughness: 0.7,
+                            metalness: 0.0
+                        });
+                    } else {
+                        snowMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+                    }
                     const snow = new THREE.Mesh(snowGeo, snowMat);
-                    snow.position.set(snowX, snowH + 12, snowZ);
+                    snow.position.set(snowX, snowH + 15, snowZ);
                     
                     if (player.graphicsQuality !== 'low') {
                         snow.castShadow = true;
@@ -3231,12 +3586,12 @@
                 }
             }
             
-            // Realistic water areas
-            for(let i = 0; i < 4; i++) {
+            // Realistic water areas with reflections
+            for(let i = 0; i < 5; i++) {
                 const waterX = (Math.random() - 0.5) * 300;
                 const waterZ = (Math.random() - 0.5) * 300;
-                const waterH = getTerrainHeight(waterX, waterZ) - 6;
-                const waterGeo = new THREE.PlaneGeometry(90, 25);
+                const waterH = getTerrainHeight(waterX, waterZ) - 8;
+                const waterGeo = new THREE.PlaneGeometry(100, 30);
                 waterGeo.rotateX(-Math.PI / 2);
                 
                 let waterMat;
@@ -3244,15 +3599,22 @@
                     waterMat = new THREE.MeshStandardMaterial({ 
                         color: 0x1e90ff,
                         transparent: true,
-                        opacity: 0.7,
-                        roughness: 0.1,
-                        metalness: 0.9
+                        opacity: 0.65,
+                        roughness: 0.05,
+                        metalness: 0.95
+                    });
+                } else if (player.graphicsQuality === 'high') {
+                    waterMat = new THREE.MeshPhongMaterial({ 
+                        color: 0x1e90ff,
+                        transparent: true,
+                        opacity: 0.6,
+                        shininess: 100
                     });
                 } else {
                     waterMat = new THREE.MeshBasicMaterial({ 
                         color: 0x1e90ff,
                         transparent: true,
-                        opacity: 0.6
+                        opacity: 0.5
                     });
                 }
                 
@@ -3289,11 +3651,23 @@
             createBox(x, h+2, z, 0.5, 4, 0.5, 0x8B4513, 'tree'); 
             
             // ENHANCED: Better tree foliage
-            const foliageGeo = new THREE.SphereGeometry(3, 16, 16);
-            const foliageMat = new THREE.MeshStandardMaterial({ 
-                color: 0x228B22,
-                roughness: 0.8
-            });
+            const foliageGeo = new THREE.SphereGeometry(3.5, 24, 24);
+            let foliageMat;
+            if (player.graphicsQuality === 'ultra') {
+                foliageMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x228B22,
+                    roughness: 0.7,
+                    metalness: 0.0
+                });
+            } else if (player.graphicsQuality === 'high') {
+                foliageMat = new THREE.MeshPhongMaterial({ 
+                    color: 0x228B22,
+                    shininess: 20
+                });
+            } else {
+                foliageMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+            }
+            
             const foliage = new THREE.Mesh(foliageGeo, foliageMat);
             foliage.position.set(x, h+5, z);
             
@@ -3308,7 +3682,6 @@
         }
 
         function generatePOIs() {
-            // Create sun in the sky
             createSun();
             
             // Generate various POIs
@@ -3366,9 +3739,9 @@
             createBox(350, getTerrainHeight(350, -350)+15, -350, 5, 30, 5, 0x06D6A0);
             
             // Forest area with many trees
-            for(let i=0; i<15; i++) {
-                const x = 400 + (Math.random()-0.5)*60;
-                const z = 150 + (Math.random()-0.5)*60;
+            for(let i=0; i<20; i++) {
+                const x = 400 + (Math.random()-0.5)*80;
+                const z = 150 + (Math.random()-0.5)*80;
                 createTree(x, z);
             }
             createBuilding(400, 150, 25, 12, 25, 0x8B4513, 0);
@@ -3389,7 +3762,7 @@
             createBox(0, getTerrainHeight(0, -400)+5, -400, 10, 10, 10, 0xFFD700);
 
             // More trees throughout map
-            for(let i=0; i<60; i++) {
+            for(let i=0; i<80; i++) {
                 const x = (Math.random()-0.5)*400;
                 const z = (Math.random()-0.5)*400;
                 createTree(x, z);
@@ -3408,8 +3781,14 @@
                 if (player.graphicsQuality === 'ultra') {
                     bodyMat = new THREE.MeshStandardMaterial({
                         color: Math.random() * 0xffffff,
-                        roughness: 0.5,
-                        metalness: 0.5
+                        roughness: 0.4,
+                        metalness: 0.6,
+                        envMapIntensity: 0.7
+                    });
+                } else if (player.graphicsQuality === 'high') {
+                    bodyMat = new THREE.MeshPhongMaterial({
+                        color: Math.random() * 0xffffff,
+                        shininess: 100
                     });
                 } else {
                     bodyMat = new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff});
@@ -3418,6 +3797,17 @@
                 const body = new THREE.Mesh(new THREE.BoxGeometry(3, 1.5, 5), bodyMat);
                 body.position.y = 1;
                 carGroup.add(body);
+                
+                // Add wheels
+                const wheelMat = new THREE.MeshStandardMaterial({color: 0x111111});
+                for(let j=0; j<4; j++) {
+                    const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.3, 16), wheelMat);
+                    wheel.rotation.z = Math.PI/2;
+                    const xPos = j < 2 ? -1.2 : 1.2;
+                    const zPos = j % 2 === 0 ? -2 : 2;
+                    wheel.position.set(xPos, 0.3, zPos);
+                    carGroup.add(wheel);
+                }
                 
                 carGroup.position.set(x, h, z); 
                 
@@ -3437,8 +3827,14 @@
             if (player.graphicsQuality === 'ultra') {
                 chestMat = new THREE.MeshStandardMaterial({
                     color: 0xFFD700,
-                    roughness: 0.4,
-                    metalness: 0.6
+                    roughness: 0.3,
+                    metalness: 0.7,
+                    envMapIntensity: 1.0
+                });
+            } else if (player.graphicsQuality === 'high') {
+                chestMat = new THREE.MeshPhongMaterial({
+                    color: 0xFFD700,
+                    shininess: 150
                 });
             } else {
                 chestMat = new THREE.MeshLambertMaterial({color: 0xFFD700});
@@ -3463,23 +3859,42 @@
             let headMat, bodyMat, legMat;
             
             if (player.graphicsQuality === 'ultra') {
-                headMat = new THREE.MeshStandardMaterial({color: 0xFFA07A, roughness: 0.8});
-                bodyMat = new THREE.MeshStandardMaterial({color: 0x007bff, roughness: 0.7});
-                legMat = new THREE.MeshStandardMaterial({color: 0x444444, roughness: 0.9});
+                headMat = new THREE.MeshStandardMaterial({
+                    color: 0xFFA07A, 
+                    roughness: 0.7,
+                    metalness: 0.1
+                });
+                bodyMat = new THREE.MeshStandardMaterial({
+                    color: 0x007bff, 
+                    roughness: 0.6,
+                    metalness: 0.2
+                });
+                legMat = new THREE.MeshStandardMaterial({
+                    color: 0x444444, 
+                    roughness: 0.8,
+                    metalness: 0.0
+                });
+            } else if (player.graphicsQuality === 'high') {
+                headMat = new THREE.MeshPhongMaterial({color: 0xFFA07A});
+                bodyMat = new THREE.MeshPhongMaterial({color: 0x007bff});
+                legMat = new THREE.MeshPhongMaterial({color: 0x444444});
             } else {
                 headMat = new THREE.MeshLambertMaterial({color: 0xFFA07A});
                 bodyMat = new THREE.MeshLambertMaterial({color: 0x007bff});
                 legMat = new THREE.MeshLambertMaterial({color: 0x444444});
             }
             
-            const head = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), headMat);
+            // Head with better geometry
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), headMat);
             head.position.y = 2.4; 
             group.add(head);
 
-            const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), bodyMat);
+            // Body with armor-like appearance
+            const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.6), bodyMat);
             body.position.y = 1.6;
             group.add(body);
 
+            // Legs with better proportions
             const legGeo = new THREE.BoxGeometry(0.4, 1.2, 0.4);
             const legL = new THREE.Mesh(legGeo, legMat);
             legL.position.set(-0.3, 0.6, 0);
@@ -3487,6 +3902,15 @@
             legR.position.set(0.3, 0.6, 0);
             group.add(legL);
             group.add(legR);
+
+            // Arms
+            const armGeo = new THREE.BoxGeometry(0.3, 0.8, 0.3);
+            const armL = new THREE.Mesh(armGeo, bodyMat);
+            armL.position.set(-0.8, 1.6, 0);
+            const armR = new THREE.Mesh(armGeo, bodyMat);
+            armR.position.set(0.8, 1.6, 0);
+            group.add(armL);
+            group.add(armR);
 
             group.position.set(x, y, z);
             
@@ -3499,13 +3923,16 @@
                 legL.receiveShadow = true;
                 legR.castShadow = true;
                 legR.receiveShadow = true;
+                armL.castShadow = true;
+                armL.receiveShadow = true;
+                armR.castShadow = true;
+                armR.receiveShadow = true;
             }
             
             return group;
         }
 
         function spawnBots() {
-            // ENHANCED: More varied bot AI with realistic behaviors
             const botTypes = [
                 { aggression: 0.85, accuracy: 0.65, range: 70, speed: 1.3, name: "Aggressor" },
                 { aggression: 0.55, accuracy: 0.85, range: 100, speed: 1.0, name: "Sniper" },
@@ -3560,10 +3987,9 @@
                     strafeDirection: Math.random() < 0.5 ? 1 : -1,
                     strafeTimer: 0,
                     type: botType.name,
-                    // ENHANCED: Bot now can damage player within 50 meters
-                    canDamagePlayer: true,
-                    lastPlayerDamageCheck: 0,
-                    damageCooldown: 1000 // 1 second between damage checks
+                    // BOTS SHOOT EVERY 2 SECONDS AND ALWAYS DEAL 21-90 DAMAGE
+                    nextShotTime: 0,
+                    damageRange: { min: 21, max: 90 }
                 });
                 
                 // Generate patrol points
@@ -3859,19 +4285,14 @@
             const base = WEAPONS_BASE[typeKey];
             const rar = RARITY_MULTIPLIERS[rarityKey];
             
-            let damageMultiplier = 1;
-            if (typeKey === 'AUTO_SHG') damageMultiplier = 2.0;
-            if (typeKey === 'STINGER') damageMultiplier = 1.25;
-            if (typeKey === 'DUAL_SMG') damageMultiplier = 1.25;
-            
             return {
                 category: 'weapon',
                 name: base.name,
                 rarity: rar,
                 stats: { 
                     ...base, 
-                    dmg: base.dmg * rar.dmg * damageMultiplier, 
-                    head: base.head * rar.dmg * damageMultiplier, 
+                    dmg: base.dmg * rar.dmg, 
+                    head: base.head * rar.dmg, 
                     reload: base.reload * rar.reload, 
                     currentMag: base.mag 
                 }, 
@@ -3934,20 +4355,28 @@
 
             let color = 0x808080;
             if (item.rarity && item.rarity.color) color = parseInt(item.rarity.color.substring(1), 16);
-            else if (item.category === 'consumable') color = 0x00d2ff;
+            else if (item.category === 'consumable') color = 0x4ecdc4;
 
             let material;
             if (player.graphicsQuality === 'ultra') {
                 material = new THREE.MeshStandardMaterial({
                     color: color,
-                    roughness: 0.5,
-                    metalness: 0.5
+                    roughness: 0.4,
+                    metalness: 0.6,
+                    emissive: color,
+                    emissiveIntensity: 0.2
+                });
+            } else if (player.graphicsQuality === 'high') {
+                material = new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 100,
+                    specular: 0x222222
                 });
             } else {
                 material = new THREE.MeshLambertMaterial({color: color});
             }
             
-            const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), material);
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), material);
             mesh.position.set(x, y, z);
             
             if (player.graphicsQuality !== 'low') {
@@ -4022,7 +4451,7 @@
         }
 
         function handleHitscan(item, fireOrigin, fireDirection, shooter) {
-            const spread = shooter === player ? (player.ads ? 0.005 : item.stats.spread) : item.stats.spread * 1.5;
+            const spread = shooter === player ? (player.ads ? 0.003 : item.stats.spread) : item.stats.spread * 1.5;
             
             for(let p = 0; p < item.stats.pellets; p++) {
                 
@@ -4060,12 +4489,6 @@
                     }
                     if(!hitBot) hitBot = bots.find(bot => bot.mesh === hit.object);
                     
-                    // ENHANCED: Bot can damage player within 50 meters
-                    if (shooter !== player) {
-                        const playerDist = hit.point.distanceTo(camera.position);
-                        if (playerDist < 2 && hit.distance < item.stats.range) hitPlayer = true; 
-                    }
-
                     if(hitBot && hitBot !== shooter) {
                         let dmg = item.stats.dmg;
                         if (hit.point.y > hitBot.mesh.position.y + 2.2) { 
@@ -4083,18 +4506,6 @@
                         }
                         
                         applyDamage(hitBot, dmg, hit.point, shooter, isHeadshot);
-                    } else if (hitPlayer) {
-                        let dmg = item.stats.dmg;
-                        if (hit.point.y > camera.position.y + 0.5) { 
-                            dmg = item.stats.head; 
-                        }
-                        
-                        createBulletTrail(fireOrigin, hit.point);
-                        createImpactEffect(hit.point, hit.point.y > camera.position.y + 0.5);
-                        
-                        takeDamage(dmg, hit.point); 
-                        playSound('player_hit');
-                        if (controllerConnected) vibrateController('hit');
                     } else {
                         const buildingHit = buildings.find(b => b.mesh === hit.object);
                         if (buildingHit) {
@@ -4121,7 +4532,7 @@
         }
         
         function handleProjectile(item, fireOrigin, fireDirection) {
-            const rocketGeo = new THREE.SphereGeometry(0.3, 12, 12);
+            const rocketGeo = new THREE.SphereGeometry(0.4, 16, 16);
             const rocketMat = new THREE.MeshBasicMaterial({ color: 0xff4d4d });
             const rocketMesh = new THREE.Mesh(rocketGeo, rocketMat);
             rocketMesh.position.copy(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(1))); 
@@ -4131,7 +4542,7 @@
             
             projectiles.push({
                 mesh: rocketMesh,
-                velocity: fireDirection.clone().multiplyScalar(50), 
+                velocity: fireDirection.clone().multiplyScalar(60), 
                 damage: item.stats.explosionDamage,
                 radius: item.stats.explosionRadius,
                 shooter: player,
@@ -4303,14 +4714,13 @@
         }
 
         // ===============================================================
-        // === ENHANCED BOT AI WITH PLAYER DAMAGE ========================
+        // === ENHANCED BOT AI WITH FORTNITE-STYLE DAMAGE ================
         // ===============================================================
 
         function findClosestTarget(bot) {
             if (player.health > 0 && !player.dead) {
                 const dist = bot.mesh.position.distanceTo(camera.position);
-                // ENHANCED: Bot can target player within 50 meters
-                if (dist <= 50) {
+                if (dist <= 100) {
                     return player;
                 }
             }
@@ -4318,7 +4728,7 @@
             for(let otherBot of bots) {
                 if(otherBot !== bot && otherBot.health > 0) {
                     const dist = bot.mesh.position.distanceTo(otherBot.mesh.position);
-                    if(dist < 30 && Math.random() < 0.3) {
+                    if(dist < 50 && Math.random() < 0.3) {
                         return otherBot;
                     }
                 }
@@ -4329,6 +4739,8 @@
 
         function updateBots(dt, now) {
             document.getElementById('alive-count').innerText = bots.length + 1;
+            document.getElementById('bot-count-display').textContent = `Bots: ${bots.length}`;
+            
             const BOT_MOVE_SPEED = WALK_SPEED * 0.4;
 
             for(let i = bots.length - 1; i >= 0; i--) {
@@ -4380,48 +4792,32 @@
                             bot.moveCooldown = 800;
                         }
                         
-                        const weaponStats = bot.weapon.stats; 
-                        if(dist < weaponStats.range && now - bot.lastShot > weaponStats.rate * 1000) { 
-                            if(Math.random() < bot.accuracy) {
-                                bot.lastShot = now;
+                        // BOTS SHOOT EVERY 2 SECONDS WITH VISUAL EFFECTS BUT NO ACTUAL RAYCAST
+                        if(now >= bot.nextShotTime) {
+                            bot.nextShotTime = now + 2000; // Shoot every 2 seconds
+                            
+                            // Create muzzle flash effect
+                            const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
+                            const fireDirection = new THREE.Vector3();
+                            fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
+                            
+                            createMuzzleFlash(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(0.5)), fireDirection);
+                            
+                            // Create bullet trail (random direction for misses)
+                            const endPoint = fireOrigin.clone().add(fireDirection.clone().multiplyScalar(50 + Math.random() * 50));
+                            createBulletTrail(fireOrigin, endPoint);
+                            
+                            // ALWAYS deal random damage between 21-90
+                            const damage = Math.floor(Math.random() * (bot.damageRange.max - bot.damageRange.min + 1)) + bot.damageRange.min;
+                            
+                            if (target === player) {
+                                // Apply damage to player
+                                takeDamage(damage, camera.position);
+                                playSound('player_hit');
+                                showHitMarker();
                                 
-                                const fireOrigin = bot.mesh.position.clone().setY(bot.mesh.position.y + 2.4);
-                                const fireDirection = new THREE.Vector3();
-                                fireDirection.subVectors(targetPos.clone().setY(targetPos.y - 0.5), fireOrigin).normalize();
-                                
-                                const inaccuracy = (1 - bot.accuracy) * 0.1;
-                                fireDirection.x += (Math.random() - 0.5) * inaccuracy;
-                                fireDirection.y += (Math.random() - 0.5) * inaccuracy;
-                                fireDirection.normalize();
-                                
-                                // ENHANCED: Bot can damage player
-                                if (target === player && bot.canDamagePlayer && now - bot.lastPlayerDamageCheck > bot.damageCooldown) {
-                                    const ray = new THREE.Raycaster(fireOrigin, fireDirection);
-                                    const playerDist = fireOrigin.distanceTo(camera.position);
-                                    
-                                    if (playerDist < 50) { // Within 50 meters
-                                        const hits = ray.intersectObjects([camera], false);
-                                        if (hits.length > 0 && hits[0].distance < 50) {
-                                            let dmg = weaponStats.dmg;
-                                            if (hits[0].point.y > camera.position.y + 0.5) {
-                                                dmg = weaponStats.head;
-                                            }
-                                            
-                                            createMuzzleFlash(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(0.5)), fireDirection);
-                                            createBulletTrail(fireOrigin, hits[0].point);
-                                            createImpactEffect(hits[0].point, hits[0].point.y > camera.position.y + 0.5);
-                                            
-                                            takeDamage(dmg, hits[0].point);
-                                            playSound('player_hit');
-                                            showHitMarker();
-                                            
-                                            bot.lastPlayerDamageCheck = now;
-                                        }
-                                    }
-                                } else {
-                                    createMuzzleFlash(fireOrigin.clone().add(fireDirection.clone().multiplyScalar(0.5)), fireDirection);
-                                    handleHitscan(bot.weapon, fireOrigin, fireDirection, bot);
-                                }
+                                // Show damage number
+                                showDamage(damage, camera.position.clone().setY(camera.position.y - 0.5));
                             }
                         }
                     } else {
@@ -4592,6 +4988,9 @@
             const isWeapon = item && item.category === 'weapon';
             const showReload = isWeapon && item.stats.currentMag < item.stats.mag;
             document.getElementById('btn-reload').style.display = gameMode === 'mobile' && isWeapon && showReload && !player.isReloading ? 'flex' : 'none';
+            
+            // Update performance display
+            updatePerformanceMonitor();
         }
         
         function switchSlot(idx) {
@@ -4675,7 +5074,7 @@
             document.getElementById('game-container').addEventListener('mousedown', lockPointer);
         }
 
-        // === ENHANCED MOBILE CONTROLS WITH HIGH SENSITIVITY ===
+        // === ENHANCED MOBILE CONTROLS ===
         function initMobileControls() {
             const touchLeft = document.getElementById('touch-left');
             const touchRight = document.getElementById('touch-right');
@@ -4738,7 +5137,7 @@
                 movementZone.style.display = 'none';
             });
             
-            // Camera controls (right 50%) - HIGH SENSITIVITY
+            // Camera controls (right 50%)
             let lastCameraTouchX = 0;
             let lastCameraTouchY = 0;
             let isTouchingCamera = false;
@@ -4761,14 +5160,15 @@
                 const deltaX = touch.clientX - lastCameraTouchX;
                 const deltaY = touch.clientY - lastCameraTouchY;
                 
-                // ENHANCED: Much higher sensitivity
-                touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING * 2;
-                touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING * 2;
+                touchDeltaX = touchDeltaX * (1 - MOBILE_SMOOTHING) + deltaX * MOBILE_SMOOTHING;
+                touchDeltaY = touchDeltaY * (1 - MOBILE_SMOOTHING) + deltaY * MOBILE_SMOOTHING;
                 
+                // FIXED CAMERA: No more upside down
                 camera.rotation.y -= touchDeltaX * MOBILE_SENSITIVITY;
                 camera.rotation.x -= touchDeltaY * MOBILE_SENSITIVITY;
                 
-                camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                // Clamp camera rotation to prevent upside down
+                camera.rotation.x = Math.max(player.cameraClampMin, Math.min(player.cameraClampMax, camera.rotation.x));
                 
                 lastCameraTouchX = touch.clientX;
                 lastCameraTouchY = touch.clientY;
@@ -4878,7 +5278,8 @@
                     if (Math.abs(controllerMapping.rightStick.x) > 0.1 || Math.abs(controllerMapping.rightStick.y) > 0.1) {
                         camera.rotation.y -= controllerMapping.rightStick.x * CONTROLLER_SENSITIVITY;
                         camera.rotation.x -= controllerMapping.rightStick.y * CONTROLLER_SENSITIVITY;
-                        camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                        // FIXED CAMERA: No more upside down
+                        camera.rotation.x = Math.max(player.cameraClampMin, Math.min(player.cameraClampMax, camera.rotation.x));
                     }
                     
                     if (controllerMapping.buttons.b && !inputs.jump) {
@@ -4966,7 +5367,7 @@
             
             document.addEventListener('keyup', e => onKey(e, false));
             
-            // PC Mouse Controls with sensitivity
+            // FIXED: PC Mouse Controls - No more upside down camera
             document.addEventListener('mousemove', (e) => {
                 if (player.dead || gameMode !== 'desktop' || !controls || !controls.isLocked || gamePaused) return;
                 
@@ -4977,7 +5378,8 @@
                     camera.rotation.y -= movementX * 0.002 * player.sensitivity;
                     camera.rotation.x -= movementY * 0.002 * player.sensitivity;
                     
-                    camera.rotation.x = Math.max(-MAX_CAMERA_ANGLE, Math.min(MAX_CAMERA_ANGLE, camera.rotation.x));
+                    // FIXED: Clamp camera rotation to prevent upside down
+                    camera.rotation.x = Math.max(player.cameraClampMin, Math.min(player.cameraClampMax, camera.rotation.x));
                 }
             });
             
@@ -5018,7 +5420,38 @@
         }
 
         // ===============================================================
-        // === NEW: SETTINGS AND PAUSE MENU FUNCTIONS ====================
+        // === PERFORMANCE MONITOR =======================================
+        // ===============================================================
+
+        function updatePerformanceMonitor() {
+            const now = performance.now();
+            frameTimes.push(now);
+            
+            // Keep only last 60 frames
+            if (frameTimes.length > 60) {
+                frameTimes.shift();
+            }
+            
+            // Update every 2 seconds
+            if (now - lastPerformanceUpdate > 2000) {
+                if (frameTimes.length > 1) {
+                    const avgFrameTime = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1);
+                    const avgFps = 1000 / avgFrameTime;
+                    
+                    if (avgFps > 50) performanceLevel = 'High';
+                    else if (avgFps > 30) performanceLevel = 'Medium';
+                    else performanceLevel = 'Low';
+                    
+                    // Update UI
+                    document.getElementById('performance-monitor').textContent = `GPU: ${performanceLevel} | FPS: ${Math.round(avgFps)}`;
+                    document.getElementById('performance-value').textContent = performanceLevel;
+                }
+                lastPerformanceUpdate = now;
+            }
+        }
+
+        // ===============================================================
+        // === SETTINGS AND PAUSE MENU FUNCTIONS =========================
         // ===============================================================
 
         function togglePauseMenu() {
@@ -5059,24 +5492,47 @@
                     case 'low':
                         renderer.setPixelRatio(1);
                         renderer.shadowMap.enabled = false;
+                        renderer.antialias = false;
                         break;
                     case 'medium':
                         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
                         renderer.shadowMap.enabled = true;
                         renderer.shadowMap.type = THREE.PCFShadowMap;
+                        renderer.antialias = true;
                         break;
                     case 'high':
                         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                         renderer.shadowMap.enabled = true;
                         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                        renderer.antialias = true;
                         break;
                     case 'ultra':
                         renderer.setPixelRatio(window.devicePixelRatio);
                         renderer.shadowMap.enabled = true;
                         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                        renderer.antialias = true;
                         break;
                 }
             }
+            
+            // Update all materials based on quality
+            updateMaterialsQuality();
+        }
+
+        function updateMaterialsQuality() {
+            // Update all scene materials based on graphics quality
+            scene.traverse((object) => {
+                if (object.isMesh) {
+                    const material = object.material;
+                    if (material) {
+                        if (player.graphicsQuality === 'ultra') {
+                            if (material.isMeshStandardMaterial) {
+                                material.needsUpdate = true;
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // ===============================================================
@@ -5095,8 +5551,8 @@
             
             // Scene Setup with enhanced graphics
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.Fog(0x87CEEB, 20, 300);
+            scene.background = new THREE.Color(0x0f0c29);
+            scene.fog = new THREE.Fog(0x0f0c29, 20, 350);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
             
@@ -5106,12 +5562,14 @@
             // Enhanced renderer with graphics settings
             renderer = new THREE.WebGLRenderer({ 
                 antialias: player.graphicsQuality !== 'low',
-                powerPreference: "high-performance"
+                powerPreference: "high-performance",
+                alpha: true
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = player.graphicsQuality !== 'low';
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             renderer.autoClear = false; 
+            renderer.setClearColor(0x000000, 0);
             
             applyGraphicsSettings();
             
@@ -5119,25 +5577,27 @@
             gameContainer.appendChild(renderer.domElement);
             
             // Enhanced Lighting
-            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambient);
             
-            const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            sunLight.position.set(100, 200, 100);
-            sunLight.castShadow = player.graphicsQuality !== 'low';
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 250, 100);
+            directionalLight.castShadow = player.graphicsQuality !== 'low';
             
             if (player.graphicsQuality !== 'low') {
-                sunLight.shadow.camera.right = 150; sunLight.shadow.camera.left = -150;
-                sunLight.shadow.camera.top = 150; sunLight.shadow.camera.bottom = -150;
-                sunLight.shadow.mapSize.width = player.graphicsQuality === 'ultra' ? 4096 : 
-                                              player.graphicsQuality === 'high' ? 2048 : 1024;
-                sunLight.shadow.mapSize.height = player.graphicsQuality === 'ultra' ? 4096 : 
-                                               player.graphicsQuality === 'high' ? 2048 : 1024;
+                directionalLight.shadow.camera.right = 150; 
+                directionalLight.shadow.camera.left = -150;
+                directionalLight.shadow.camera.top = 150; 
+                directionalLight.shadow.camera.bottom = -150;
+                directionalLight.shadow.mapSize.width = player.graphicsQuality === 'ultra' ? 4096 : 
+                                                      player.graphicsQuality === 'high' ? 2048 : 1024;
+                directionalLight.shadow.mapSize.height = player.graphicsQuality === 'ultra' ? 4096 : 
+                                                       player.graphicsQuality === 'high' ? 2048 : 1024;
             }
-            scene.add(sunLight);
+            scene.add(directionalLight);
             
             weaponScene.add(ambient.clone());
-            weaponScene.add(sunLight.clone());
+            weaponScene.add(directionalLight.clone());
             
             // Controls
             controls = new PointerLockControls(camera, document.body);
@@ -5150,8 +5610,8 @@
             // Initialize mini-map
             miniMapCanvas = document.getElementById('mini-map-canvas');
             miniMapCtx = miniMapCanvas.getContext('2d');
-            miniMapCanvas.width = 200;
-            miniMapCanvas.height = 200;
+            miniMapCanvas.width = 220;
+            miniMapCanvas.height = 220;
             
             animate();
         }
@@ -5159,29 +5619,61 @@
         function updateMiniMap() {
             if (!miniMapCtx) return;
             
-            // Clear mini-map
-            miniMapCtx.fillStyle = 'rgba(0, 4, 40, 0.9)';
-            miniMapCtx.fillRect(0, 0, 200, 200);
+            // Clear mini-map with gradient background
+            const gradient = miniMapCtx.createLinearGradient(0, 0, 220, 220);
+            gradient.addColorStop(0, 'rgba(15, 12, 41, 0.95)');
+            gradient.addColorStop(1, 'rgba(48, 43, 99, 0.95)');
+            miniMapCtx.fillStyle = gradient;
+            miniMapCtx.fillRect(0, 0, 220, 220);
             
-            // Draw storm circle
-            const mapScale = 200 / WORLD_SIZE;
+            // Draw storm circle with glow effect
+            const mapScale = 220 / WORLD_SIZE;
             const stormX = (stormCenter.x + WORLD_SIZE/2) * mapScale;
             const stormY = (stormCenter.y + WORLD_SIZE/2) * mapScale;
             const stormR = stormRadius * mapScale;
             
             miniMapCtx.beginPath();
             miniMapCtx.arc(stormX, stormY, stormR, 0, Math.PI * 2);
-            miniMapCtx.fillStyle = 'rgba(157, 78, 221, 0.3)';
+            miniMapCtx.fillStyle = 'rgba(157, 78, 221, 0.4)';
             miniMapCtx.fill();
             
-            // Draw player
+            // Storm glow
+            miniMapCtx.beginPath();
+            miniMapCtx.arc(stormX, stormY, stormR + 3, 0, Math.PI * 2);
+            miniMapCtx.strokeStyle = 'rgba(157, 78, 221, 0.7)';
+            miniMapCtx.lineWidth = 2;
+            miniMapCtx.stroke();
+            
+            // Draw player with direction indicator
             const playerX = (camera.position.x + WORLD_SIZE/2) * mapScale;
             const playerY = (camera.position.z + WORLD_SIZE/2) * mapScale;
             
+            // Player direction arrow
+            miniMapCtx.save();
+            miniMapCtx.translate(playerX, playerY);
+            miniMapCtx.rotate(camera.rotation.y);
+            
             miniMapCtx.beginPath();
-            miniMapCtx.arc(playerX, playerY, 4, 0, Math.PI * 2);
-            miniMapCtx.fillStyle = '#00ffff';
+            miniMapCtx.moveTo(0, -8);
+            miniMapCtx.lineTo(-4, 4);
+            miniMapCtx.lineTo(4, 4);
+            miniMapCtx.closePath();
+            miniMapCtx.fillStyle = '#4ecdc4';
             miniMapCtx.fill();
+            miniMapCtx.restore();
+            
+            // Player circle
+            miniMapCtx.beginPath();
+            miniMapCtx.arc(playerX, playerY, 5, 0, Math.PI * 2);
+            miniMapCtx.fillStyle = '#4ecdc4';
+            miniMapCtx.fill();
+            
+            // Player glow
+            miniMapCtx.beginPath();
+            miniMapCtx.arc(playerX, playerY, 8, 0, Math.PI * 2);
+            miniMapCtx.strokeStyle = 'rgba(78, 205, 196, 0.5)';
+            miniMapCtx.lineWidth = 2;
+            miniMapCtx.stroke();
             
             // Draw bots
             bots.forEach(bot => {
@@ -5190,8 +5682,16 @@
                 
                 miniMapCtx.beginPath();
                 miniMapCtx.arc(botX, botY, 3, 0, Math.PI * 2);
-                miniMapCtx.fillStyle = bot.health > 0 ? '#ff4d4d' : '#666666';
+                miniMapCtx.fillStyle = bot.health > 0 ? '#ff6b6b' : '#666666';
                 miniMapCtx.fill();
+                
+                // Bot health indicator
+                if (bot.health > 0) {
+                    const healthPercent = bot.health / 200;
+                    miniMapCtx.fillStyle = healthPercent > 0.5 ? '#4CAF50' : 
+                                          healthPercent > 0.25 ? '#FF9800' : '#F44336';
+                    miniMapCtx.fillRect(botX - 2, botY - 6, 4 * healthPercent, 2);
+                }
             });
             
             // Draw buildings
@@ -5202,6 +5702,34 @@
                 miniMapCtx.fillStyle = '#8B4513';
                 miniMapCtx.fillRect(buildX - 2, buildY - 2, 4, 4);
             });
+            
+            // Draw chests
+            chests.forEach(chest => {
+                const chestX = (chest.position.x + WORLD_SIZE/2) * mapScale;
+                const chestY = (chest.position.z + WORLD_SIZE/2) * mapScale;
+                
+                miniMapCtx.fillStyle = '#FFD700';
+                miniMapCtx.fillRect(chestX - 1.5, chestY - 1.5, 3, 3);
+            });
+            
+            // Draw loot
+            loot.forEach(item => {
+                const lootX = (item.mesh.position.x + WORLD_SIZE/2) * mapScale;
+                const lootY = (item.mesh.position.z + WORLD_SIZE/2) * mapScale;
+                
+                let color = '#808080';
+                if (item.data.rarity && item.data.rarity.color) {
+                    color = item.data.rarity.color;
+                }
+                
+                miniMapCtx.fillStyle = color;
+                miniMapCtx.fillRect(lootX - 1, lootY - 1, 2, 2);
+            });
+            
+            // Border
+            miniMapCtx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+            miniMapCtx.lineWidth = 3;
+            miniMapCtx.strokeRect(0, 0, 220, 220);
         }
 
         window.startGame = (mode) => {
