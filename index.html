@@ -1416,7 +1416,7 @@
             scene.add(dayNightCycle.moonLight);
         }
 
-        function updateDayNightCycle(dt) {
+                function updateDayNightCycle(dt) {
             dayNightCycle.cycleTime += dt;
             
             if (dayNightCycle.cycleTime >= dayNightCycle.cycleDuration) {
@@ -1431,14 +1431,16 @@
             if (dayNightCycle.isDay) {
                 icon.textContent = '🌞';
                 text.textContent = 'Day';
-                dayNightCycle.sunLight.visible = true;
-                dayNightCycle.moonLight.visible = false;
+                // FIX: Add null checks
+                if (dayNightCycle.sunLight) dayNightCycle.sunLight.visible = true;
+                if (dayNightCycle.moonLight) dayNightCycle.moonLight.visible = false;
                 scene.background = new THREE.Color(0x87CEEB);
             } else {
                 icon.textContent = '🌙';
                 text.textContent = 'Night';
-                dayNightCycle.sunLight.visible = false;
-                dayNightCycle.moonLight.visible = true;
+                // FIX: Add null checks
+                if (dayNightCycle.sunLight) dayNightCycle.sunLight.visible = false;
+                if (dayNightCycle.moonLight) dayNightCycle.moonLight.visible = true;
                 scene.background = new THREE.Color(0x0a0a2a);
             }
         }
@@ -2636,6 +2638,7 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x87CEEB);
             scene.fog = new THREE.Fog(0x87CEEB, 20, 300);
+            initDayNightCycle();
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
             
